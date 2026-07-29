@@ -64,7 +64,9 @@ namespace Iris
         } 
 
         uint16_t* ram16 = (uint16_t*)ram;
-        return ram16[addr >> 1];
+        uint16_t value = ram16[addr >> 1];
+        TOBE16(value);
+        return value;
     }
 
     uint32_t Memory::OnRead32(size_t addr)
@@ -78,7 +80,12 @@ namespace Iris
         } 
 
         uint32_t* ram32 = (uint32_t*)ram;
-        return ram32[addr >> 2];
+        uint32_t value = ram32[addr >> 2];
+
+        // IRIS is a big-endian system.
+        TOBE32(value);
+
+        return value;
     }
 
     void Memory::OnWrite8(size_t addr, uint8_t value)
@@ -105,6 +112,7 @@ namespace Iris
         } 
     
         uint16_t* ram16 = (uint16_t*)ram;       
+        TOBE16(value);
         ram16[addr >> 1] = value;
     }
 
@@ -119,6 +127,8 @@ namespace Iris
         } 
 
         uint32_t* ram32 = (uint32_t*)ram;
+        // IRIS is a big-endian system.
+        TOBE32(value);
         ram32[addr >> 2] = value;
 
     }

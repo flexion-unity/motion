@@ -46,6 +46,13 @@ namespace Iris
         ImVec2 debugContainerPaneSize = ImVec2(290, 600);
         ImVec2 debugContainerChildWindowSize = ImVec2(290, 170);
 
+        for (CoherentExtension* extension : Coherent::extensions)
+        {
+            if (extension->enabled
+            && extension->extensionType != CoherentExtensionType::CustomMenu)
+                extension->AddUI();
+        }
+
         if (ImGui::Begin("Coherent Debugger", &Coherent::active, ImGuiWindowFlags_MenuBar))
         {
             if (ImGui::BeginMenuBar())
@@ -60,10 +67,7 @@ namespace Iris
                     {
                         if (extension->extensionType == CoherentExtensionType::PeripheralsMenu)
                             if (ImGui::MenuItem(extension->component->GetName()))
-                                extension->enabled = true; 
-
-                        if (extension->enabled)
-                            extension->AddUI();
+                                extension->enabled = true;
                     }
 
                     ImGui::EndMenu();
@@ -118,9 +122,6 @@ namespace Iris
 
                         if (clicked)
                             extension->enabled = true;
-                        
-                        if (extension->enabled) 
-                            extension->AddUI();
                     }
                 }
 

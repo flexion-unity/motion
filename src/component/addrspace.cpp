@@ -60,7 +60,6 @@ namespace Iris
         {
             auto value = mapping->component->OnRead16(realAddr);
             // IRIS is a big-endian system
-            value = (value >> 8) | (value << 8); 
 
             return value;
         }
@@ -87,12 +86,6 @@ namespace Iris
         {
             // IRIS is a big-endian system
             auto value = mapping->component->OnRead32(realAddr);
-
-            // IRIS is a big-endian system.
-            value = ((((value) & 0xff000000) >> 24)|
-                (((value) & 0x00ff0000) >>  8) |
-                (((value) & 0x0000ff00) <<  8) |
-                (((value) & 0x000000ff) << 24));
 
             return value;
         }
@@ -185,7 +178,6 @@ namespace Iris
         if (mapping)
         {
             // IRIS is a big-endian system
-            value = (value >> 8) | (value << 8);
             return mapping->component->OnWrite16(realAddr, value);
         }
         else
@@ -206,12 +198,6 @@ namespace Iris
 
         if (mapping)
         {
-            // IRIS is a big-endian system.
-            value = ((((value) & 0xff000000) >> 24)|
-                (((value) & 0x00ff0000) >>  8) |
-                (((value) & 0x0000ff00) <<  8) |
-                (((value) & 0x000000ff) << 24));
-
             return mapping->component->OnWrite32(realAddr, value);
         }
         else

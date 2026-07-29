@@ -189,15 +189,16 @@ namespace Iris
         uint16_t pageNumber = 0;
         
         // stack is mapped in reverse
+        // MAME bit: "packed into a right-aligned field in the output.""
         if (segment == MMU_SEGMENT_STACK)
         {
-            // bits 14-10
-            pageNumber = (addr & 0xFFFC00) ^ 0x3FFF;
+            // bits 23-10
+            pageNumber = ((addr & 0xFFFC00) >> 10) ^ 0x3FFF;
             finalPageNumber = baseValue - pageNumber;
         }
         else
         {
-            pageNumber = (addr & 0xFFFC00);
+            pageNumber = ((addr & 0xFFFC00) >> 10);
             finalPageNumber = baseValue + pageNumber;
         }
 

@@ -52,19 +52,7 @@
 #define STRING_MAX_SHORT    48
 #define STRING_MAX_LONG     256
 #define STRING_MAX_PATH     260
-
-// Some useful macros for converting between different io sizes
-#define READ_32TO8(x, addr) (uint8_t)(x >> ((addr & 3) << 3) & 0xFF)
-#define READ_32TO16(x, addr)(uint16_t)(x >> ((addr & 3) << 3) & 0xFFFF)
-
-#define WRITE_32TO8(x, old, addr)       x &= (~0xFF << (addr & 3) << 3); \
-                                        x |= (old << ((addr & 3) << 3))
-                            
-
-#define WRITE_32TO16(x, old, addr)      x &= (~0xFFFF << (addr & 3) << 3); \
-                                        x |= (old << ((addr & 3) << 3))    
                                         
-
 // Lets the programmer know if we are deliberately allowing a falltrhough            
 #define fallthrough
 
@@ -73,4 +61,12 @@
                                             dst &= ~(cond); \
                                         else \
                                             dst |= cond
-                                            
+// Endianness shit
+
+#define TOBE16(value)                   value = (value >> 8) | (value << 8)
+
+#define TOBE32(value)                   value = ((((value) & 0xff000000) >> 24)| \
+                                        (((value) & 0x00ff0000) >> 8) | \
+                                        (((value) & 0x0000ff00) << 8) | \
+                                        (((value) & 0x000000ff) << 24))             
+                                                          

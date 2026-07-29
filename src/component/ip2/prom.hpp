@@ -30,14 +30,18 @@ namespace Iris
         { 
             addr %= (size_t)promSize->GetValue();
             uint16_t* rom16 = (uint16_t*)rom; 
-            return rom16[addr >> 1]; 
+            uint16_t value =  rom16[addr >> 1]; 
+            TOBE16(value);
+            return value;
         };
 
         uint32_t OnRead32(size_t addr) override 
         { 
             addr %= (size_t)promSize->GetValue();
             uint32_t* rom32 = (uint32_t*)rom; 
-            return rom32[addr >> 2]; 
+            uint32_t value = rom32[addr >> 2]; 
+            TOBE32(value);
+            return value;
         };
 
         void OnWrite8(size_t addr, uint8_t value) override

@@ -64,13 +64,17 @@ namespace Iris
         { 
             addr %= (size_t)SRAM_SIZE;
             uint16_t* rom16 = (uint16_t*)sram; 
-            return rom16[addr >> 1]; 
+            uint16_t value = rom16[addr >> 1];
+            TOBE16(value);
+            return value;
         }
 
         uint32_t OnRead32(size_t addr) override 
         { 
             addr %= (size_t)SRAM_SIZE;
             uint32_t* rom32 = (uint32_t*)sram; 
+            uint16_t value = rom32[addr >> 2];
+            TOBE32(value);
             return rom32[addr >> 2]; 
         }
 
@@ -84,6 +88,7 @@ namespace Iris
         { 
             addr %= (size_t)SRAM_SIZE;
             uint16_t* rom16 = (uint16_t*)sram; 
+            TOBE16(value);
             rom16[addr >> 1] = value; 
         }
 
@@ -91,6 +96,7 @@ namespace Iris
         { 
             addr %= (size_t)SRAM_SIZE;
             uint32_t* rom32 = (uint32_t*)sram; 
+            TOBE32(value);
             rom32[addr >> 2] = value; 
         }
 

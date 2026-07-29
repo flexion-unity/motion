@@ -61,7 +61,7 @@ namespace Iris
     #define MMU_MASK_REFERENCED             0x40000000      // referenced
     #define MMU_MASK_MODIFIED               0x80000000      // modified
     #define MMU_MASK_ALWAYS_SET             0xF0001FFF      // Bits which mame always sets. these seem to be wrong compared with the implementation 
-    
+
     #define MMU_SEGMENT_GET_ID(x)           (x >> 28) & 0x0F
 
     /// The coherent extnension
@@ -69,8 +69,11 @@ namespace Iris
     {
     public:
         CoherentExtensionIP2MMU(Component* owner) : CoherentExtension(owner) {}
-
         void AddUI() override;
+        void DrawPagetableUI();
+
+    private:
+        bool pagetableUiEnabled;
     };
 
     // not sure hwy sgi decided that addresses must be so sparse that bit fucking 24 needed to be the register selector.
@@ -78,6 +81,7 @@ namespace Iris
 
     class IP2MMU : public ComponentMMU
     {
+        friend class CoherentExtensionIP2MMU;
     public: 
         void Start()
         {
