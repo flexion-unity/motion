@@ -16,5 +16,8 @@ Similar to a .plan file
         * Enough for the PROM to detect that we have 16 MB, rather than 0 or 1 MB.
         * Likely required also to run UNIX.
         * Mame was wrong - 13 bits instead of 10. Not sure why it works? Maybe I am wrong or maybe he only tested with limited ram
+        * also has a start and shutdown method to measure tearing down and setting up the mmu in the addrspace system.
 * guy wanted to add github actions support
     * he only did macos and linux. no windows. i can add windows later.
+* added pagetable debug window
+    * it sucks

@@ -40,6 +40,7 @@ namespace Iris
         styleObj.Colors[ImGuiCol_TitleBg] = ImVec4(0.8, 0.8, 0.8, 1.0);
         styleObj.Colors[ImGuiCol_TitleBgActive] = ImVec4(1.0, 1.0, 1.0, 1.0);
         styleObj.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.9, 0.9, 0.9, 1.0);
+        styleObj.Colors[ImGuiCol_PopupBg] = ImVec4(0.9, 0.9, 0.9, 1.0);
         // from an mex screenshot. need to make the text black in the window but blue in the title bar...
         styleObj.Colors[ImGuiCol_Text] = ImVec4(0.0, 0.0, 1.0, 1.0);
         styleObj.Colors[ImGuiCol_Header] = ImVec4(0.094, 0.173, 0.902, 1.0);
