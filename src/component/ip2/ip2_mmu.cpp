@@ -92,6 +92,8 @@ namespace Iris
 
     void IP2MMU::OnWrite16(size_t addr, uint16_t value)
     {
+        size_t index = 0;
+
         switch (addr)
         {
             case REG_OS_BASE:
@@ -107,11 +109,14 @@ namespace Iris
                 multibusProtect = value;
                 break;       
             case REG_PAGETABLE_BASE ... PAGETABLE_INDEX(PAGETABLE_MAX_PAGES):
+                index = (addr - REG_PAGETABLE_BASE) >> 2;
+        
                 if (addr & 2)
-                    pagetable[(addr - REG_PAGETABLE_BASE) >> 2] |= value;
+                    pagetable[index] |= value;
                 else
-                    pagetable[(addr - REG_PAGETABLE_BASE) >> 2] |= (value << 16);
-                    break;
+                    pagetable[index] |= (value << 16);
+
+                break;
             case REG_TEXTDATA_BASE:
                 textdataBase = value;
                 break;
@@ -187,12 +192,12 @@ namespace Iris
         if (segment == MMU_SEGMENT_STACK)
         {
             // bits 14-10
-            pageNumber = (addr & 0x7C00) ^ 0x3FFF;
+            pageNumber = (addr & 0xFFFC00) ^ 0x3FFF;
             finalPageNumber = baseValue - pageNumber;
         }
         else
         {
-            pageNumber = (addr & 0x7C00);
+            pageNumber = (addr & 0xFFFC00);
             finalPageNumber = baseValue + pageNumber;
         }
 
@@ -238,8 +243,8 @@ namespace Iris
         }
         
         // calculate a real physical ram address with 13...0 page adn teh bottom1 0 bits of the real address
-        *finalAddress = (page & 0x3FFF) << 10 | (addr & 0x7FF);
-        //Logger::Log(LOG_PREFIX_IP2MMU, std::format("Translated virtual address {:x} to physical address {:x}", addr, *finalAddress).c_str(), LogChannels::Debug);
+        *finalAddress = (page & 0x1FFF) << 10 | (addr & 0x3FF);
+        Logger::Log(LOG_PREFIX_IP2MMU, std::format("Translated virtual address {:x} to physical address {:x}", addr, *finalAddress).c_str(), LogChannels::Debug);
         return true; 
     }
 }

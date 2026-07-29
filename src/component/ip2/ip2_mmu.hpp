@@ -60,8 +60,8 @@ namespace Iris
     #define MMU_MASK_READ_WRITE             0x30000000      // read write
     #define MMU_MASK_REFERENCED             0x40000000      // referenced
     #define MMU_MASK_MODIFIED               0x80000000      // modified
-    #define MMU_MASK_ALL_BITS               0xF0001FFF      // ALl theoretically settable bits
-
+    #define MMU_MASK_ALWAYS_SET             0xF0001FFF      // Bits which mame always sets. these seem to be wrong compared with the implementation 
+    
     #define MMU_SEGMENT_GET_ID(x)           (x >> 28) & 0x0F
 
     /// The coherent extnension
