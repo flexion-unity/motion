@@ -13,7 +13,7 @@ namespace Iris
             for (int32_t i = 0; i < PAGETABLE_MAX_PAGES; i++)
             {
                 uint32_t physicalPageNumber = (mmu->pagetable[i] & 0x1FFF);
-                uint32_t protectionInfo = (mmu->pagetable[i] & 0x30000000);
+                uint32_t protectionInfo = ((mmu->pagetable[i] & 0x30000000) >> 28);
 
                 const char* access = "No Access";
                 ImVec4 accessColour = ImVec4(1.0, 0.0, 0.0, 1.0);
