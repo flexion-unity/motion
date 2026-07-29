@@ -33,22 +33,6 @@ namespace Iris
         mappingTd.component = this;
         AddrSpace::AddMapping(mappingTd);
 
-        AddrSpaceMapping mappingStack = AddrSpaceMapping();
-
-        // MMU segment 1
-
-        mappingStack.startAddr = MEM_SEG1_START;
-        mappingStack.endAddr = mappingStack.startAddr + capacity;
-        mappingStack.component = this;
-        AddrSpace::AddMapping(mappingStack);
-
-        // MMU segment 2
-        AddrSpaceMapping mappingKernel = AddrSpaceMapping();
-        mappingKernel.startAddr = MEM_SEG2_START;
-        mappingKernel.endAddr = mappingKernel.startAddr + capacity;
-        mappingKernel.component = this;     
-        AddrSpace::AddMapping(mappingKernel);
-
         // Temporary code 
         ram[0] = 0x33; // initial sp=0x33000800
         ram[2] = 0x08;

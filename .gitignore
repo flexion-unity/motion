@@ -1,2 +1,6 @@
 .DS_Store
 ._*
+.cache/*
+build/*
+src/build/*
+build/output/*

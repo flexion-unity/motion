@@ -244,7 +244,7 @@ namespace Iris
         
         // calculate a real physical ram address with 13...0 page adn teh bottom1 0 bits of the real address
         *finalAddress = (page & 0x1FFF) << 10 | (addr & 0x3FF);
-        Logger::Log(LOG_PREFIX_IP2MMU, std::format("Translated virtual address {:x} to physical address {:x}", addr, *finalAddress).c_str(), LogChannels::Debug);
+        //Logger::Log(LOG_PREFIX_IP2MMU, std::format("Translated virtual address {:x} to physical address {:x}", addr, *finalAddress).c_str(), LogChannels::Debug);
         return true; 
     }
 }
