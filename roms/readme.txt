@@ -1,5 +1,10 @@
 ROMs go here
 
+M  O  T  I  O  N
+The SGI Emulator 
+
+Copyright (C) 2026 
+
 A basic guide for using the emulator. May be out of date it is always changing
 
 Emulator Log window - shows you the log of what is happening
@@ -45,6 +50,11 @@ Command line:
 
         Profile files:
             ip2_sram.hpp: Private PROM SRAM.
+    promPath - THe path of the PROM (basically the BIOS) to load.
+    If you are messing around with different versions of the BIOS oyu can set this
+
+Notes:
+    "Unmapped write" or "Unmapped read" warnings: Ignore them, they are fine.
 
 Not done:
     - Reconfigurable machines

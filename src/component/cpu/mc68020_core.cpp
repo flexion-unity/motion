@@ -5,6 +5,9 @@ namespace Iris
 {
     void MC68020::Start()
     {
+        // ensure we are in reset so e.g. the MMUs don't try and map everything
+        isInReset = true;
+
         Logger::Log("*yawn* I'm a Motorola 68020!");
 
         moiraCpu.setModel(Iris::Lisburn::Model::M68020);
@@ -45,6 +48,9 @@ namespace Iris
 
         Logger::Log("Resetting Lisburn...");
         moiraCpu.reset();
+
+        // moira has a didReset delegate, but due to various design reasons (mostly include cycles) we can't use it 
+        isInReset = false;
     }
 
     void MC68020::Tick()

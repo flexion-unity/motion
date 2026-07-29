@@ -107,21 +107,21 @@ namespace Iris
             ImGui::PopStyleColor();
 
             DrawConsole(consoleLine, consoleLineNum, 380.0f);
-        }
 
-        ImGui::Separator();
+            ImGui::Separator();
 
-        for (int32_t d = 0; d < 2; d++)
-        {
-            DUART68681::DUART& duart = duartComponent->duarts[d];
-
-            if (ImGui::CollapsingHeader(std::format("DUART{} @ {}", d, d ? "0x32800000" : "0x32000000").c_str()))
+            for (int32_t d = 0; d < 2; d++)
             {
-                ImGui::Text("ISR: 0x%02X   IMR: 0x%02X   IVR: 0x%02X   ACR: 0x%02X   OPR: 0x%02X   OPCR: 0x%02X",
-                    duart.isr, duart.imr, duart.ivr, duart.auxControl, duart.opr, duart.opcr);
+                DUART68681::DUART& duart = duartComponent->duarts[d];
 
-                DrawChannelUI(duartComponent, d, 0);
-                DrawChannelUI(duartComponent, d, 1);
+                if (ImGui::CollapsingHeader(std::format("DUART{} @ {}", d, d ? "0x32800000" : "0x32000000").c_str()))
+                {
+                    ImGui::Text("ISR: 0x%02X   IMR: 0x%02X   IVR: 0x%02X   ACR: 0x%02X   OPR: 0x%02X   OPCR: 0x%02X",
+                        duart.isr, duart.imr, duart.ivr, duart.auxControl, duart.opr, duart.opcr);
+
+                    DrawChannelUI(duartComponent, d, 0);
+                    DrawChannelUI(duartComponent, d, 1);
+                }
             }
         }
 

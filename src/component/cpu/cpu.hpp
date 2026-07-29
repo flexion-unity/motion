@@ -20,5 +20,17 @@ namespace Iris
         /// @brief returns a boolean indicating if this cpu is in privileged mode. most cpus only have two levels of privilege and x86 has 4, but 2 are almost never used.
         /// @return a boolean indicating if the cpu is in privileged mode
         virtual bool IsPrivilegedMode() { return true; };
+
+        // Getters for private fields
+
+        /// @brief returns a boolean indicating if this cpu is in reset.
+        /// @return a boolean indicating if this cpu is in reset.
+        bool GetIsInReset() { return isInReset; };
+
+        // Setters for private fields
+        void SetIsInReset(bool inReset) { this->isInReset = inReset; };
+
+    protected: 
+        bool isInReset;
     };
 }

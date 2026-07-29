@@ -155,6 +155,13 @@ namespace Iris
         if (!cpu)
             cpu = Emulation::GetMachine().FindComponentByType<ComponentCPU>();
 
+        // don't map in reset
+        if (cpu->GetIsInReset())
+        {
+            *finalAddress = addr;
+            return true; 
+        }
+        
         uint8_t segment = MMU_SEGMENT_GET_ID(addr);
      
         // MAME uses templates for this, which is a bit simpler, but seems a bit silly

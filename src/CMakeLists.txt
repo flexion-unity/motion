@@ -49,5 +49,6 @@ add_executable(motion
     component/ip2/ip2_dip_switches.cpp
     base/event/event.cpp
     base/profile/profile.cpp
+    component/mmu/mmu.cpp
 )
 

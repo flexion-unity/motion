@@ -83,8 +83,10 @@ namespace Iris
     {
         friend class CoherentExtensionIP2MMU;
     public: 
-        void Start()
+        void Start() override
         {
+            ComponentMMU::Start();
+
             // map the private ram
             AddrSpaceMapping mapping = AddrSpaceMapping();
 
@@ -104,13 +106,12 @@ namespace Iris
 
             if (logEnabled)
                 Logger::SetChannelEnabled(MMU_LOG_CHANNEL_NAME);
-
-            AddrSpace::RegisterMMU(this);
         }
 
         void Shutdown() override
         {
             delete mmuExtension;
+            ComponentMMU::Shutdown();
         }
 
         const char* GetName() { return "IRIS 3130 TTL MMU"; };

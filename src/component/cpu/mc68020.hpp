@@ -52,8 +52,8 @@ namespace Iris
 
         /// @brief get the name of this component. immutable const char*.
         const char* GetName() { return "Motorola MC68020 CPU (Lisburn)"; };
+
     private:
         MC68020DebuggerSystem* system; 
-
     };
 }

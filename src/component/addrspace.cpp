@@ -221,12 +221,15 @@ namespace Iris
 
     void AddrSpace::RegisterMMU(ComponentMMU* mmu)
     {
-        Logger::Log(LOG_PREFIX_MAPPING, std::format("Addressing system registered an MMU: {}", mmu->GetName()).c_str(), LogChannels::Debug);
+        if (mmu)
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("Addressing system registered an MMU: {}", mmu->GetName()).c_str(), LogChannels::Debug);
         AddrSpace::mmu = mmu;
     }
 
     void AddrSpace::Shutdown()
     {
+        // in case the bozo user forgot to actually shut down the mmu. it will be deleted anywya but then we will have a stale pointer.
+        mmu = nullptr; 
         mappings.clear();
     }
 }
