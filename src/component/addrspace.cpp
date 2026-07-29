@@ -160,7 +160,7 @@ namespace Iris
             return mapping->component->OnWrite8(realAddr, value);
         }
         else
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU8 - Unmapped write of 0x{:x} to 0x{:x}!", value, addr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU8 - Unmapped write of 0x{:x} to 0x{:x}!", value, realAddr).c_str(), LogChannels::Warning);
     }
 
     void AddrSpace::WriteU16(size_t addr, uint16_t value)
@@ -181,7 +181,7 @@ namespace Iris
             return mapping->component->OnWrite16(realAddr, value);
         }
         else
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU16 - Unmapped write of 0x{:x} to 0x{:x}!", value, addr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU16 - Unmapped write of 0x{:x} to 0x{:x}!", value, realAddr).c_str(), LogChannels::Warning);
     }
 
     void AddrSpace::WriteU32(size_t addr, uint32_t value)

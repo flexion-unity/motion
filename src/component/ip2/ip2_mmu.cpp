@@ -112,9 +112,9 @@ namespace Iris
                 index = (addr - REG_PAGETABLE_BASE) >> 2;
         
                 if (addr & 2)
-                    pagetable[index] |= value;
+                    pagetable[index] = (pagetable[index] & 0xFFFF0000) | (value);
                 else
-                    pagetable[index] |= (value << 16);
+                    pagetable[index] = (pagetable[index] & 0x0000FFFF) | ((uint32_t)(value) << 16);
 
                 break;
             case REG_TEXTDATA_BASE:
@@ -192,18 +192,18 @@ namespace Iris
         // MAME bit: "packed into a right-aligned field in the output.""
         if (segment == MMU_SEGMENT_STACK)
         {
-            // bits 23-10
-            pageNumber = ((addr & 0xFFFC00) >> 10) ^ 0x3FFF;
+            // bits 23-12
+            pageNumber = ((addr & 0xFFF000) >> 12) ^ 0x3FFF;
             finalPageNumber = baseValue - pageNumber;
         }
         else
         {
-            pageNumber = ((addr & 0xFFFC00) >> 10);
+            pageNumber = ((addr & 0xFFF000) >> 12);
             finalPageNumber = baseValue + pageNumber;
         }
 
         bool limitReached = limitValue && pageNumber > limitValue;
-        uint32_t page = pagetable[finalPageNumber];
+        uint32_t& page = pagetable[finalPageNumber];
 
         bool busError = false;
 
@@ -236,15 +236,15 @@ namespace Iris
 
         if (busError)
         {
-            //Logger::Log(LOG_PREFIX_IP2MMU, 
-            //    std::format("***** VERY BIG PROBLEM ***** Bus error @ segment {} offset {} (haven't figured out the interface yet)", 
-            //    segment, (addr << 2)).c_str(), LogChannels::FatalError);
+            Logger::Log(LOG_PREFIX_IP2MMU, 
+                std::format("***** VERY BIG PROBLEM ***** Bus error @ segment {} offset {} (haven't figured out the interface yet)", 
+                segment, (addr << 2)).c_str(), LogChannels::FatalError);
 
-            //return false; 
+            return false; 
         }
         
         // calculate a real physical ram address with 13...0 page adn teh bottom1 0 bits of the real address
-        *finalAddress = (page & 0x1FFF) << 10 | (addr & 0x3FF);
+        *finalAddress = (page & 0x1FFF) << 12 | (addr & 0x1FFF);
         //Logger::Log(LOG_PREFIX_IP2MMU, std::format("Translated virtual address {:x} to physical address {:x}", addr, *finalAddress).c_str(), LogChannels::Debug);
         return true; 
     }
