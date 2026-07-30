@@ -421,29 +421,27 @@ namespace Motion
             ImGui::PopStyleColor();
 
             // not yet started so do not bother
-            if (Coherent::currentSystem->GetRunState() == CoherentSystem::RunState::NotYetStarted)
-                return;
-
-            for (int32_t offset = 0; offset < 8; offset++)
+            if (Coherent::currentSystem->GetRunState() != CoherentSystem::RunState::NotYetStarted)
             {
-                switch (Coherent::currentSystem->GetWordSize())
+                for (int32_t offset = 0; offset < 8; offset++)
                 {
-                    case CoherentSystem::WordSize::WordSize8:
-                        ImGui::Text("0x%02x", Coherent::currentSystem->GetStack8(offset));
-                        break;
-                    case CoherentSystem::WordSize::WordSize16:
-                        ImGui::Text("0x%04x", Coherent::currentSystem->GetStack16(offset));
-                        break;
-                    case CoherentSystem::WordSize::WordSize32:
-                        ImGui::Text("0x%08x", Coherent::currentSystem->GetStack32(offset));
-                        break;
-                    case CoherentSystem::WordSize::WordSize64:
-                        ImGui::Text("0x%16lx", Coherent::currentSystem->GetStack64(offset));
-                        break;
+                    switch (Coherent::currentSystem->GetWordSize())
+                    {
+                        case CoherentSystem::WordSize::WordSize8:
+                            ImGui::Text("0x%02x", Coherent::currentSystem->GetStack8(offset));
+                            break;
+                        case CoherentSystem::WordSize::WordSize16:
+                            ImGui::Text("0x%04x", Coherent::currentSystem->GetStack16(offset));
+                            break;
+                        case CoherentSystem::WordSize::WordSize32:
+                            ImGui::Text("0x%08x", Coherent::currentSystem->GetStack32(offset));
+                            break;
+                        case CoherentSystem::WordSize::WordSize64:
+                            ImGui::Text("0x%16lx", Coherent::currentSystem->GetStack64(offset));
+                            break;
+                    }
                 }
-
-
-            }
+            }              
         }
 
         ImGui::EndChild();
