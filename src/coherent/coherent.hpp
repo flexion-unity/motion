@@ -172,6 +172,9 @@ namespace Motion
             Paused = 1,
             Reset = 2,
             SingleStep = 3,
+
+            // not yet started i.e. don't display the stack etc. from the emulator's pov, this is the same as paused.
+            NotYetStarted = 4,
         };
 
         /// @brief Add a register to this system
@@ -345,7 +348,8 @@ namespace Motion
             // start pausd if we configured to do so (for debugging)
             if (currentSystem != nullptr && startPaused->GetValue())
             {
-                currentSystem->SetRunState(CoherentSystem::RunState::Paused);
+                // add a new not yet started state
+                currentSystem->SetRunState(CoherentSystem::RunState::NotYetStarted);
             }
         }; 
         

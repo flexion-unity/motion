@@ -18,6 +18,7 @@ namespace Motion
                 SetRunState(Paused);
                 break;
             case CoherentSystem::RunState::Paused:
+            case CoherentSystem::RunState::NotYetStarted:
                 if (!Emulation::GetPaused())
                     Emulation::SetPaused(true);
 

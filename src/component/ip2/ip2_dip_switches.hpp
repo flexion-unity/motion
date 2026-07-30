@@ -75,7 +75,7 @@ namespace Motion
 
                 switchExtension = new CoherentExtensionIP2Switches(this);
                 switchExtension->SetExtensionType(CoherentExtensionType::CustomMenu);
-                switchExtension->SetMenuName("System Configuration");
+                switchExtension->SetMenuName("System Config");
                 Coherent::RegisterExtension(switchExtension);
 
                 // setup reasonable defaults

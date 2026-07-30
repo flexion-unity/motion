@@ -73,21 +73,6 @@ namespace Motion
                     ImGui::EndMenu();
                 }
 
-                // Help / about window 
-
-                if (ImGui::BeginMenu("Style"))
-                {
-                    if (ImGui::MenuItem("IMGUI Default"))
-                        CoherentUI::InitStyle(UIStyle::Default);
-                    
-                    if (ImGui::MenuItem("SGI mex-style"))
-                        CoherentUI::InitStyle(UIStyle::MEX);
-
-                    if (ImGui::MenuItem("Experimental"))
-                        CoherentUI::InitStyle(UIStyle::Experimental);
-
-                    ImGui::EndMenu();
-                }
 
 
                 // Add custom menu type extensions
@@ -125,11 +110,29 @@ namespace Motion
                     }
                 }
 
-                // Options menu
+                // Misc options menu
+                
                 if (ImGui::BeginMenu("Options"))
                 {
                     ImGui::MenuItem("Break on Exception", nullptr, &Coherent::breakOnException);
                 }
+
+                // Style menu
+
+                if (ImGui::BeginMenu("Style"))
+                {
+                    if (ImGui::MenuItem("IMGUI Default"))
+                        CoherentUI::InitStyle(UIStyle::Default);
+                    
+                    if (ImGui::MenuItem("SGI mex-style"))
+                        CoherentUI::InitStyle(UIStyle::MEX);
+
+                    if (ImGui::MenuItem("Experimental"))
+                        CoherentUI::InitStyle(UIStyle::Experimental);
+
+                    ImGui::EndMenu();
+                }
+
 
                 // Help menu
 
@@ -152,7 +155,9 @@ namespace Motion
                     ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 0.0f), "***** Error - No System Active *****");
                 else
                 {
-                    if (Coherent::currentSystem->GetRunState() == CoherentSystem::RunState::Running)
+                    CoherentSystem::RunState runState = Coherent::currentSystem->GetRunState();
+
+                    if (runState == CoherentSystem::RunState::Running)
                     {
                         if (ImGui::Button("Pause CPU"))
                             Coherent::currentSystem->SetRunState(CoherentSystem::RunState::Paused);
@@ -168,7 +173,8 @@ namespace Motion
                     if (ImGui::Button("Reset"))
                         Coherent::currentSystem->SetRunState(CoherentSystem::RunState::Reset);
 
-                    if (Coherent::currentSystem->GetRunState() == CoherentSystem::RunState::Paused)
+                    if (runState == CoherentSystem::RunState::Paused
+                    || runState == CoherentSystem::RunState::NotYetStarted)
                     {
                         ImGui::SameLine();
                         
@@ -407,6 +413,10 @@ namespace Motion
 
     void CoherentUI::DrawStackWindow(ImVec2 size)
     {
+        // not yet started so do not bother
+        if (Coherent::currentSystem->GetRunState() == CoherentSystem::RunState::NotYetStarted)
+            return;
+
         if (ImGui::BeginChild("Stack", size, ImGuiChildFlags_None))
         {
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));

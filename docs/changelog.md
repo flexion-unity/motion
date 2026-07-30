@@ -26,3 +26,7 @@ Similar to a .plan file
 
 * this emulator hasn't been called iris in forever and now people know about it so change the namespace to motion and rename Iris.hpp to Motion.hpp.
 * get rid of catchpoints due to UI space. instead we will have an option that allows to break on exception and to allow you to specify a simple ID to break on
+* incremented coherent version to v0.6 (v0.5 = v0.0728 verison)
+    * refactored the totally awful coherent file structure
+        * coherentsystem now in coherent_system.cpp
+    * added stack window and options menu
