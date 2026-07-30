@@ -421,6 +421,9 @@ namespace Motion
             ImGui::Text("%s", "Stack"); //shutup compiler by doing this
             ImGui::PopStyleColor();
 
+            ImVec4 color = ImVec4(1.0, 1.0, 1.0, 1.0);
+            
+            
             // not yet started so do not bother
             if (Coherent::currentSystem->GetRunState() != CoherentSystem::RunState::NotYetStarted)
             {
@@ -429,18 +432,21 @@ namespace Motion
                     switch (Coherent::currentSystem->GetWordSize())
                     {
                         case CoherentSystem::WordSize::WordSize8:
-                            ImGui::Text("[%d]: 0x%02x", offset, Coherent::currentSystem->GetStack8(offset));
+                            ImGui::TextColored(color, "[%d]: 0x%02x", offset, Coherent::currentSystem->GetStack8(offset));
                             break;
                         case CoherentSystem::WordSize::WordSize16:
-                            ImGui::Text("[%d]: 0x%04x", offset, Coherent::currentSystem->GetStack16(offset));
+                            ImGui::TextColored(color, "[%d]: 0x%04x", offset, Coherent::currentSystem->GetStack16(offset));
                             break;
                         case CoherentSystem::WordSize::WordSize32:
-                            ImGui::Text("[%d]: 0x%08x", offset, Coherent::currentSystem->GetStack32(offset));
+                            ImGui::TextColored(color, "[%d]: 0x%08x", offset, Coherent::currentSystem->GetStack32(offset));
                             break;
                         case CoherentSystem::WordSize::WordSize64:
-                            ImGui::Text("[%d]: 0x%16lx", offset, Coherent::currentSystem->GetStack64(offset));
+                            ImGui::TextColored(color, "[%d]: 0x%16lx", offset, Coherent::currentSystem->GetStack64(offset));
                             break;
                     }
+
+                    // make it fade out despite its lack of computational sense because it looks cool
+                    color.w -= 0.080 - (0.010 * offset) + 0.065;
                 }
             }              
         }
