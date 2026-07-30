@@ -115,6 +115,7 @@ namespace Motion
                 if (ImGui::BeginMenu("Options"))
                 {
                     ImGui::MenuItem("Break on Exception", nullptr, &Coherent::breakOnException);
+                    ImGui::EndMenu();
                 }
 
                 // Style menu
@@ -428,16 +429,16 @@ namespace Motion
                     switch (Coherent::currentSystem->GetWordSize())
                     {
                         case CoherentSystem::WordSize::WordSize8:
-                            ImGui::Text("0x%02x", Coherent::currentSystem->GetStack8(offset));
+                            ImGui::Text("[%d]: 0x%02x", offset, Coherent::currentSystem->GetStack8(offset));
                             break;
                         case CoherentSystem::WordSize::WordSize16:
-                            ImGui::Text("0x%04x", Coherent::currentSystem->GetStack16(offset));
+                            ImGui::Text("[%d]: 0x%04x", offset, Coherent::currentSystem->GetStack16(offset));
                             break;
                         case CoherentSystem::WordSize::WordSize32:
-                            ImGui::Text("0x%08x", Coherent::currentSystem->GetStack32(offset));
+                            ImGui::Text("[%d]: 0x%08x", offset, Coherent::currentSystem->GetStack32(offset));
                             break;
                         case CoherentSystem::WordSize::WordSize64:
-                            ImGui::Text("0x%16lx", Coherent::currentSystem->GetStack64(offset));
+                            ImGui::Text("[%d]: 0x%16lx", offset, Coherent::currentSystem->GetStack64(offset));
                             break;
                     }
                 }
