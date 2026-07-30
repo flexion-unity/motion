@@ -16,6 +16,9 @@ namespace Motion
 {
     // Temp until convars are a thi9ng
     #define CONFIG_PATH "Motion.cfg"
+    
+    // this is extremely temporary
+    extern Cvar* forceEnterSerialMonitor;
 
     class Emulation
     {
@@ -24,7 +27,7 @@ namespace Motion
         static void Start();            // Start emulation
         static void Frame();            // render a frame
         static void Tick();             // run one tick of the system
-        static void OnEvent(Event evt);   // fire an event
+        static void OnEvent(Event& evt);   // fire an event
         static void Reset();            // reset the emulation
         static void SingleStep();       // run one emulation tick
         static void Stop();             // shut down

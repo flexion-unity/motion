@@ -11,6 +11,7 @@
 */
 
 #pragma once
+#include <base/event/event.hpp>
 #include <component/component.hpp>
 
 namespace Motion
@@ -24,6 +25,25 @@ namespace Motion
     // Cap on how much transmitted output a SerialLine remember,s for display purposes.
     #define SERIAL_TXLOG_MAX_SIZE   16384
     #define SERIAL_TXLOG_PURGE_SIZE 4096
+
+    /// @brief a serial receive event
+    class SerialReceiveEvent : public Event
+    {
+    public:
+        uint8_t data; 
+        int32_t lineId;
+
+        SerialReceiveEvent() : Event(EventType::SerialReceive) { };
+    };
+
+    class SerialTransmitEvent : public Event
+    {
+    public:
+        uint8_t data; 
+        int32_t lineId;
+        
+        SerialTransmitEvent() : Event(EventType::SerialTransmit) { };
+    };
 
     /// @brief A single byte oriented raw serial line.
     ///
@@ -49,13 +69,18 @@ namespace Motion
         /// @brief Clear the transmit log
         void ClearTxLog();
 
+        // NOTE: this might be too slow because we have to tell everything about this event.
+        // we can design a custom event system for serial ports if this turns out to be the case. but since serial ports run at low clock it is probably fine
+        void FireReceiveEvent(uint8_t data);
+        void FireTransmitEvent(uint8_t data);
+        
         // Getters for private fields 
 
         /// @brief Get everything the current line has sent so far, for display purposes (e.g. the Coherent debug UI).
         std::string& GetTxLog() { return txLog; };
 
-
-        // Setters for private fields
+        // Lets this serial port know what we want
+        int32_t id; 
 
     private:
 
@@ -67,6 +92,8 @@ namespace Motion
 
         // Receive queue - fed directly via AddRxByte()/AddRxString().
         std::queue<uint8_t> rxQueue;
+
+
     };
 
     /// @brief Base class for components that expose one or more raw serial lines to the host (e.g. UART chips).
@@ -74,7 +101,15 @@ namespace Motion
     class ComponentSerial : public Component
     {
     public:
-        /// @brief 
+        void Start() 
+        {
+            Component::Start();
+
+            for (int32_t i = 0; i < SERIAL_MAX_LINES; i++)
+                lines[i].id = i;
+        }
+
+        /// @brief Check if this Component is a serial port.
         /// @return TRUE since this is a serial port (component determination truth value)
         bool IsSerialPort() override { return true; };
 

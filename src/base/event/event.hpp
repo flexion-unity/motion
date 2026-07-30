@@ -17,6 +17,12 @@ namespace Motion
     {
         KeyDown = 0,
         KeyUp = 1,
+        MouseDown = 2,
+        MouseUp = 3,
+
+        // for convenience the event classes for these are deifned in the serial code
+        SerialReceive = 4,
+        SerialTransmit = 5,
     }; 
 
     extern const char* eventTypeToString[];
@@ -34,24 +40,43 @@ namespace Motion
     
     // some prebuilt event types
   
-    class KeyDownEvent : Event
+    class KeyDownEvent : public Event
     {
+    public:
         uint32_t key; 
 
         KeyDownEvent() : Event(EventType::KeyDown) { };
     }; 
 
-    class KeyUpEvent : Event
+    class KeyUpEvent : public Event
     {
+    public: 
         uint32_t key; 
 
         KeyUpEvent() : Event(EventType::KeyUp) { };
     }; 
     
+    class MouseDownEvent : public Event
+    {
+    public:
+        uint32_t mouse;
+
+        MouseDownEvent() : Event(EventType::MouseDown) { };
+    };
+
+    class MouseUpEvent : public Event
+    {
+    public:
+        uint32_t mouse;
+
+        MouseUpEvent() : Event(EventType::MouseUp) { };
+    };
+
+
     class EventSystem
     {
     public:
-        static void FireEvent(Event evt);
+        static void FireEvent(Event& evt);
     private: 
     }; 
 }; 

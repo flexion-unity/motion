@@ -151,6 +151,8 @@ namespace Motion
     public:
         void Start() override
         {
+            ComponentSerial::Start();
+            
             // map the DUARTs
             AddrSpaceMapping mapping0 = AddrSpaceMapping();
 

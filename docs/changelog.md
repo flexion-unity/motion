@@ -30,3 +30,7 @@ Similar to a .plan file
     * refactored the totally awful coherent file structure
         * coherentsystem now in coherent_system.cpp
     * added stack window and options menu
+* made the event system work
+    * don't like it since it calls empty methods. but having io device specific interface seemed too brittle.
+* keyboard now correctly configures itself
+    * however this makes the PROM not work.

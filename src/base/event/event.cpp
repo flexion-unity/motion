@@ -12,7 +12,7 @@
 
 namespace Motion
 {
-    void EventSystem::FireEvent(Event evt)
+    void EventSystem::FireEvent(Event& evt)
     {
         Emulation::OnEvent(evt);
     }
@@ -22,5 +22,9 @@ namespace Motion
     {
         "Key Down",
         "Key Up",
+        "Mouse Down",
+        "Mouse Up",
+        "Serial Receive Byte",
+        "Serial Transmit Byte",
     };
 }

@@ -21,7 +21,7 @@ namespace Motion
 
         virtual void Start() { };
         virtual void Tick() { };                // ticks at clock speed
-        virtual void Event(Event evt) { };      // fire an event
+        virtual void OnEvent(Event& evt) { };      // fire an event
         virtual void Shutdown() { };
         
         virtual uint8_t OnRead8(size_t addr) { return 0; };

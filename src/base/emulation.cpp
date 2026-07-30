@@ -8,17 +8,18 @@
 #include <component/ip2/ip2_rtc.hpp>
 #include <component/ip2/ip2_duart.hpp>
 #include <component/ip2/ip2_dip_switches.hpp>
+#include <component/keyboard/keyboard_iris.hpp>
 
 namespace Motion
 {
+    Cvar* forceEnterSerialMonitor;
+    
     void Emulation::Init()
     {
         // TEMP
         renderer = new RendererSDL3();
         renderer->Init();
-
         Coherent::Init();
-
         Start();
     }   
 
@@ -34,6 +35,13 @@ namespace Motion
         machine.AddComponent<DUART68681>();
         machine.AddComponent<IP2Switches>();
         machine.AddComponent<IP2Clock>();
+
+        forceEnterSerialMonitor = Cvar::Get("forceEnterSerialMonitor", "0");
+
+        // temporary debug solution utnil the graphics system works
+        if (!forceEnterSerialMonitor->GetValue())
+            machine.AddComponent<KeyboardIris>();
+            
         machine.Start();
 
         // enter the coherent debugger
@@ -56,7 +64,7 @@ namespace Motion
         renderer->FramePostRender();
     }
 
-    void Emulation::OnEvent(Event evt)
+    void Emulation::OnEvent(Event& evt)
     {
         machine.OnEvent(evt);
     }

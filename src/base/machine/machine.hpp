@@ -66,7 +66,7 @@ namespace Motion
         }
 
         // should this really be from emulation::event or should we use Emulation::GetMachine::OnEvent...
-        void OnEvent(Event evt);
+        void OnEvent(Event& evt);
 
         void Shutdown();
 

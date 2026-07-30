@@ -19,6 +19,8 @@ namespace Motion
 
         if (txLog.size() > SERIAL_TXLOG_MAX_SIZE)
             txLog.erase(0, SERIAL_TXLOG_PURGE_SIZE);
+
+        FireTransmitEvent(data);
     }
 
     void SerialLine::ClearTxLog()
@@ -33,12 +35,15 @@ namespace Motion
 
         data = rxQueue.front();
         rxQueue.pop();
+
+        FireReceiveEvent(data);
         return true;
     }
 
     void SerialLine::AddRxByte(uint8_t data)
     {
         rxQueue.push(data);
+        FireReceiveEvent(data);  
     }
 
     void SerialLine::AddRxString(const char* str)
@@ -47,6 +52,24 @@ namespace Motion
             return;
 
         for (const char* c = str; *c; c++)
-            rxQueue.push((uint8_t)*c);
+            AddRxByte((uint8_t)*c);
+    }
+
+    void SerialLine::FireReceiveEvent(uint8_t data)
+    {
+        SerialReceiveEvent event = SerialReceiveEvent();
+        event.lineId = id;
+        event.data = data; 
+
+        EventSystem::FireEvent(event);
+    }
+
+    void SerialLine::FireTransmitEvent(uint8_t data)
+    {
+        SerialTransmitEvent event = SerialTransmitEvent();
+        event.lineId = id;
+        event.data = data; 
+
+        EventSystem::FireEvent(event);
     }
 }

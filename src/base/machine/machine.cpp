@@ -64,11 +64,11 @@ namespace Motion
         }
     }
 
-    void Machine::OnEvent(Event evt)
+    void Machine::OnEvent(Event& evt)
     {
         for (Component* component : components)
         {
-            component->Event(evt);
+            component->OnEvent(evt);
         }
     }
 
