@@ -2,7 +2,7 @@
 #include <coherent/coherent_gui_imgui.hpp>
 #include <component/ip2/ip2_mmu.hpp>
 
-namespace Iris
+namespace Motion
 {
     void CoherentExtensionIP2MMU::DrawPagetableUI()
     {

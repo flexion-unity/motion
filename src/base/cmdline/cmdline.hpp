@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/cvar/cvar.hpp>
 
 /*
@@ -12,7 +12,7 @@
     cmdline.cpp: Implements the command-line (wow!)
 */
 
-namespace Iris
+namespace Motion
 {
     #define STRING_MAX_COMMAND_LINE             1024
 

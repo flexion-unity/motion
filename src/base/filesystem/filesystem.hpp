@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <filesystem>
 
 //
@@ -8,7 +8,7 @@
 // THis one just provides a very narrow thing...
 //
 
-namespace Iris
+namespace Motion
 {
     class FileStream
     {

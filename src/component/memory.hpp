@@ -7,10 +7,10 @@
 // The MMU has 13-bit page numbers and 4kb pages for a theoretical maximum of 32 MB system RAM.
 
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <component/component.hpp>
 
-namespace Iris
+namespace Motion
 {
  
     class Memory : public Component

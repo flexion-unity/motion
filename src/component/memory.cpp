@@ -10,7 +10,7 @@
 #include <base/emulation.hpp>
 #include <component/memory.hpp>
 
-namespace Iris 
+namespace Motion 
 {
     #define MEM_SEG0_START          0x0
     #define MEM_SEG1_START          0x1000000

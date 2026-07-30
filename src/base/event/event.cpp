@@ -10,7 +10,7 @@
 #include <base/event/event.hpp>
 #include <base/emulation.hpp>
 
-namespace Iris
+namespace Motion
 {
     void EventSystem::FireEvent(Event evt)
     {

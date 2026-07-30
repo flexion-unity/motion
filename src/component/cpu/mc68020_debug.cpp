@@ -1,6 +1,6 @@
 #include <component/cpu/mc68020.hpp>
 
-namespace Iris
+namespace Motion
 {
     char* MC68020DebuggerSystem::DisasmInstruction(size_t start)
     {

@@ -3,7 +3,7 @@
 */
 
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>
 #include <base/machine/machine.hpp>
 #include <base/event/event.hpp>
@@ -12,7 +12,7 @@
 #include <render/render.hpp>
 #include <render/sdl3/render_sdl3.hpp>
 
-namespace Iris
+namespace Motion
 {
     // Temp until convars are a thi9ng
     #define CONFIG_PATH "Motion.cfg"

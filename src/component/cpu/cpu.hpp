@@ -1,17 +1,17 @@
 #pragma once 
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <component/component.hpp>
 
-namespace Iris
+namespace Motion
 {
     /// @brief Base class for components that implement a CPU
     class ComponentCPU : public Component
     {
     public:
 
-        /// @brief See Iris::Component::IsCPU
-        /// @return See Iris::Component::IsCPU
+        /// @brief See Motion::Component::IsCPU
+        /// @return See Motion::Component::IsCPU
         bool IsCPU() override { return true; };
 
         /// @brief get the name of this component. immutable const char*.

@@ -1,7 +1,7 @@
 #include <coherent/coherent.hpp>
 #include <coherent/coherent_gui_imgui.hpp>
 
-namespace Iris
+namespace Motion
 {
     void CoherentUI::LeftAlign()
     {

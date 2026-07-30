@@ -9,7 +9,7 @@
 
 #include <component/serial/serial.hpp>
 
-namespace Iris
+namespace Motion
 {
     void SerialLine::SendByte(uint8_t data)
     {

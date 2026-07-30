@@ -9,7 +9,7 @@
 
 #include <base/cvar/cvar.hpp>
 
-namespace Iris
+namespace Motion
 {
     Cvar* Cvar::Add(const char* name, const char* value)
     {

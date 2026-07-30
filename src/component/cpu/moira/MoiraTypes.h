@@ -11,7 +11,7 @@
 #include <string>
 #include <optional>
 
-namespace Iris::Lisburn {
+namespace Motion::Lisburn {
 
 //
 // Basic data types

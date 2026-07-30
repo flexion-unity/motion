@@ -1,6 +1,6 @@
 #include <component/ip2/prom.hpp>
 
-namespace Iris
+namespace Motion
 {
     Cvar* promPath;
     Cvar* promSize;

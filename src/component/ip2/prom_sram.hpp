@@ -1,10 +1,10 @@
 #pragma once 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>
 #include <base/profile/profile.hpp>
 #include <component/addrspace.hpp>
 
-namespace Iris
+namespace Motion
 {
     extern Cvar* promPath;
     extern Cvar* promSize;

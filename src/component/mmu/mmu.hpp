@@ -8,10 +8,10 @@
 */
 
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <component/component.hpp>
 
-namespace Iris
+namespace Motion
 {
     class ComponentMMU : public Component
     {

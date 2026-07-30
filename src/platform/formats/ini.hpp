@@ -7,12 +7,12 @@
     1.0.1:      Added additional INISection constructor     July 27, 2026
 */
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>
 
 #define INI_LIB_VERSION          "StarfrostLib/INI Version 1.0.1 - July 27, 2026"
 
-namespace Iris
+namespace Motion
 {
     class INISection
     {

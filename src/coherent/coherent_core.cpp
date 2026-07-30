@@ -1,6 +1,6 @@
 #include <coherent/coherent.hpp>
 
-namespace Iris
+namespace Motion
 {
     //
     // Cvars

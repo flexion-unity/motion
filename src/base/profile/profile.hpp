@@ -11,11 +11,11 @@
     the name of which is based on a cvar.
 */
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>
 #include <platform/formats/ini.hpp>
 
-namespace Iris
+namespace Motion
 {
     extern Cvar* profileFolder; 
 

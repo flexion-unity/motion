@@ -1,8 +1,8 @@
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/event/event.hpp>
 
-namespace Iris
+namespace Motion
 {
     class Component
     {

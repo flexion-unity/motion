@@ -12,13 +12,13 @@
 */
 
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>
 #include <component/addrspace.hpp>
 #include <component/serial/serial.hpp>
 #include <coherent/coherent.hpp>
 
-namespace Iris
+namespace Motion
 {
     extern Cvar* logIP2DUART;
 

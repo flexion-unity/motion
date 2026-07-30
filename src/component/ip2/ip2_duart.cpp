@@ -13,7 +13,7 @@
 
 #include <component/ip2/ip2_duart.hpp>
 
-namespace Iris
+namespace Motion
 {
     Cvar* logIP2DUART;
 

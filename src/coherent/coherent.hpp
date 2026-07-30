@@ -7,13 +7,13 @@
 */
 
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/emulation.hpp>
 #include <component/addrspace.hpp>
 #include <component/component.hpp>
 #include <coherent/coherent_gui_imgui.hpp>
 
-namespace Iris
+namespace Motion
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
     #define COHERENT_VERSION        "Coherent Debugging Engine v0.5 (July 2026)"

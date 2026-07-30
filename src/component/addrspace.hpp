@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <component/component.hpp>
 #include <component/mmu/mmu.hpp>
 
-namespace Iris
+namespace Motion
 {
     // This class implements an address space mapping.
     // The 

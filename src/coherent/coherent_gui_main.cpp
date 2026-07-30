@@ -13,7 +13,7 @@
 #include <coherent/coherent_gui_imgui.hpp>
 #include <component/cpu/cpu.hpp>
 
-namespace Iris
+namespace Motion
 {
     /// @brief a basic about window since coherent is retargetable
     void CoherentUI::DrawAboutWindow()

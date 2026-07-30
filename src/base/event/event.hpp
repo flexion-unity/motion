@@ -9,9 +9,9 @@
 */
 
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 
-namespace Iris
+namespace Motion
 {
     enum EventType
     {

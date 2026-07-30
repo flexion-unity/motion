@@ -1,6 +1,6 @@
 #include <component/ip2/ip2_dip_switches.hpp>   
 
-namespace Iris
+namespace Motion
 {
     //
     // STATUS REG 

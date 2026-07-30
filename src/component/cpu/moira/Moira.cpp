@@ -18,7 +18,7 @@
 #include <vector>
 #include <stdexcept>
 
-namespace Iris::Lisburn {
+namespace Motion::Lisburn {
 
 using namespace Flag;
 

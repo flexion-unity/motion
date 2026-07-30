@@ -9,10 +9,10 @@
 */
 
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <imgui.h>
 
-namespace Iris 
+namespace Motion 
 {    
     #define LOGBUF_MAX_SIZE         16384
     #define LOGBUF_PURGE_SIZE       2048

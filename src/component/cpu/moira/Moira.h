@@ -11,7 +11,7 @@
 #include "MoiraTypes.h"
 #include "StrWriter.h"
 
-namespace Iris::Lisburn {
+namespace Motion::Lisburn {
 
 class Moira {
     

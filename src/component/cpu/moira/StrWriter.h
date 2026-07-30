@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace Iris::Lisburn {
+namespace Motion::Lisburn {
 
 //
 // Wrapper structures controlling the output format

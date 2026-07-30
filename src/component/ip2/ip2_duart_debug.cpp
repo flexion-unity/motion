@@ -1,7 +1,7 @@
 #include <coherent/coherent.hpp>
 #include <component/ip2/ip2_duart.hpp>
 
-namespace Iris
+namespace Motion
 {
     // Persistent per-line input boxes for the "type into this port" harness below. Indexed by serial line number
     // (see DUART68681::GetLineIndex) rather than being function-local statics, since each line needs its own buffer.

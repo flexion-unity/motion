@@ -1,7 +1,7 @@
 #include <component/addrspace.hpp>
 #include <base/emulation.hpp>
 
-namespace Iris
+namespace Motion
 {
     // yes, this checks exactly for one. becaue we don't want duplicatges and check for them 
     AddrSpaceMapping* AddrSpace::GetMapping(size_t addr) 

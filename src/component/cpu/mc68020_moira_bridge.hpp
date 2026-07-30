@@ -1,15 +1,15 @@
 #pragma once 
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <coherent/coherent.hpp>
 #include <component/component.hpp>
 #include <component/cpu/cpu.hpp>
 #include <component/cpu/moira/Moira.h>
 #include <base/emulation.hpp>
 
-namespace Iris
+namespace Motion
 {
-    class MC68020MoiraBridge : public Iris::Lisburn::Moira 
+    class MC68020MoiraBridge : public Motion::Lisburn::Moira 
     {
         friend class MC68020;
 

@@ -8,7 +8,7 @@
 */
 
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <render/render.hpp>
 
 #include <SDL3/SDL.h>
@@ -16,7 +16,7 @@
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_sdlgpu3.h>
 
-namespace Iris
+namespace Motion
 {
     #define LOG_PREFIX_RENDER_SDL3      "Render - SDL3"
 

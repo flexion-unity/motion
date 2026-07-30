@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <component/component.hpp>
 #include <component/cpu/cpu.hpp>
 #include <base/emulation.hpp>
 #include <component/cpu/mc68020_moira_bridge.hpp>
 
-namespace Iris
+namespace Motion
 {
     #define MOIRA_DISASM_BUF_SIZE    512
 

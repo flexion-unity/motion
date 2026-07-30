@@ -6,9 +6,9 @@
 */
 
 #pragma once
-#include <Iris.hpp>
+#include <Motion.hpp>
 
-namespace Iris
+namespace Motion
 {
     #define RENDER_LOG_PREFIX       "Render - Core"
 

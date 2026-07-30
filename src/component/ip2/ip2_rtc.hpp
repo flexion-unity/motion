@@ -8,11 +8,11 @@
     For now, simple enough to be a header only situation
 */
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <component/component.hpp>
 #include <component/addrspace.hpp>
 
-namespace Iris
+namespace Motion
 {
     #define IP2_CLOCK_START                     0x34000000
     #define IP2_CLOCK_END                       0x35000000

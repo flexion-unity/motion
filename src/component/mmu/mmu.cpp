@@ -10,7 +10,7 @@
 #include <component/mmu/mmu.hpp>
 #include <component/addrspace.hpp>
 
-namespace Iris
+namespace Motion
 {
     void ComponentMMU::Start()
     {

@@ -9,7 +9,7 @@
 
 #include <component/ip2/ip2_mmu.hpp>
 
-namespace Iris
+namespace Motion
 {
     Cvar* logIP2MMU; 
 

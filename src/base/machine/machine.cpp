@@ -1,7 +1,7 @@
 #include <base/machine/machine.hpp>
 #include <coherent/coherent.hpp>
 
-namespace Iris
+namespace Motion
 {
     void Machine::Start()
     {

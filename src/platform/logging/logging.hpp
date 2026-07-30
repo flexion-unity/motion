@@ -34,7 +34,7 @@
 
 #define LOGGER_USE_NAMESPACE                                                    // Comment out to disable namespaces
 
-#define LOGGER_NAMESPACE                Iris                                    // Namespace to use if namespace is enabled
+#define LOGGER_NAMESPACE                Motion                                  // Namespace to use if namespace is enabled
 #define LOGGER_MAX_PATH                 260                                     // Max path
 #define LOGGER_MAX_STRING_SHORT         48                                      // Generic maximum length for "short" strings
 #define LOGGER_MAX_STRING_LONG          256                                     // Generic maximum length for "long" strings

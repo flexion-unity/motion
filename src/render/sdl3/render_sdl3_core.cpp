@@ -11,7 +11,7 @@
 #include <coherent/coherent.hpp>
 #include <render/sdl3/render_sdl3.hpp>
 
-namespace Iris
+namespace Motion
 {
     /// @brief Initialises the SDL renderer. A failure is reported as a FATAL_ERROR Log.
     void RendererSDL3::Init()

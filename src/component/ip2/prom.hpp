@@ -1,8 +1,8 @@
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>
 #include <component/addrspace.hpp>
 
-namespace Iris
+namespace Motion
 {
     extern Cvar* promPath;
     extern Cvar* promSize;

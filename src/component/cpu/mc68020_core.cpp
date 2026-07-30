@@ -1,7 +1,7 @@
 #include <iostream>
 #include <component/cpu/mc68020.hpp>
 
-namespace Iris
+namespace Motion
 {
     void MC68020::Start()
     {
@@ -10,7 +10,7 @@ namespace Iris
 
         Logger::Log("*yawn* I'm a Motorola 68020!");
 
-        moiraCpu.setModel(Iris::Lisburn::Model::M68020);
+        moiraCpu.setModel(Motion::Lisburn::Model::M68020);
 
         system = new MC68020DebuggerSystem(&moiraCpu);
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.d[0], "d0"));

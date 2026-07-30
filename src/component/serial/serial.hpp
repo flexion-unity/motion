@@ -13,7 +13,7 @@
 #pragma once
 #include <component/component.hpp>
 
-namespace Iris
+namespace Motion
 {
     /// @brief The number of raw serial lines a ComponentSerial can expose. Sized for two DUART chips, two
     /// channels each.

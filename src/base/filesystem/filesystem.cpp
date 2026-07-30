@@ -5,7 +5,7 @@
 // THis one just provides a very narrow thing...
 //
 
-namespace Iris
+namespace Motion
 {
     FileStream* Filesystem::Open(const char* path, FileFlags mode)
     {

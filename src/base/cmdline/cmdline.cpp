@@ -1,6 +1,6 @@
 #include <base/cmdline/cmdline.hpp>
 
-namespace Iris
+namespace Motion
 {
     void CommandLine::Parse(int32_t argc, char** argv)
     {

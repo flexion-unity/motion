@@ -4,7 +4,7 @@
 
     Copyright (c)2026 starfrost
 
-    Iris.hpp: Main file for motion (previously called Iris, but it was too generic) SGI Emulator
+    Motion.hpp: Main file for motion (previously called Iris, but it was too generic) SGI Emulator
 */
 
 #pragma once

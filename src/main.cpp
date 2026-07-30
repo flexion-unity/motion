@@ -3,12 +3,12 @@ Motion - The SGI Emulator!
 Copyright (C) 2026 starfrost
 */
 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/emulation.hpp>
 #include <base/profile/profile.hpp>
 #include <iostream>
 
-namespace Iris
+namespace Motion
 {
     /// @brief Fatal error function
     /// @return Emulator shuts down after this runs
@@ -19,7 +19,6 @@ namespace Iris
 
     int main(int argc, char** argv)
     {
-
         Logger::settings.SetAppName(APP_NAME);
         Logger::settings.SetDestinations((LogDestination)(LogDestination::Stdout | LogDestination::File));
         Logger::settings.SetFatalFunction(fatal);
@@ -52,5 +51,5 @@ namespace Iris
 
 int main(int argc, char** argv)
 {
-    return Iris::main(argc, argv);
+    return Motion::main(argc, argv);
 }

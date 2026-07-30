@@ -11,7 +11,7 @@
 
 #include <base/profile/profile.hpp>
 
-namespace Iris
+namespace Motion
 {
     Cvar* profileFolder; 
 

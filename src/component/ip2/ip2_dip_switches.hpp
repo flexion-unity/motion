@@ -10,7 +10,7 @@
 #pragma once
 #include <coherent/coherent.hpp>
 
-namespace Iris
+namespace Motion
 {
     class CoherentExtensionIP2Switches : public CoherentExtension
     {

@@ -8,14 +8,14 @@
 */
 
 #pragma once 
-#include <Iris.hpp>
+#include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>
 #include <component/addrspace.hpp>
 #include <coherent/coherent.hpp>
 #include <component/mmu/mmu.hpp>
 #include <component/cpu/cpu.hpp>
 
-namespace Iris
+namespace Motion
 {
     extern Cvar* logIP2MMU;
 
