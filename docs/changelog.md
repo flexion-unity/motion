@@ -21,3 +21,8 @@ Similar to a .plan file
     * he only did macos and linux. no windows. i can add windows later.
 * added pagetable debug window
     * it sucks
+
+## 2026-07-30
+
+* this emulator hasn't been called iris in forever and now people know about it so change the namespace to motion and rename Iris.hpp to Motion.hpp.
+* get rid of catchpoints due to UI space. instead we will have an option that allows to break on exception and to allow you to specify a simple ID to break on

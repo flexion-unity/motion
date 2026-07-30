@@ -93,7 +93,6 @@ namespace Motion
     {   
         // shuts down session specific data
         breakpoints.clear();
-        catchpoints.clear();
         watchpoints.clear();
 
         extensions.clear();
@@ -156,18 +155,6 @@ namespace Motion
         watchpoints[wp.addr] = wp;
     }
 
-    /// @brief Called when the coherent system was requested to add a catchpoint.
-    void Coherent::AddCatchpoint(Catchpoint cp)
-    {
-        if (catchpoints.count(cp.addr) > 0)
-        {
-            Logger::Log(COHERENT_LOG_PREFIX, "Coherent::AddCatchpoint - the catchpoint already exists!", LogChannels::Warning);
-            return; 
-        }
-
-        catchpoints[cp.addr] = cp;
-    }
-
     /// @brief Called when the coherent system was requested to remove a breakpoint.
     void Coherent::RemoveBreakpoint(Breakpoint bp)
     {
@@ -185,14 +172,6 @@ namespace Motion
             Logger::Log(COHERENT_LOG_PREFIX, "Coherent::RemoveWatchpoint - the watchpoint doesn't exist!", LogChannels::Warning);
     }
 
-    void Coherent::RemoveCatchpoint(Catchpoint cp)
-    {
-        if (catchpoints.count(cp.addr) > 0)
-            catchpoints.erase(cp.addr);
-        else
-            Logger::Log(COHERENT_LOG_PREFIX, "Coherent::RemoveCatchpoint - the catchpoint doesn't exist!", LogChannels::Warning);
-    }
-
     Coherent::Breakpoint Coherent::GetBreakpointByAddr(size_t addr)
     {
         return breakpoints[addr];
@@ -202,10 +181,4 @@ namespace Motion
     {
         return watchpoints[addr];
     }
-
-    Coherent::Catchpoint Coherent::GetCatchpointByAddr(size_t addr)
-    {
-        return catchpoints[addr];
-    }
-
 }

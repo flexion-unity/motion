@@ -16,7 +16,7 @@
 namespace Motion
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
-    #define COHERENT_VERSION        "Coherent Debugging Engine v0.5 (July 2026)"
+    #define COHERENT_VERSION        "Coherent Debugging Engine v0.6 (August 2026)"
 
     extern Cvar* startPaused;
 
@@ -90,9 +90,18 @@ namespace Motion
     /// @brief Defines a coherent system. A system is e.g. a CPU which is being debugged
     class CoherentSystem
     {
-
     public: 
 
+        /// the fundamental word size of the processor
+        enum WordSize
+        {
+            WordSize8 = 0x0,
+            WordSize16 = 0x1,
+            WordSize32 = 0x2,
+            WordSize64 = 0x3,
+        };
+
+        // BASE CLASS for exception vector
         class ExceptionVectorBase
         {
         public: 
@@ -191,16 +200,46 @@ namespace Motion
         size_t GetNextInstructionSize() { return nextInstructionSize; };
         /// @brief get the run state of the system
         CoherentSystem::RunState GetRunState();
+        CoherentSystem::WordSize GetWordSize() { return wordSize; };
 
         /// setters for private fields
 
         /// @brief set the run state of the system
         void SetRunState(CoherentSystem::RunState runState);
 
+        // private because they may do something later
+        void SetWordSize(CoherentSystem::WordSize wordSize) { this->wordSize = wordSize; };
+
+        // we can't override templated virtual methods and this class is not really set up well for type erasure.
+
+        virtual uint8_t GetStack8(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call GetStack8 on a system but it didn't implement it. Check the word size");
+            return 0xFF;
+        }
+        
+        virtual uint16_t GetStack16(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call GetStack16 on a system but it didn't implement it. Check the word size");
+            return 0xFFFF;
+        }
+
+        virtual uint32_t GetStack32(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call GetStack32 on a system but it didn't implement it. Check the word size");
+            return 0xFFFFFFFF;
+        }
+
+        virtual uint64_t GetStack64(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call GetStack64 on a system but it didn't implement it. Check the word size");
+            return (uint64_t)-1; // bignumber of fs
+        }
     protected: 
+
+        inline static WordSize wordSize; 
         /// @brief the run state of the system
         inline static RunState runState;
-
         inline static size_t nextInstructionSize;
     };
 
@@ -273,31 +312,16 @@ namespace Motion
             uint32_t GetValue() { return AddrSpace::ReadU32(addr); }; 
         }; 
 
-        class Catchpoint : public Guard
-        {
-        public: 
-            Catchpoint() : Guard() { }
-            Catchpoint(size_t addr, size_t exceptionId) : Guard(addr) 
-            { 
-                this->exceptionId = exceptionId;
-            }
-
-            size_t exceptionId;
-        };
-
         /// @brief Called when the coherent system was requested to remove a breakpoint.
         static void AddBreakpoint(Breakpoint bp);
         static void AddWatchpoint(Watchpoint wp);
-        static void AddCatchpoint(Catchpoint cp);
 
         /// @brief Called when the coherent system was requested to remove a breakpoint.
         static void RemoveBreakpoint(Breakpoint bp);
         static void RemoveWatchpoint(Watchpoint wp);
-        static void RemoveCatchpoint(Catchpoint cp);
 
         static Breakpoint GetBreakpointByAddr(size_t addr);
         static Watchpoint GetWatchpointByAddr(size_t addr);
-        static Catchpoint GetCatchpointByAddr(size_t addr);
 
         // @brief Exit the coherent system.
         static void Leave();
@@ -343,6 +367,8 @@ namespace Motion
         // key is the size_t
         inline static std::unordered_map<size_t, Breakpoint> breakpoints;
         inline static std::unordered_map<size_t, Watchpoint> watchpoints;
-        inline static std::unordered_map<size_t, Catchpoint> catchpoints;
+
+        // automatically break on exception fired
+        inline static bool breakOnException;
     };
 }

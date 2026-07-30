@@ -125,6 +125,12 @@ namespace Motion
                     }
                 }
 
+                // Options menu
+                if (ImGui::BeginMenu("Options"))
+                {
+                    ImGui::MenuItem("Break on Exception", nullptr, &Coherent::breakOnException);
+                }
+
                 // Help menu
 
                 if (ImGui::BeginMenu("Help"))
@@ -256,8 +262,7 @@ namespace Motion
             {
                 CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowBreakpoint, debugContainerChildWindowSize);
                 CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowWatchpoint, debugContainerChildWindowSize);
-                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowCatchpoint, debugContainerChildWindowSize);
-
+                CoherentUI::DrawStackWindow(debugContainerChildWindowSize);
             }
            
             ImGui::EndChild();

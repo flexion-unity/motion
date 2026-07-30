@@ -40,11 +40,12 @@ namespace Motion
         enum GuardWindowType
         {
             GuardWindowWatchpoint = 0,
-            GuardWindowCatchpoint = 1,
             GuardWindowBreakpoint = 2,
         };
 
         static void DrawGuardWindow(GuardWindowType windowType, ImVec2 size);
+        static void DrawStackWindow(ImVec2 size);
+
         // Methods for drawing specific user interfaces
 
         static void DrawMainWindow();

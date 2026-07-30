@@ -1,3 +1,12 @@
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    prom_sram.hpp: Private sram for the PROM to use and store settings. (and do stuff - 2 KB)
+*/
+
 #pragma once 
 #include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>

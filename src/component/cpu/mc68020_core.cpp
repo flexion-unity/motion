@@ -43,6 +43,9 @@ namespace Motion
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.caar, "caar"));
         //system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.sr), "sr");
 
+        // set the word size
+        system->SetWordSize(CoherentSystem::WordSize::WordSize32);
+
         Coherent::SetSystem(system);
         // convert to nanoseconds
 

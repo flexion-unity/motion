@@ -59,12 +59,6 @@ namespace Motion
                 Coherent::Watchpoint& watchpoint = (Coherent::Watchpoint&)pair.second;
                 snprintf(addrBuf, STRING_MAX_LONG, "[%d] addr [%lx] = %x", index, guard.addr, watchpoint.GetValue());
             }
-            else if (windowType == GuardWindowCatchpoint)
-            {
-                // should be fine
-                Coherent::Catchpoint& catchpoint = (Coherent::Catchpoint&)pair.second;
-                snprintf(addrBuf, STRING_MAX_LONG, "[%d] catch on exception #%ld from 0x%lx", index, catchpoint.exceptionId, guard.addr);
-            }
 
             if (ImGui::Selectable(addrBuf))
                 guard.selected = !guard.selected;
@@ -77,10 +71,6 @@ namespace Motion
             case GuardWindowBreakpoint:
                 headerText = "Breakpoints";
                 addrBuf = addrBufForBreakpoints;
-                break;
-            case GuardWindowCatchpoint:
-                headerText = "Catchpoints";
-                addrBuf = addrBufForCatchpoints;
                 break;
             case GuardWindowWatchpoint:
                 headerText = "Watchpoints";
@@ -129,12 +119,6 @@ namespace Motion
                     watchpoint.enabled = true;
                     Coherent::AddWatchpoint(watchpoint);
                 }
-                else if (windowType == GuardWindowCatchpoint)
-                {
-                    Coherent::Catchpoint catchpoint = Coherent::Catchpoint(addr, 0);
-                    catchpoint.enabled = true;
-                    Coherent::AddCatchpoint(catchpoint);
-                }
 
                 // effectively clears the buffer
                 addrBuf[0] = '\0';
@@ -146,9 +130,6 @@ namespace Motion
             {
                 case GuardWindowBreakpoint:
                     for (auto& guard : Coherent::breakpoints) processItem(guard, windowType, index++);
-                    break;
-                case GuardWindowCatchpoint:
-                    for (auto& guard : Coherent::catchpoints) processItem(guard, windowType, index++);
                     break;
                 case GuardWindowWatchpoint:
                     for (auto& guard : Coherent::watchpoints) processItem(guard, windowType, index++);
@@ -164,9 +145,6 @@ namespace Motion
                     case GuardWindowBreakpoint:
                         std::erase_if(Coherent::breakpoints, [](const auto& pair) { return pair.second.selected; });
                         break;
-                    case GuardWindowCatchpoint:
-                        std::erase_if(Coherent::catchpoints, [](const auto& pair) { return pair.second.selected; });
-                        break;
                     case GuardWindowWatchpoint:
                         std::erase_if(Coherent::watchpoints, [](const auto& pair) { return pair.second.selected; });
                         break;
@@ -174,6 +152,39 @@ namespace Motion
             }
         }
         
+        ImGui::EndChild();
+    }
+
+    void CoherentUI::DrawStackWindow(ImVec2 size)
+    {
+        if (ImGui::BeginChild("Stack", size, ImGuiChildFlags_None))
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));
+            ImGui::Text("%s", "Stack"); //shutup compiler by doing this
+            ImGui::PopStyleColor();
+
+            for (int32_t offset = 0; offset < 8; offset++)
+            {
+                switch (Coherent::currentSystem->GetWordSize())
+                {
+                    case CoherentSystem::WordSize::WordSize8:
+                        ImGui::Text("0x%02x", Coherent::currentSystem->GetStack8(offset));
+                        break;
+                    case CoherentSystem::WordSize::WordSize16:
+                        ImGui::Text("0x%04x", Coherent::currentSystem->GetStack16(offset));
+                        break;
+                    case CoherentSystem::WordSize::WordSize32:
+                        ImGui::Text("0x%08x", Coherent::currentSystem->GetStack32(offset));
+                        break;
+                    case CoherentSystem::WordSize::WordSize64:
+                        ImGui::Text("0x%16lx", Coherent::currentSystem->GetStack64(offset));
+                        break;
+                }
+
+
+            }
+        }
+
         ImGui::EndChild();
     }
 }
