@@ -423,7 +423,6 @@ namespace Motion
 
             ImVec4 color = ImVec4(1.0, 1.0, 1.0, 1.0);
             
-            
             // not yet started so do not bother
             if (Coherent::currentSystem->GetRunState() != CoherentSystem::RunState::NotYetStarted)
             {

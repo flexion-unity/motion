@@ -33,7 +33,7 @@ namespace Motion
         float value; 
         const char* string;  // the linked list prevents whatever string we put here from being delete.d
 
-        static inline std::unordered_map<const char*, Cvar*> cvars;
+        static inline std::unordered_map<std::string, Cvar*, std::hash<std::string_view>, std::equal_to<>> cvars;
 
         /// @brief Internal method to set a convar
         /// @param name The name of the convar to set

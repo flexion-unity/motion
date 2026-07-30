@@ -14,12 +14,11 @@ namespace Motion
     Cvar* Cvar::Add(const char* name, const char* value)
     {
         Cvar* cvar = new Cvar;
-
-        Cvar::cvars[cvar->name] = cvar;
-
         cvar->name = name;
         cvar->SetInternal(value);
-       
+
+        Cvar::cvars[name] = cvar;
+
         return cvar;
     }
 
