@@ -9,6 +9,8 @@
 
     On IRIS and early IRIS 4D, the keyboard I/O Interface is DUART0 Channel A. So we will hook to this. But this is the generic keyboard interface.#
     This class mostly exists so Machine::FindComponentByType can find all types of keyboards.
+
+    Technically this is an Intel 8748 but HLE will be perfectly acceptable.
 */
 
 #include <component/keyboard/keyboard_iris.hpp>
@@ -30,6 +32,7 @@ namespace Motion
 
                 switch (transmitEvent.data)
                 {
+                    // throw it back in
                     case KEYBOARD_CONFIG_REQUEST:
                         duart->GetLine(KEYBOARD_DUART_LINE).AddRxByte(KEYBOARD_TYPE_IRIS);
                         break; 
