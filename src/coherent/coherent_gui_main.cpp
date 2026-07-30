@@ -271,6 +271,173 @@ namespace Motion
         ImGui::End();
     }
     
+     /// @brief draw one of the right-pane guard windows of the Coherent debugger
+    /// @param windowType the type of the subwindow to draw 
+    /// @param size the size of the window to draw
+    void CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType windowType, ImVec2 size)
+    {
+        const char* headerText = "";
+        // buf used for inserting the guard's addrss
+        char* addrBuf = addrBufForWatchpoints;
+
+        // so this is what lambdas are used for
+        auto processItem = [](auto& pair, GuardWindowType windowType, int32_t index)
+        {
+            Coherent::Guard& guard = pair.second;
+
+            if (!guard.enabled) // bp is disabled
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.7f, 0.7f, 1.0f));
+            else if (guard.active) // bp is active
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.1f, 1.0f));
+            else // bp is enabled but not hit
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+            char addrBuf[STRING_MAX_LONG] = {0};
+
+            if (windowType == GuardWindowBreakpoint)
+            {
+                // some flavour text
+                if (!guard.active && guard.enabled)
+                    snprintf(addrBuf, STRING_MAX_LONG, "[%d] break at 0x%lx", index, guard.addr);
+                else if (!guard.enabled)
+                    snprintf(addrBuf, STRING_MAX_LONG, "[%d] break at 0x%lx [disabled]", index, guard.addr);
+                else if (guard.active)
+                    snprintf(addrBuf, STRING_MAX_LONG, "[%d] break at 0x%lx [hit!]", index, guard.addr);
+            }
+            else if (windowType == GuardWindowWatchpoint)
+            {
+                Coherent::Watchpoint& watchpoint = (Coherent::Watchpoint&)pair.second;
+                snprintf(addrBuf, STRING_MAX_LONG, "[%d] addr [%lx] = %x", index, guard.addr, watchpoint.GetValue());
+            }
+
+            if (ImGui::Selectable(addrBuf))
+                guard.selected = !guard.selected;
+            
+            ImGui::PopStyleColor();
+        };
+
+        switch (windowType)
+        {
+            case GuardWindowBreakpoint:
+                headerText = "Breakpoints";
+                addrBuf = addrBufForBreakpoints;
+                break;
+            case GuardWindowWatchpoint:
+                headerText = "Watchpoints";
+                addrBuf = addrBufForWatchpoints;
+                break;
+            default: 
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "***** INVALID guard window type created *****");
+                return; // code will die anyway
+        }       
+
+        // draw the "top" of the window
+        if (ImGui::BeginChild(headerText, size, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
+        {                
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));
+            ImGui::Text("%s", headerText); //shutup compiler by doing this
+            ImGui::PopStyleColor();
+
+            // if the user clicked the add button or hit enter, add the guard
+            bool createGuard = false;
+
+            if (ImGui::Button("Add"))
+                createGuard = true;
+
+            ImGui::SameLine();
+
+            if (ImGui::InputTextWithHint("##AddressInput", "Address...", addrBuf, STRING_MAX_LONG, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                createGuard = true;
+                ImGui::SetKeyboardFocusHere(-1); // we want the input box to automatically reselect
+            }
+        
+            if (createGuard
+            && strlen(addrBuf) > 0)
+            {
+                auto addr = (size_t)strtol(addrBuf, NULL, 16);
+
+                if (windowType == GuardWindowBreakpoint)
+                {
+                    Coherent::Breakpoint breakpoint = Coherent::Breakpoint(addr);
+                    breakpoint.enabled = true;
+                    Coherent::AddBreakpoint(breakpoint);
+                }
+                else if (windowType == GuardWindowWatchpoint)
+                {
+                    Coherent::Watchpoint watchpoint = Coherent::Watchpoint(addr);
+                    watchpoint.enabled = true;
+                    Coherent::AddWatchpoint(watchpoint);
+                }
+
+                // effectively clears the buffer
+                addrBuf[0] = '\0';
+            }
+
+            int32_t index = 0;
+
+            switch (windowType)
+            {
+                case GuardWindowBreakpoint:
+                    for (auto& guard : Coherent::breakpoints) processItem(guard, windowType, index++);
+                    break;
+                case GuardWindowWatchpoint:
+                    for (auto& guard : Coherent::watchpoints) processItem(guard, windowType, index++);
+                    break;
+            }   
+
+            // remove button
+
+            if (ImGui::Button("Remove"))
+            {
+                switch (windowType)
+                {
+                    case GuardWindowBreakpoint:
+                        std::erase_if(Coherent::breakpoints, [](const auto& pair) { return pair.second.selected; });
+                        break;
+                    case GuardWindowWatchpoint:
+                        std::erase_if(Coherent::watchpoints, [](const auto& pair) { return pair.second.selected; });
+                        break;
+                }
+            }
+        }
+        
+        ImGui::EndChild();
+    }
+
+    void CoherentUI::DrawStackWindow(ImVec2 size)
+    {
+        if (ImGui::BeginChild("Stack", size, ImGuiChildFlags_None))
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));
+            ImGui::Text("%s", "Stack"); //shutup compiler by doing this
+            ImGui::PopStyleColor();
+
+            for (int32_t offset = 0; offset < 8; offset++)
+            {
+                switch (Coherent::currentSystem->GetWordSize())
+                {
+                    case CoherentSystem::WordSize::WordSize8:
+                        ImGui::Text("0x%02x", Coherent::currentSystem->GetStack8(offset));
+                        break;
+                    case CoherentSystem::WordSize::WordSize16:
+                        ImGui::Text("0x%04x", Coherent::currentSystem->GetStack16(offset));
+                        break;
+                    case CoherentSystem::WordSize::WordSize32:
+                        ImGui::Text("0x%08x", Coherent::currentSystem->GetStack32(offset));
+                        break;
+                    case CoherentSystem::WordSize::WordSize64:
+                        ImGui::Text("0x%16lx", Coherent::currentSystem->GetStack64(offset));
+                        break;
+                }
+
+
+            }
+        }
+
+        ImGui::EndChild();
+    }
+    
     void Coherent::Frame()
     {
         CoherentUI::DrawMainWindow();

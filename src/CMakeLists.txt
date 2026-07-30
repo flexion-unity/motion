@@ -50,5 +50,7 @@ add_executable(motion
     base/event/event.cpp
     base/profile/profile.cpp
     component/mmu/mmu.cpp
+    component/multibus/multibus.cpp
+    coherent/coherent_system.cpp
 )
 

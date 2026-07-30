@@ -199,7 +199,7 @@ namespace Motion
         /// getters for private fields
         size_t GetNextInstructionSize() { return nextInstructionSize; };
         /// @brief get the run state of the system
-        CoherentSystem::RunState GetRunState();
+        CoherentSystem::RunState GetRunState() { return runState; };
         CoherentSystem::WordSize GetWordSize() { return wordSize; };
 
         /// setters for private fields
