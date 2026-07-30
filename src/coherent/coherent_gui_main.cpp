@@ -111,7 +111,7 @@ namespace Motion
                 }
 
                 // Misc options menu
-                
+
                 if (ImGui::BeginMenu("Options"))
                 {
                     ImGui::MenuItem("Break on Exception", nullptr, &Coherent::breakOnException);
@@ -413,15 +413,16 @@ namespace Motion
 
     void CoherentUI::DrawStackWindow(ImVec2 size)
     {
-        // not yet started so do not bother
-        if (Coherent::currentSystem->GetRunState() == CoherentSystem::RunState::NotYetStarted)
-            return;
 
         if (ImGui::BeginChild("Stack", size, ImGuiChildFlags_None))
         {
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));
             ImGui::Text("%s", "Stack"); //shutup compiler by doing this
             ImGui::PopStyleColor();
+
+            // not yet started so do not bother
+            if (Coherent::currentSystem->GetRunState() == CoherentSystem::RunState::NotYetStarted)
+                return;
 
             for (int32_t offset = 0; offset < 8; offset++)
             {
