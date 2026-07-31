@@ -64,6 +64,7 @@ namespace Motion
         DUART68681* duart;
 
         uint8_t keyState;
+        uint8_t selectedMatrix;
         
         inline static Key keysSgiToAscii[KEYBOARD_NUM_KEYS] =
         {
