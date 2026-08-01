@@ -69,9 +69,12 @@ namespace Motion
         }
         else if (evt.type == EventType::KeyDown)
         {
-            KeyDownEvent& keyDownEvent = static_cast<KeyDownEvent&>(evt);
-            // send in the key. We need to convert to SGI format
-            duart->GetLine(KEYBOARD_DUART_LINE).AddRxByte(sdlToSgi[(SDL_Keycode)keyDownEvent.key]);
+            if (initialised)
+            {
+                KeyDownEvent& keyDownEvent = static_cast<KeyDownEvent&>(evt);
+                // send in the key. We need to convert to SGI format
+                duart->GetLine(KEYBOARD_DUART_LINE).AddRxByte(sdlToSgi[(SDL_Keycode)keyDownEvent.key]);
+            }
         }
     }
 
