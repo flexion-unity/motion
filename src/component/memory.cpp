@@ -132,4 +132,9 @@ namespace Motion
         ram32[addr >> 2] = value;
 
     }
+
+    void Memory::Shutdown()
+    {
+        delete ram;
+    }
 }

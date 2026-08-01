@@ -18,6 +18,7 @@ namespace Motion
         uint8_t* ram;
         
         void Start() override;
+        void Shutdown() override;
 
     public: 
         uint8_t OnRead8(size_t addr) override; 

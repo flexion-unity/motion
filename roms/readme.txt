@@ -63,6 +63,8 @@ Command line:
     forceUseSerialMonitor
         Disconnects the keyboard from the emulated machine. This forces the PROM to enter serial communication mode over DUART0 Port B.
         Since the graphics system (and multibus) don't work yet this is the only way to do anything with the machine right now.
+    startPaused (default is 1)
+        Start the emulator paused, 0 will start the CPU immediately.
 
 Notes:
     "Unmapped write" or "Unmapped read" warnings: Ignore them, they are fine.
