@@ -39,7 +39,7 @@ namespace Motion
         }
         else
         {
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU8 - Unmapped read from 0x{:x}!", addr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU8 - Unmapped read from 0x{:x}!", realAddr).c_str(), LogChannels::Warning);
             return 0;
         }
     }
@@ -65,7 +65,7 @@ namespace Motion
         }
         else
         {
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU16 - Unmapped read from 0x{:x}!", addr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU16 - Unmapped read from 0x{:x}!", realAddr).c_str(), LogChannels::Warning);
             return 0;
         }
     }
@@ -91,7 +91,7 @@ namespace Motion
         }
         else
         {
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU32 - Unmapped read from 0x{:x}!", addr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU32 - Unmapped read from 0x{:x}!", realAddr).c_str(), LogChannels::Warning);
             return 0;
         }
     }
