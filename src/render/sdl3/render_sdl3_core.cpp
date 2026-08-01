@@ -127,7 +127,7 @@ namespace Motion
                 KeyUpEvent evt = KeyUpEvent();
                 evt.key = event.key.key;
                 evt.repeat = event.key.repeat;
-                EventSystem::FireEvent(evt)
+                EventSystem::FireEvent(evt);
             }
             else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
             {
@@ -138,7 +138,7 @@ namespace Motion
             }
             else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP)
             {
-                MouseUpEvent evt = MouseUPEvent();
+                MouseUpEvent evt = MouseUpEvent();
                 evt.mouse = event.button.button;
                 evt.numClicks = event.button.clicks;
                 EventSystem::FireEvent(evt);

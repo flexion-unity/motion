@@ -34,3 +34,12 @@ Similar to a .plan file
     * don't like it since it calls empty methods. but having io device specific interface seemed too brittle.
 * keyboard now correctly configures itself
     * however this makes the PROM not work.
+
+## 2026-07-31
+
+* nothing really
+
+## 2026-08-01
+
+* implemented key and mouse events after figuring out the keyboard only translates keys. doh!
+    * need to translate ASCII to SGI
