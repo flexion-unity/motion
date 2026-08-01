@@ -43,7 +43,6 @@ namespace Motion
     void SerialLine::AddRxByte(uint8_t data)
     {
         rxQueue.push(data);
-        FireReceiveEvent(data);  
     }
 
     void SerialLine::AddRxString(const char* str)

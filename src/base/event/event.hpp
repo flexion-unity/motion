@@ -21,6 +21,7 @@ namespace Motion
         MouseUp = 3,
 
         // for convenience the event classes for these are deifned in the serial code
+        // i think the name of these events might need to be flipped.
         SerialReceive = 4,
         SerialTransmit = 5,
     }; 
@@ -44,6 +45,7 @@ namespace Motion
     {
     public:
         uint32_t key; 
+        bool repeat;
 
         KeyDownEvent() : Event(EventType::KeyDown) { };
     }; 
@@ -51,7 +53,8 @@ namespace Motion
     class KeyUpEvent : public Event
     {
     public: 
-        uint32_t key; 
+        uint32_t key;
+        bool repeat; 
 
         KeyUpEvent() : Event(EventType::KeyUp) { };
     }; 
@@ -60,6 +63,7 @@ namespace Motion
     {
     public:
         uint32_t mouse;
+        uint8_t numClicks;
 
         MouseDownEvent() : Event(EventType::MouseDown) { };
     };
@@ -68,6 +72,7 @@ namespace Motion
     {
     public:
         uint32_t mouse;
+        uint8_t numClicks;
 
         MouseUpEvent() : Event(EventType::MouseUp) { };
     };

@@ -96,6 +96,7 @@ namespace Motion
     {
         SDL_Event event;
 
+        // tell the event system about various things
         while (SDL_PollEvent(&event))
         {
             ImGui_ImplSDL3_ProcessEvent(&event);
@@ -114,6 +115,33 @@ namespace Motion
                         Coherent::active = !Coherent::active;
                         break;
                 }
+
+                // tell the event system
+                KeyDownEvent evt = KeyDownEvent();
+                evt.key = event.key.key;
+                evt.repeat = event.key.repeat;
+                EventSystem::FireEvent(evt);
+            }
+            else if (event.type == SDL_EVENT_KEY_UP)
+            {
+                KeyUpEvent evt = KeyUpEvent();
+                evt.key = event.key.key;
+                evt.repeat = event.key.repeat;
+                EventSystem::FireEvent(evt)
+            }
+            else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+            {
+                MouseDownEvent evt = MouseDownEvent();
+                evt.mouse = event.button.button;
+                evt.numClicks = event.button.clicks;
+                EventSystem::FireEvent(evt);
+            }
+            else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP)
+            {
+                MouseUpEvent evt = MouseUPEvent();
+                evt.mouse = event.button.button;
+                evt.numClicks = event.button.clicks;
+                EventSystem::FireEvent(evt);
             }
         }
     

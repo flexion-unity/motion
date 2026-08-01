@@ -63,9 +63,12 @@ namespace Motion
     private: 
         DUART68681* duart;
 
-        uint8_t keyState;
-        uint8_t selectedMatrix;
-        
+        bool initialised = false;
+
+        // shut up the log files
+        bool shutUpBeep = false; 
+        bool shutUpLed = false; 
+
         inline static Key keysSgiToAscii[KEYBOARD_NUM_KEYS] =
         {
     //       normal shift ctrl ctrlsh  alt  gs 
