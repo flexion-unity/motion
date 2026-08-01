@@ -20,9 +20,14 @@ namespace Motion
     void KeyboardIris::OnEvent(Event& evt)
     {
         if (!duart)
+        {
             duart = Emulation::GetMachine().FindComponentByType<DUART68681>();
 
-        
+            // if still no duart return
+            if (!duart)
+                return;
+        }
+
         if (evt.type == EventType::SerialTransmit)
         {
             SerialTransmitEvent transmitEvent = *static_cast<SerialTransmitEvent*>(&evt);
@@ -61,6 +66,12 @@ namespace Motion
                     }
                     break;
             }
+        }
+        else if (evt.type == EventType::KeyDown)
+        {
+            KeyDownEvent& keyDownEvent = static_cast<KeyDownEvent&>(evt);
+            // send in the key. We need to convert to SGI format
+            duart->GetLine(KEYBOARD_DUART_LINE).AddRxByte(sdlToSgi[(SDL_Keycode)keyDownEvent.key]);
         }
     }
 
