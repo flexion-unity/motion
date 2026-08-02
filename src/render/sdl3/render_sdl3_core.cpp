@@ -10,6 +10,7 @@
 #include <base/emulation.hpp>
 #include <coherent/coherent.hpp>
 #include <render/sdl3/render_sdl3.hpp>
+#include <render/sdl3/render_sdl3_passes.hpp>
 
 namespace Motion
 {
@@ -91,7 +92,28 @@ namespace Motion
         ImGui_ImplSDLGPU3_Init(&initInfo);
 
         // create our screen texture
-        texture = new RenderTextureSDL3(this, windowSizeX, windowSizeY);
+        screen = new RenderTextureSDL3(this, windowSizeX, windowSizeY);
+
+        // never goes out of scope, never deleted. lol!
+        MainRenderPass* renderPass = new MainRenderPass();
+        AddRenderPass(renderPass);
+
+        // create our gpu transfer buffer
+        CreateTransferBuffer();
+    }
+
+    void RendererSDL3::CreateTransferBuffer()
+    {
+        SDL_GPUTransferBufferCreateInfo gpuXferInfo = SDL_GPUTransferBufferCreateInfo();
+
+        gpuXferInfo.usage = SDL_GPUTransferBufferUsage::SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
+        gpuXferInfo.size = (screen->sizeX * screen->sizeY) << 2;
+
+        transfer = SDL_CreateGPUTransferBuffer(gpuDevice, &gpuXferInfo);
+
+        if (!transfer)
+            Logger::Log(LOG_PREFIX_RENDER_SDL3, "Failed to create GPU transfer buffer ??", LogChannels::FatalError);
+            
     }
 
     /// @brief Render a new frame.
@@ -148,10 +170,7 @@ namespace Motion
             }
         }
 
-        // run our render passes
-        for (RenderPass& pass : passes)
-            pass.Render(screen);
-    
+
         // run the passes of the
         ImGui_ImplSDLGPU3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
@@ -167,32 +186,35 @@ namespace Motion
 
         ImDrawData* data = ImGui::GetDrawData();
         bool isMinimised = (data->DisplaySize.x < 0.0f | data->DisplaySize.y < 0.0f);
-        SDL_GPUCommandBuffer* buffer = SDL_AcquireGPUCommandBuffer(gpuDevice);
-
-        SDL_GPUTexture* swapchainTexture;
-        SDL_WaitAndAcquireGPUSwapchainTexture(buffer, window, &swapchainTexture, nullptr, nullptr);
+        commandBuffer = SDL_AcquireGPUCommandBuffer(gpuDevice);
+        
+        SDL_AcquireGPUSwapchainTexture(commandBuffer, window, &swapchainTexture, nullptr, nullptr);
 
         if (swapchainTexture && !isMinimised)
         {
-            ImGui_ImplSDLGPU3_PrepareDrawData(data, buffer);
+           // run our render passes
+            for (RenderPass* pass : passes)
+                pass->Render(this, screen);
+    
+            // then render imgui
+
+            ImGui_ImplSDLGPU3_PrepareDrawData(data, commandBuffer);
 
             SDL_GPUColorTargetInfo targetInfo = {};
             targetInfo.texture = swapchainTexture;
             targetInfo.clear_color = { 0.0f, 0.0f, 0.0f, 1.0f }; 
-            targetInfo.load_op = SDL_GPU_LOADOP_CLEAR; // huh
+            targetInfo.load_op = SDL_GPU_LOADOP_LOAD; // allow IMGUI to layer on top of the emulator
             targetInfo.store_op = SDL_GPU_STOREOP_STORE;
             targetInfo.mip_level = 0; // 2D
             targetInfo.layer_or_depth_plane = 0; 
             targetInfo.cycle = false;
 
-            SDL_GPURenderPass* imguiPass = SDL_BeginGPURenderPass(buffer, &targetInfo, 1, nullptr); 
-
-            ImGui_ImplSDLGPU3_RenderDrawData(data, buffer, imguiPass);
-
+            SDL_GPURenderPass* imguiPass = SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, nullptr); 
+            ImGui_ImplSDLGPU3_RenderDrawData(data, commandBuffer, imguiPass);
             SDL_EndGPURenderPass(imguiPass);
         }
         
-        SDL_SubmitGPUCommandBuffer(buffer);
+        SDL_SubmitGPUCommandBuffer(commandBuffer);
     }
 
     // Allow resizing the window
@@ -205,10 +227,19 @@ namespace Motion
     /// @brief Shut down the renderer.
     void RendererSDL3::Shutdown()
     {
-        delete texture; 
+        delete screen; 
 
         // Wait for the gpu to shut down so we don't corrupt its state
         SDL_WaitForGPUIdle(gpuDevice);
+
+        for (RenderPass* pass : passes)
+            delete pass; 
+
+        passes.clear();
+
+        // free the transfer buffer
+        if (transfer)
+            SDL_ReleaseGPUTransferBuffer(gpuDevice, transfer);
 
         ImGui_ImplSDLGPU3_Shutdown();
         ImGui_ImplSDL3_Shutdown();

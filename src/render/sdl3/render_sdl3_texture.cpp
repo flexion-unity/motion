@@ -21,11 +21,12 @@ namespace Motion
         // should be fine for now
         SDL_GPUTextureCreateInfo createInfo = SDL_GPUTextureCreateInfo();
         createInfo.num_levels = 1;
-        createInfo.format = SDL_GPUTextureFormat::SDL_GPU_TEXTUREFORMAT_R8G8B8A8_INT;
+        createInfo.format = SDL_GPUTextureFormat::SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
         createInfo.width = sizeX;
         createInfo.height = sizeY;
         createInfo.sample_count = SDL_GPUSampleCount::SDL_GPU_SAMPLECOUNT_1;
         createInfo.layer_count_or_depth = 1;
+        createInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER;
 
         Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("RenderTextureSDL3 constructor: creating a texture of size {} x {}", sizeX, sizeY).c_str(), LogChannels::Debug);
 

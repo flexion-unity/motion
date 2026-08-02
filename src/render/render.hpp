@@ -5,6 +5,8 @@
     Copyright (c)2026 starfrost
 
     render.hpp: Backend independent render stuff
+
+    TODO: Fully genericise this to be backend independent by eg adding a platform independent window class.
 */
 
 #pragma once
@@ -48,8 +50,8 @@ namespace Motion
             this->renderer = renderer; 
             this->sizeX = sizeX;
             this->sizeY = sizeY;
-            this->stride = sizeX * sizeY * DEFAULT_TEXTURE_BYTES_PER_PIXEL;
-            this->pixels = new uint8_t[sizeX * sizeY * DEFAULT_TEXTURE_BYTES_PER_PIXEL];
+            this->stride = sizeY * DEFAULT_TEXTURE_BYTES_PER_PIXEL;
+            this->pixels = new uint8_t[GetMemorySize()];
         };
         
         uint32_t sizeX = 0, sizeY = 0, stride = 0; 
@@ -58,6 +60,11 @@ namespace Motion
         Color GetPixel(int32_t x, int32_t y);
         void SetPixel(int32_t x, int32_t y, Color color); 
         void SetPixel(int32_t x, int32_t y, uint32_t color);
+
+        // setter for private
+        uint8_t* GetPixels() { return pixels; };
+
+        uint64_t GetMemorySize() { return (sizeX * sizeY) << 2; };
 
     protected:
         Renderer* renderer; 
@@ -69,7 +76,7 @@ namespace Motion
     class RenderPass
     {
     public: 
-        virtual void Render(RenderTexture* screen) { };
+        virtual void Render(Renderer* renderer, RenderTexture* screen) { };
         const char* GetName() { return name; };
 
         // constructors
@@ -111,16 +118,16 @@ namespace Motion
         // Setters for private fields
         virtual void SetWindowSize(int32_t x, int32_t y) { };
         
-        void AddRenderPass(RenderPass& pass)
+        void AddRenderPass(RenderPass* pass)
         {
-            Logger::Log(RENDER_LOG_PREFIX, std::format("Added render pass: {}", pass.GetName()).c_str(), LogChannels::Debug);
+            Logger::Log(RENDER_LOG_PREFIX, std::format("Added render pass: {}", pass->GetName()).c_str(), LogChannels::Debug);
             passes.push_back(pass);
         }
 
     protected: 
         int32_t windowSizeX = WINDOW_SIZE_X, windowSizeY = WINDOW_SIZE_Y;
         // vecotr of render passes
-        std::vector<RenderPass> passes = std::vector<RenderPass>(); 
+        std::vector<RenderPass*> passes = std::vector<RenderPass*>(); 
         RenderTexture* screen = nullptr;
 
     };
