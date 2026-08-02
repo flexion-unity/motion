@@ -9,6 +9,7 @@
 #include <component/ip2/ip2_duart.hpp>
 #include <component/ip2/ip2_dip_switches.hpp>
 #include <component/keyboard/keyboard_iris.hpp>
+#include <component/multibus/multibus.hpp>
 
 namespace Motion
 {
@@ -27,8 +28,10 @@ namespace Motion
     {
         Logger::Log("Starting emulation...");
            
+        // this will be temporary until there is a
         machine.AddComponent<Memory>();
         machine.AddComponent<MC68020>();
+        machine.AddComponent<Multibus>();
         machine.AddComponent<PROM>();
         machine.AddComponent<PROM_SRAM>();
         machine.AddComponent<IP2MMU>();

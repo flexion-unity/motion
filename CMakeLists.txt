@@ -1,5 +1,11 @@
-# Motion - An SGI Emulator!
-# Copyright (C) 2026 starfrost
+# 
+#   m  o  t  i  o  n
+#   The SGI Emulator
+#
+#   Copyright (c)2026 starfrost
+#
+#   CMakeLists.txt: Raw buildscript.
+#
 
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 23)

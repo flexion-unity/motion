@@ -30,6 +30,10 @@ namespace Motion
         // Setters for private fields
         void SetIsInReset(bool inReset) { this->isInReset = inReset; };
 
+        /// @brief fire an irq
+        /// @param irqNum the irq number to fire
+        virtual void SetIRQ(int32_t irqNum) { };
+
     protected: 
         bool isInReset;
     };

@@ -10,3 +10,38 @@
     Most likely it was inheited from the SUN design that SGI bought back in '82. PM1/PM2/IP1 boards are fully multibus, IP2 boards,
     except for the CPU, GPU and FPU (?) (thees use their own private bus.)
 */
+
+#pragma once
+#include <Motion.hpp>
+#include <component/addrspace.hpp>
+#include <component/component.hpp>
+
+// also depends on the CPU
+#include <component/cpu/cpu.hpp>
+
+namespace Motion
+{
+    #define MULTIBUS_MEMORY_START           0x40000000
+    #define MULTIBUS_MEMORY_END             0x40FFFFFF
+    
+    #define MULTIBUS_IO_START               0x50000000
+    #define MULTIBUS_IO_END                 0x5000FFFF
+
+    class Multibus : public Component
+    {
+    public: 
+        void Start() override; 
+
+        const char* GetName() override { return "Intel Multibus"; };
+
+        class Slot
+        {
+
+        }; 
+    private:
+        void FireMultibusIRQ(uint8_t number);
+
+        
+    
+    };
+};

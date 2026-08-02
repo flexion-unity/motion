@@ -1,3 +1,12 @@
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    component.hpp: Base class for all components
+*/
+
 #pragma once
 #include <Motion.hpp>
 #include <base/event/event.hpp>
