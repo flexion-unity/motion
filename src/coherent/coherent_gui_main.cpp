@@ -53,7 +53,7 @@ namespace Motion
                 extension->AddUI();
         }
 
-        if (ImGui::Begin("Coherent Debugger", &Coherent::active, ImGuiWindowFlags_MenuBar))
+        if (ImGui::Begin("Debugger", &Coherent::active, ImGuiWindowFlags_MenuBar))
         {
             if (ImGui::BeginMenuBar())
             {

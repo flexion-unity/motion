@@ -59,5 +59,6 @@ add_executable(motion
     render/sdl3/render_sdl3_texture.cpp
     render/render_core.cpp
     render/sdl3/render_sdl3_passes.cpp
+    render/sdl3/render_sdl3_debug.cpp
 )
 
