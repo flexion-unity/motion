@@ -16,7 +16,7 @@ namespace Motion
     {
         uint64_t pixelIndex = (y * this->stride) + (x << 2);
         // checks might be too slow, this is hot-path stuff, so assert
-        MOTION_ASSERT(pixelIndex >= ((sizeX * sizeY) << 2), "***** RenderTexture::GetPixel - INVALID pixel index write *****");
+        MOTION_ASSERT(pixelIndex >= GetMemorySize(), "***** RenderTexture::GetPixel - INVALID pixel index write *****");
 
         // little endian
         return (pixels[pixelIndex + 3] << 24)
@@ -29,7 +29,7 @@ namespace Motion
     {
         uint64_t pixelIndex = (y * this->stride) + (x << 2);
         // checks might be too slow, this is hot-path stuff, so assert
-        MOTION_ASSERT(pixelIndex >= ((sizeX * sizeY) << 2), "***** RenderTexture::GetPixel - INVALID pixel index write *****");
+        MOTION_ASSERT(pixelIndex >= GetMemorySize(), "***** RenderTexture::GetPixel - INVALID pixel index write *****");
 
         // little endian
         return Color(pixels[pixelIndex], pixels[pixelIndex + 1], pixels[pixelIndex + 2], pixels[pixelIndex + 3]);
@@ -39,7 +39,7 @@ namespace Motion
     {
         uint64_t pixelIndex = (y * this->stride) + (x << 2);
         // checks might be too slow, this is hot-path stuff, so assert
-        MOTION_ASSERT(pixelIndex >= ((sizeX * sizeY) << 2), "***** RenderTexture::SetPixel - INVALID pixel index write *****");
+        MOTION_ASSERT(pixelIndex >= GetMemorySize(), "***** RenderTexture::SetPixel - INVALID pixel index write *****");
 
         pixels[pixelIndex] = color.r;
         pixels[pixelIndex + 1] = color.g;
@@ -51,7 +51,7 @@ namespace Motion
     {
         uint64_t pixelIndex = (y * this->stride) + (x << 2);
         // checks might be too slow, this is hot-path stuff, so assert
-        MOTION_ASSERT(pixelIndex >= ((sizeX * sizeY) << 2), "***** RenderTexture::SetPixel - INVALID pixel index write *****");
+        MOTION_ASSERT(pixelIndex >= GetMemorySize(), "***** RenderTexture::SetPixel - INVALID pixel index write *****");
 
         pixels[pixelIndex] = color & 0xFF;
         pixels[pixelIndex + 1] = (color >> 8) & 0xFF;

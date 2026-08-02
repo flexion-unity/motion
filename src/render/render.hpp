@@ -50,7 +50,7 @@ namespace Motion
             this->renderer = renderer; 
             this->sizeX = sizeX;
             this->sizeY = sizeY;
-            this->stride = sizeY * DEFAULT_TEXTURE_BYTES_PER_PIXEL;
+            this->stride = sizeX * DEFAULT_TEXTURE_BYTES_PER_PIXEL;
             this->pixels = new uint8_t[GetMemorySize()];
         };
         
