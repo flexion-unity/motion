@@ -89,6 +89,9 @@ namespace Motion
         initInfo.PresentMode = SDL_GPU_PRESENTMODE_VSYNC; // VSync enabled? Make it a convar?
 
         ImGui_ImplSDLGPU3_Init(&initInfo);
+
+        // create our screen texture
+        texture = new RenderTextureSDL3(this, windowSizeX, windowSizeY);
     }
 
     /// @brief Render a new frame.
@@ -202,6 +205,8 @@ namespace Motion
     /// @brief Shut down the renderer.
     void RendererSDL3::Shutdown()
     {
+        delete texture; 
+
         // Wait for the gpu to shut down so we don't corrupt its state
         SDL_WaitForGPUIdle(gpuDevice);
 

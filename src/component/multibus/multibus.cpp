@@ -19,6 +19,7 @@ namespace Motion
         AddrSpaceMapping mappingMultibus = AddrSpaceMapping();
         mappingMultibus.startAddr = MULTIBUS_MEMORY_START;
         mappingMultibus.endAddr = MULTIBUS_MEMORY_END;
+        mappingMultibus.component = this;
 
         AddrSpace::AddMapping(mappingMultibus);
 
@@ -27,6 +28,7 @@ namespace Motion
         AddrSpaceMapping mappingIo = AddrSpaceMapping();
         mappingIo.startAddr = MULTIBUS_IO_START;
         mappingIo.endAddr = MULTIBUS_IO_END;
+        mappingIo.component = this; 
 
         AddrSpace::AddMapping(mappingIo);
         

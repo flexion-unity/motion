@@ -3,6 +3,8 @@
     The SGI Emulator
 
     Copyright (c)2026 starfrost
+
+    render.hpp: Backend independent render stuff
 */
 
 #pragma once
@@ -12,6 +14,9 @@ namespace Motion
 {
     #define RENDER_LOG_PREFIX       "Render - Core"
 
+    // forward declare
+    class Renderer;
+    
     // a colour in rgba format like sgi uses
     // use imvec4 if ui code
     struct Color
@@ -32,16 +37,28 @@ namespace Motion
         Color() : Color(0, 0, 0, 0) { };
     }; 
 
+
+
     // base class for render texture. this is so we could use something other than SDL in the future.
     class RenderTexture
     {
     public: 
-        int32_t sizeX = 0, sizeY = 0; 
+        RenderTexture(Renderer* renderer, int32_t sizeX, int32_t sizeY) 
+        { 
+            this->renderer = renderer; 
+            this->sizeX = sizeX;
+            this->sizeY = sizeY;
+        };
+        
+        uint32_t sizeX = 0, sizeY = 0; 
 
         virtual uint32_t GetPixel(int32_t x, int32_t y, Color color) { return 0; };
         virtual Color GetPixel(int32_t x, int32_t y) { return Color(); };
         virtual void SetPixel(int32_t x, int32_t y, Color color) { };
         virtual void SetPixel(int32_t x, int32_t y, uint32_t color) { };
+
+    protected:
+        Renderer* renderer; 
     }; 
 
     /// @brief this class defines a render pass so that we can do e.g. GF2->UC4->DC4

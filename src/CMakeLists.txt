@@ -56,5 +56,6 @@ add_executable(motion
     component/multibus/multibus_debug.cpp
     component/uc4/uc4_core.cpp
     component/dc4/dc4_core.cpp
+    render/sdl3/render_sdl3_texture.cpp
 )
 

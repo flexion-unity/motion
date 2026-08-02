@@ -18,24 +18,45 @@
 
 namespace Motion
 {
-    #define LOG_PREFIX_RENDER_SDL3      "Render - SDL3"
+    #define LOG_PREFIX_RENDER_SDL3          "Render - SDL3"
+    #define WINDOW_TITLE_DEFAULT APP_NAME " - SGI Emulator (c) 2026 Starfrost"
+
+    class RenderTextureSDL3 : public RenderTexture
+    {
+    public:
+        // THIS ALLOCATES THE TEXTURE RIGHT THERE!
+        RenderTextureSDL3(Renderer* renderer, uint32_t sizeX, uint32_t sizeY);
+        ~RenderTextureSDL3();
+
+        uint32_t GetPixel(int32_t x, int32_t y, Color color) override;
+        Color GetPixel(int32_t x, int32_t y) override; 
+        void SetPixel(int32_t x, int32_t y, Color color) override;
+        void SetPixel(int32_t x, int32_t y, uint32_t color) override;
+    private:
+        SDL_GPUTexture* texture; 
+        Renderer* renderer;
+    };
 
     /// @brief Base renderer class. Other renderers inherit from this
     class RendererSDL3 : public Renderer
     {
-        #define WINDOW_TITLE_DEFAULT APP_NAME " - SGI Emulator (c) 2026 Starfrost"
+        friend class RenderTextureSDL3;
 
     public:
+        
         void Init() override;
         void FramePreRender() override;
         void FramePostRender() override;
         void Shutdown() override;
+
+        // Getters for private fields
 
         // Setters for private fields
         void SetWindowSize(int32_t x, int32_t y) override;
 
     private:
         SDL_Window* window;
+        RenderTextureSDL3* texture;
 
         SDL_GPUDevice* gpuDevice;
         
