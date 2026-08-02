@@ -27,6 +27,10 @@ namespace Motion
     #define MULTIBUS_IO_START               0x50000000
     #define MULTIBUS_IO_END                 0x5000FFFF
 
+    #define MULTIBUS_LOG_PREFIX             "Multibus"
+
+    #define MULTIBUS_NUM_IRQ                0x8
+
     class Multibus : public Component
     {
     public: 
@@ -34,14 +38,18 @@ namespace Motion
 
         const char* GetName() override { return "Intel Multibus"; };
 
+        /* Defines a multibus backplane slot */
         class Slot
-        {
-
+        {  
+            uint32_t id; 
+            uint32_t irq; 
         }; 
-    private:
-        void FireMultibusIRQ(uint8_t number);
 
-        
+    private:
+        void FireMultibusIRQ(int32_t number);
+
+        // THE CPU, so we can fire an irq
+        ComponentCPU* cpu; 
     
     };
 };

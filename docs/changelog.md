@@ -46,3 +46,6 @@ Similar to a .plan file
 * translating SDL keycodes to SGI and sending them along on key is enough to get to a loop. it seems like it is trying to do a lot of i/o so maybe it is in graphics mode
     * PROM explodes and enters serial mode if you press a key too quickly during boot, so just odn't allow keypresses until keyboard init
     * typing PROM commands proves that its the PROM console, and that it works. cool!
+* started multibus
+
+## 2026-08-02

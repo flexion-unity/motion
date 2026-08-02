@@ -32,7 +32,7 @@ namespace Motion
 
         /// @brief fire an irq
         /// @param irqNum the irq number to fire
-        virtual void SetIRQ(int32_t irqNum) { };
+        virtual void SetIRQLine(int32_t irqNum) { };
 
     protected: 
         bool isInReset;

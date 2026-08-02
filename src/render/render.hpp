@@ -12,6 +12,59 @@ namespace Motion
 {
     #define RENDER_LOG_PREFIX       "Render - Core"
 
+    // a colour in rgba format like sgi uses
+    // use imvec4 if ui code
+    struct Color
+    {
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
+        uint8_t a; 
+
+        Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        {
+            this->r = r;
+            this->g = g;
+            this->b = b;
+            this->a = a; 
+        }
+
+        Color() : Color(0, 0, 0, 0) { };
+    }; 
+
+    // base class for render texture. this is so we could use something other than SDL in the future.
+    class RenderTexture
+    {
+    public: 
+        int32_t sizeX = 0, sizeY = 0; 
+
+        virtual uint32_t GetPixel(int32_t x, int32_t y, Color color) { return 0; };
+        virtual Color GetPixel(int32_t x, int32_t y) { return Color(); };
+        virtual void SetPixel(int32_t x, int32_t y, Color color) { };
+        virtual void SetPixel(int32_t x, int32_t y, uint32_t color) { };
+    }; 
+
+    /// @brief this class defines a render pass so that we can do e.g. GF2->UC4->DC4
+    class RenderPass
+    {
+    public: 
+        virtual void Render(RenderTexture* screen) { };
+
+        // constructors
+
+        RenderPass(const char* name)
+        {
+            strncpy(this->name, name, STRING_MAX_SHORT);
+        }
+
+        // have a parameterless constructor for e.g. standard arrays
+        RenderPass() : RenderPass("Unnamed Render Pass (Thanks, bozo programmer)") { };
+
+    private: 
+        // for debug
+        char name[STRING_MAX_SHORT] = {0};
+    }; 
+
     /// @brief Base renderer class. Other renderers inherit from this
     class Renderer
     {
@@ -36,8 +89,18 @@ namespace Motion
         // Setters for private fields
         virtual void SetWindowSize(int32_t x, int32_t y) { };
         
+        void AddRenderPass(RenderPass pass)
+        {
+            passes.push_back(pass);
+        }
+
     protected: 
         int32_t windowSizeX = WINDOW_SIZE_X, windowSizeY = WINDOW_SIZE_Y;
+        // vecotr of render passes
+        std::vector<RenderPass> passes = std::vector<RenderPass>(); 
+        RenderTexture* screen = nullptr;
 
     };
+
+
 }

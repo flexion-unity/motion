@@ -61,7 +61,7 @@ namespace Motion
         const char* GetName() { return "Motorola MC68020 CPU (Lisburn)"; };
 
         // not sure if this is right
-        void SetIRQ(int32_t irq) override { moiraCpu.setIPL(irq) };
+        void SetIRQLine(int32_t irq) override { moiraCpu.setIPL(irq); };
 
     private:
         MC68020DebuggerSystem* system; 

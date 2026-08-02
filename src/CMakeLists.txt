@@ -54,5 +54,7 @@ add_executable(motion
     coherent/coherent_system.cpp
     component/keyboard/keyboard_iris.cpp
     component/multibus/multibus_debug.cpp
+    component/uc4/uc4_core.cpp
+    component/dc4/dc4_core.cpp
 )
 

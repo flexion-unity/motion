@@ -144,7 +144,12 @@ namespace Motion
                 EventSystem::FireEvent(evt);
             }
         }
+
+        // run our render passes
+        for (RenderPass& pass : passes)
+            pass.Render(screen);
     
+        // run the passes of the
         ImGui_ImplSDLGPU3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
