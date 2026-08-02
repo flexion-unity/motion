@@ -49,6 +49,7 @@ namespace Motion
     {
     public: 
         virtual void Render(RenderTexture* screen) { };
+        const char* GetName() { return name; };
 
         // constructors
 
@@ -89,8 +90,9 @@ namespace Motion
         // Setters for private fields
         virtual void SetWindowSize(int32_t x, int32_t y) { };
         
-        void AddRenderPass(RenderPass pass)
+        void AddRenderPass(RenderPass& pass)
         {
+            Logger::Log(RENDER_LOG_PREFIX, std::format("Added render pass: {}", pass.GetName()).c_str(), LogChannels::Debug);
             passes.push_back(pass);
         }
 
