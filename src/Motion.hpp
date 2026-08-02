@@ -68,5 +68,16 @@
 #define TOBE32(value)                   value = ((((value) & 0xff000000) >> 24)| \
                                         (((value) & 0x00ff0000) >> 8) | \
                                         (((value) & 0x0000ff00) << 8) | \
-                                        (((value) & 0x000000ff) << 24))             
-                                                          
+                                        (((value) & 0x000000ff) << 24))                                  
+
+// Assertions.
+// I usually don't like them except in critical-path stuff, where it may be too slow to do manual checks.
+
+#ifndef NDEBUG
+#define MOTION_ASSERT(cond, msg)        if (cond) \
+                                            Logger::Log(std::format("***** ASSERTION FAILED *****\n{}", msg).c_str(), LogChannels::FatalError) 
+#define MOTION_ASSET_UNSAFE(cond, msg)  if (cond) \
+                                            Logger::Log(std::format("***** ASSERTION FAILED *****\n{}", msg).c_str(), LogChannels::UnsafeShutdown)
+#else
+#define MOTION_ASSERT(cond, msg)
+#endif

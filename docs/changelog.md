@@ -49,3 +49,9 @@ Similar to a .plan file
 * started multibus
 
 ## 2026-08-02
+
+* wrote the first pass of the rendering api
+    * everything is a render pass
+    * backend-independent textures, inheriting from rendertexture 
+        * sdl gpu textures are pushed to the gpu at the end of each frame. this should be in its own thread like iris
+    *  since a uint8_t* of pixels is renderer independent and we will just be pushing to the gpu, make rendertexture nonvirtual for now. We can always change it later (woo, oop). it would likely be very slow to run a check all the time, so implement asserts for hotpath sanity checks (i.e. should never happen on a release build of the emulator.)

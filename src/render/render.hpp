@@ -12,7 +12,8 @@
 
 namespace Motion
 {
-    #define RENDER_LOG_PREFIX       "Render - Core"
+    #define RENDER_LOG_PREFIX                   "Render - Core"
+    #define DEFAULT_TEXTURE_BYTES_PER_PIXEL     4                   // Not sure why we would need anything else...
 
     // forward declare
     class Renderer;
@@ -38,7 +39,6 @@ namespace Motion
     }; 
 
 
-
     // base class for render texture. this is so we could use something other than SDL in the future.
     class RenderTexture
     {
@@ -48,17 +48,21 @@ namespace Motion
             this->renderer = renderer; 
             this->sizeX = sizeX;
             this->sizeY = sizeY;
+            this->stride = sizeX * sizeY * DEFAULT_TEXTURE_BYTES_PER_PIXEL;
+            this->pixels = new uint8_t[sizeX * sizeY * DEFAULT_TEXTURE_BYTES_PER_PIXEL];
         };
         
-        uint32_t sizeX = 0, sizeY = 0; 
+        uint32_t sizeX = 0, sizeY = 0, stride = 0; 
 
-        virtual uint32_t GetPixel(int32_t x, int32_t y, Color color) { return 0; };
-        virtual Color GetPixel(int32_t x, int32_t y) { return Color(); };
-        virtual void SetPixel(int32_t x, int32_t y, Color color) { };
-        virtual void SetPixel(int32_t x, int32_t y, uint32_t color) { };
+        uint32_t GetPixel(int32_t x, int32_t y, Color color);
+        Color GetPixel(int32_t x, int32_t y);
+        void SetPixel(int32_t x, int32_t y, Color color); 
+        void SetPixel(int32_t x, int32_t y, uint32_t color);
 
     protected:
         Renderer* renderer; 
+        uint8_t* pixels;
+        // this is a mirror texture that gets uploaded to the
     }; 
 
     /// @brief this class defines a render pass so that we can do e.g. GF2->UC4->DC4

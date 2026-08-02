@@ -15,7 +15,7 @@ namespace Motion
     RenderTextureSDL3::RenderTextureSDL3(Renderer* renderer, uint32_t sizeX, uint32_t sizeY) : RenderTexture::RenderTexture(renderer, sizeX, sizeY)
     {
         this->renderer = renderer;
-        
+
         RendererSDL3* sdl3Renderer = static_cast<RendererSDL3*>(renderer);
 
         // should be fine for now
@@ -38,26 +38,8 @@ namespace Motion
     {
         RendererSDL3* sdl3Renderer = static_cast<RendererSDL3*>(renderer);
         SDL_ReleaseGPUTexture(sdl3Renderer->gpuDevice, texture);
-    }
-
-    uint32_t RenderTextureSDL3::GetPixel(int32_t x, int32_t y, Color color) 
-    {
-        return 0; 
-    }
-
-    Color RenderTextureSDL3::GetPixel(int32_t x, int32_t y)
-    {
-        return Color();
-    }
-
-    void RenderTextureSDL3::SetPixel(int32_t x, int32_t y, Color color)
-    {
-
-    }
-
-    void RenderTextureSDL3::SetPixel(int32_t x, int32_t y, uint32_t color) 
-    {
-
+        
+        delete pixels; 
     }
 
 };
