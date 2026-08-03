@@ -11,6 +11,7 @@ namespace Motion
     #define MOIRA_DISASM_BUF_SIZE    512
 
     /// @brief Debugger extensions for Lisburn
+    /// if it deals with the debugger it goes in here. if it doesn't it doesn't 
     class MC68020DebuggerSystem : public CoherentSystem
     {
 
@@ -18,14 +19,13 @@ namespace Motion
         char* DisasmInstruction(size_t start) override;
         size_t GetPC() override;
 
-        /// Initialise an MC68020 DEbugger System
+        /// @brief Initialise the MC68020 Debugger System
         MC68020DebuggerSystem(MC68020MoiraBridge* bridge)
         {
             this->moiraCpu = bridge;
         }
 
-        // for the coherent stack window
-
+        // @brief for the coherent stack window
         uint32_t GetStack32(uint32_t offset) override
         {
             return AddrSpace::ReadU32(moiraCpu->reg.sp + (offset << 2));
