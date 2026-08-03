@@ -59,6 +59,7 @@ namespace Motion
         virtual const char* GetName() { return "Name this component by overriding Component::GetName!"; };
 
         /// @brief an early start component, is dependent on 
-        bool earlyStart = false;
+        virtual bool IsEarlyStart() { return false; }; 
+
     };
 }

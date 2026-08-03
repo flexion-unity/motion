@@ -10,7 +10,7 @@ namespace Motion
         // any memory mappings that get made need to be registered with it 
         for (Component* component : components)
         {
-            if (component->earlyStart)
+            if (component->IsEarlyStart())
                 component->Start();
         }
 
@@ -18,7 +18,7 @@ namespace Motion
         // late start components
         for (Component* component : components)
         {
-            if (!component->earlyStart)
+            if (!component->IsEarlyStart())
                 component->Start();
         }
     }

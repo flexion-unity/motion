@@ -38,12 +38,18 @@ namespace Motion
 
         const char* GetName() override { return "Intel Multibus"; };
 
-        /* Defines a multibus backplane slot */
+        /* 
+            Defines a multibus backplane slot 
+            Aparently multibus kind of sucks and basically it seems like it just provides a mechanism of firing the IRQs and protection.
+        */
         class Slot
         {  
             uint32_t id; 
             uint32_t irq; 
         }; 
+
+        // other stuff may be dependent on the multibus, so start it first
+        bool IsEarlyStart() override { return true; };
 
     private:
         void FireMultibusIRQ(int32_t number);

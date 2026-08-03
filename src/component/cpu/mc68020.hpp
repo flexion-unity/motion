@@ -25,7 +25,7 @@ namespace Motion
             this->moiraCpu = bridge;
         }
 
-        // @brief for the coherent stack window
+        /// @brief for the coherent stack window
         uint32_t GetStack32(uint32_t offset) override
         {
             return AddrSpace::ReadU32(moiraCpu->reg.sp + (offset << 2));
@@ -54,8 +54,8 @@ namespace Motion
         void Tick() override;
         void Shutdown() override; 
 
-        // other stuff may be dependent on tih scpu
-        bool earlyStart = true; 
+        // other stuff may be dependent on the CPU, so start it first
+        bool IsEarlyStart() override { return true; };
 
         /// @brief get the name of this component. immutable const char*.
         const char* GetName() { return "Motorola MC68020 CPU (Lisburn)"; };
