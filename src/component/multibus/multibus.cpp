@@ -205,12 +205,14 @@ namespace Motion
                 std::format("Multibus::OnWrite32: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                 LogChannels::Warning);
             }
-            
+
         lastSlotRead->component->OnWrite32(addr, value);       
     }
 
     void Multibus::Shutdown()
     {
+        cpu = nullptr;
+        lastSlotRead = lastSlotWritten = nullptr; 
         memset(slots, 0x00, sizeof(slots));
     }
 }; 

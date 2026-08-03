@@ -60,5 +60,6 @@ add_executable(motion
     render/render_core.cpp
     render/sdl3/render_sdl3_passes.cpp
     render/sdl3/render_sdl3_debug.cpp
+    component/dc4/dc4_debug.cpp
 )
 

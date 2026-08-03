@@ -6,3 +6,13 @@
 
     multibus_debug.cpp: Coherent extension for Multibus
 */
+
+#include <component/multibus/multibus.hpp>
+
+namespace Motion
+{
+    void MultibusExtension::AddUI()
+    {
+
+    };
+};

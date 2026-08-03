@@ -13,6 +13,7 @@
 
 #pragma once
 #include <Motion.hpp>
+#include <coherent/coherent.hpp>
 #include <component/addrspace.hpp>
 #include <component/component.hpp>
 
@@ -32,6 +33,11 @@ namespace Motion
     #define MULTIBUS_NUM_IRQ                0x8
     // we use a raw array because its the fastest and a lot of this stuff is EXTREMELY Hot path! Like UC4/DC4. 
     #define MULTIBUS_MAX_SLOTS              20  
+
+    class MultibusExtension : public CoherentExtension
+    {
+        void AddUI() override; 
+    }; 
 
     class Multibus : public Component
     {

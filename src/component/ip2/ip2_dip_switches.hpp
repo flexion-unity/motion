@@ -17,6 +17,9 @@ namespace Motion
     public:
         CoherentExtensionIP2Switches(Component* owner) : CoherentExtension(owner) {}
 
+        CoherentExtensionType GetExtensionType() override { return CoherentExtensionType::CustomMenu; }; 
+        const char* GetMenuName() override { return "Backpanel Switches"; };
+
         void AddUI() override;
     };
 
@@ -74,8 +77,6 @@ namespace Motion
                 AddrSpace::AddMapping(mapping);
 
                 switchExtension = new CoherentExtensionIP2Switches(this);
-                switchExtension->SetExtensionType(CoherentExtensionType::CustomMenu);
-                switchExtension->SetMenuName("System Config");
                 Coherent::RegisterExtension(switchExtension);
 
                 // setup reasonable defaults

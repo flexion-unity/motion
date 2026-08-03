@@ -49,7 +49,7 @@ namespace Motion
         for (CoherentExtension* extension : Coherent::extensions)
         {
             if (extension->enabled
-            && extension->extensionType != CoherentExtensionType::CustomMenu)
+            && extension->GetExtensionType() != CoherentExtensionType::CustomMenu)
                 extension->AddUI();
         }
 
@@ -65,7 +65,7 @@ namespace Motion
 
                     for (CoherentExtension* extension : Coherent::extensions)
                     {
-                        if (extension->extensionType == CoherentExtensionType::PeripheralsMenu)
+                        if (extension->GetExtensionType() == CoherentExtensionType::PeripheralsMenu)
                             if (ImGui::MenuItem(extension->component->GetName()))
                                 extension->enabled = true;
                     }
@@ -81,10 +81,10 @@ namespace Motion
                     const char* name = extension->component->GetName();
 
                     // if the extension has a specified menu name do that
-                    if (extension->menuName[0] != '\0')
-                        name = extension->menuName;
+                    if (extension->GetMenuName()[0] != '\0')
+                        name = extension->GetMenuName();
 
-                    if (extension->extensionType == CoherentExtensionType::CustomMenu)
+                    if (extension->GetExtensionType() == CoherentExtensionType::CustomMenu)
                     {
 
                         // we checked already so it can only be custommenunochildren
@@ -101,7 +101,7 @@ namespace Motion
                             ImGui::EndMenu();                              
                         }
                     }
-                    else if (extension->extensionType == CoherentExtensionType::CustomMenuItem)
+                    else if (extension->GetExtensionType() == CoherentExtensionType::CustomMenuItem)
                     {
                         bool clicked = ImGui::MenuItem(name);
 

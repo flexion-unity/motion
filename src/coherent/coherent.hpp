@@ -72,19 +72,16 @@ namespace Motion
         virtual void AddUI() { };
 
         // Getters for private methods
-
-        // Setters for private methods
-        virtual void SetExtensionType(CoherentExtensionType extensionType) { this->extensionType = extensionType; };
+        virtual CoherentExtensionType GetExtensionType() { return CoherentExtensionType::PeripheralsMenu; };
 
         /// @brief Set the menu name. If this is not called the component name will be used as the menu name.
         /// @param name The menu name to use
-        virtual void SetMenuName(const char* name) { strncpy(menuName, name, STRING_MAX_SHORT); };
+        virtual const char* GetMenuName() { return "Name this Menu"; };
+
+        // Setters for private methods
+
     private:
         std::vector<CoherentCommand*> commands;
-
-        /// @brief An optional menu name to give your extension.
-        char menuName[STRING_MAX_SHORT] = {0};
-        CoherentExtensionType extensionType = CoherentExtensionType::PeripheralsMenu;
     };
 
     /// @brief Defines a coherent system. A system is e.g. a CPU which is being debugged

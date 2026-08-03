@@ -56,3 +56,11 @@ Similar to a .plan file
         * sdl gpu textures are pushed to the gpu at the end of each frame. this should be in its own thread like iris
     *  since a uint8_t* of pixels is renderer independent and we will just be pushing to the gpu, make rendertexture nonvirtual for now. We can always change it later (woo, oop). it would likely be very slow to run a check all the time, so implement asserts for hotpath sanity checks (i.e. should never happen on a release build of the emulator.)
     * Implemented a basic renderer that has a single gpu copy pass that uploads a screen image to the screen as modified by any number of previous render passes. It shares  command buffer and swapchain texture with imgui
+
+## 2026-08-03
+
+* wrote multibus io methods
+    * 20 slots, basic c++ array. slots are added by components and multibus stores a pointer to tehm.
+    * we cache which slot is being accessed to prevent having to iterate through them.
+        * TODO: Actually move this into the main emulation.
+* implemented early-start properly so we don't do the ugly crock of checking if a component exists in tick and then getitng it.
