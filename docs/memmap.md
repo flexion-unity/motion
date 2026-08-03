@@ -204,3 +204,16 @@ pagetable stuff:
     (todo)
 
 CPU will setup supervisor stack pointer based on pointer at 00000000h jump to initial PC (pointer at 00000004h) and jump to system initialisation at 30000000h
+
+Multibus I/O:
+
+Apparently the addresses are hardcoded.
+(Why even use a bus?)
+
+50003000h -> UC4
+    (see docs/boards/uc4.md)
+
+50004000h -> DC4
+    (see docs/boards/dc4.md)
+        
+GF2 does not use multibus. In fact it's hardcoded to Segment 6
