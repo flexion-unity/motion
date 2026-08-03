@@ -21,7 +21,7 @@ SGI claim: 16,000 flat shaded, non-z-buffered polygons per second (400 pixel)
 1,000 gouraud shaded, z-buffered polygons per second
 
 GAs are converting IEEE754->20.8 SGI format and FIFOing (and back on the way out).
-the zbuffer is implemented on GE5 and GE10, and i think gouraud is being done on the 2903 FBCs, this means that one of those is a 5-cycle thing, OUCH!
+the zbuffer is implemented on GE5 and GE10, and all shading (flat + gouraud) is being done on the 2903 FBCs, this means that one of those is a 5-cycle thing, OUCH!
 
 meaning:
 ~333 flat-shaded, non-z-buffered polygons per frame at 15fps
