@@ -85,6 +85,7 @@ namespace Motion
         bool UseCachedReadSlot(size_t addr);
         bool UseCachedWriteSlot(size_t addr);
 
+        // these are never meant to fail. MB writes should not occur unmapped.
         bool SetCachedReadSlot(size_t addr);
         bool SetCachedWriteSlot(size_t addr);
 

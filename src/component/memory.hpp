@@ -31,6 +31,9 @@ namespace Motion
         /// @brief get the name of this component. immutable const char*.
         const char* GetName() { return "System RAM"; };
 
+        // other stuff may be dependent on the memory, so start it first
+        bool IsEarlyStart() override { return true; };
+
     private: 
         size_t GetRamCapacity() { return Emulation::GetMachine().ramCapacity; };
 
