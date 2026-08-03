@@ -17,15 +17,17 @@ namespace Motion
 
         int32_t slotId = 0;
         
-        if (ImGui::Begin("Multibus State"))
+        ImGui::SetNextWindowSize(ImVec2(400, 400));
+
+        if (ImGui::Begin("Multibus State"), &enabled)
         {
             for (Multibus::Slot& slot : multibus->slots)
             {
                 if (!slot.active)
-                    ImGui::TextColored(ImVec4(0.6, 0.6, 0.6, 1.0), "Slot %d: not active", slotId);
+                    ImGui::TextColored(ImVec4(0.6, 0.6, 0.6, 1.0), "Slot %d: not active", slotId + 1); // add 1 as this is the actual multibus slot #.
                 else
                     ImGui::TextColored(ImVec4(1.0, 1.0, 1.0, 1.0),
-                    "Slot %d: I/O 0x%lX-0x%lX: %s", slotId, slot.ioStart, slot.ioEnd, slot.component->GetName());
+                    "Slot %d: I/O 0x%lX-0x%lX: %s", slotId + 1, slot.ioStart, slot.ioEnd, slot.component->GetName());
 
                 slotId++;
             }
