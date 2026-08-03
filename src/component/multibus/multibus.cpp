@@ -32,8 +32,13 @@ namespace Motion
 
         AddrSpace::AddMapping(mappingIo);
         
+        // guaranteed, the CPU Initialises before this.
         if (!cpu)
             cpu = Emulation::GetMachine().FindComponentByType<ComponentCPU>();
+
+        // add the multibus state
+        multibusExtension = new CoherentExtensionMultibus(this);
+        Coherent::RegisterExtension(multibusExtension);
     }
 
     void Multibus::FireMultibusIRQ(int32_t number)
@@ -54,8 +59,8 @@ namespace Motion
         if (!lastSlotRead)
             return false;
 
-        return (addr >= lastSlotRead->addrStart
-        && addr <= lastSlotRead->addrEnd);
+        return (addr >= lastSlotRead->ioStart
+        && addr <= lastSlotRead->ioEnd);
     }
 
     bool Multibus::UseCachedWriteSlot(size_t addr)
@@ -63,21 +68,19 @@ namespace Motion
         if (!lastSlotWritten)
             return false;
 
-        return (addr >= lastSlotWritten->addrStart
-        && addr <= lastSlotWritten->addrEnd);
+        return (addr >= lastSlotWritten->ioStart
+        && addr <= lastSlotWritten->ioEnd);
     }
 
     bool Multibus::SetCachedReadSlot(size_t addr)
     {
-        for (int32_t i = 0; i < MULTIBUS_MAX_SLOTS; i++)
+        for (Multibus::Slot& slot : slots)
         {
-            Slot& slot = slots[i];
-
             if (!slot.active)
                 continue;
 
-            if (addr >= slot.addrStart
-            && addr <= slot.addrEnd)
+            if (addr >= slot.ioStart
+            && addr <= slot.ioEnd)
             {
                 lastSlotRead = &slot;
                 return true;
@@ -91,15 +94,13 @@ namespace Motion
 
     bool Multibus::SetCachedWriteSlot(size_t addr)
     {
-        for (int32_t i = 0; i < MULTIBUS_MAX_SLOTS; i++)
+        for (Multibus::Slot& slot : slots)
         {
-            Slot& slot = slots[i];
-
             if (!slot.active)
                 continue;
 
-            if (addr >= slot.addrStart
-            && addr <= slot.addrEnd)
+            if (addr >= slot.ioStart
+            && addr <= slot.ioEnd)
             {
                 lastSlotRead = &slot;
                 return true;

@@ -9,6 +9,8 @@
 
     Most likely it was inheited from the SUN design that SGI bought back in '82. PM1/PM2/IP1 boards are fully multibus, IP2 boards,
     except for the CPU, GPU and FPU (?) (thees use their own private bus.)
+
+    TODO: Cards that use memory space, not just I/O space.
 */
 
 #pragma once
@@ -34,13 +36,19 @@ namespace Motion
     // we use a raw array because its the fastest and a lot of this stuff is EXTREMELY Hot path! Like UC4/DC4. 
     #define MULTIBUS_MAX_SLOTS              20  
 
-    class MultibusExtension : public CoherentExtension
+    class CoherentExtensionMultibus : public CoherentExtension
     {
+    public: 
+        CoherentExtensionMultibus(Component* owner) : CoherentExtension(owner) {}
+
         void AddUI() override; 
     }; 
 
     class Multibus : public Component
     {
+        // friend so we can access random etc
+        friend class CoherentExtensionMultibus;
+
     public: 
         void Start() override; 
         void Shutdown() override;
@@ -54,11 +62,12 @@ namespace Motion
         class Slot
         {  
             friend class Multibus; 
+            friend class CoherentExtensionMultibus; 
 
         public: 
             uint32_t irq; 
-            size_t addrStart;
-            size_t addrEnd; 
+            size_t ioStart;
+            size_t ioEnd; 
             Component* component;
         private: 
             bool active = false;
@@ -71,6 +80,7 @@ namespace Motion
         Slot slots[MULTIBUS_MAX_SLOTS];
         
         // this simulates the action of the user inserting a slot into the Multibus backplane.
+        // NOTE: no attempt is made to prevent the addresses overlapping. the first slot in the range will be used.
         bool AddSlot(Slot slot, int32_t id);
 
         uint8_t OnRead8(size_t addr) override;
@@ -97,6 +107,8 @@ namespace Motion
 
         // THE CPU, so we can fire an irq
         ComponentCPU* cpu; 
+        // our coherent extension
+        CoherentExtensionMultibus* multibusExtension;
     
     };
 };
