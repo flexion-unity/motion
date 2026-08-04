@@ -60,7 +60,7 @@ namespace Motion
                     ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Map %d:", i);
 
                     // draw each colour
-                    for (int32_t j = 0; j < 256; i++)
+                    for (int32_t j = 0; j < 256; j++)
                         DrawColour(dc4, windowDrawList, (i * j), x, y);
                 }
             }
