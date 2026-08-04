@@ -8,7 +8,7 @@ namespace Motion
         {
             DC4* dc4 = (DC4*)component;
 
-            bool singleMapMode = (dc4->flags & 0x20);
+            bool singleMapMode = !(dc4->flags & 0x20);
 
             // iamadc4
             if (singleMapMode)
@@ -42,10 +42,14 @@ namespace Motion
             auto DrawColour = [rectSizeX, rectSizeY, borderSize, &dc4, &windowDrawList, &numMapped, &initialX, &x, &y]
             (int32_t i)
             {
-                uint32_t colour = (dc4->colourMap[i] << 24
-                | (dc4->colourMap[i + 0x200] << 16
-                | (dc4->colourMap[i + 0x400] << 8
-                | 0xFF)));
+                // the colourmap entries are *16-bit* but only 0...255 are supported for each colour.
+                // effectively ignore the lower 16 bits
+                uint32_t colour = IM_COL32(
+                    dc4->colourMap[i] & 0xFF,
+                    dc4->colourMap[i + 256] & 0xFF,
+                    dc4->colourMap[i + 512] & 0xFF,
+                    0xFF
+                );
 
                 // draw colour with a white outline
                 windowDrawList->AddRectFilled(ImVec2(x + 1, y + 1), ImVec2(x + (rectSizeX - borderSize), y + (rectSizeY - borderSize)), colour, 0.0f);
@@ -84,7 +88,7 @@ namespace Motion
 
                     // draw each colour
                     for (int32_t j = 0; j < 256; j++)
-                        DrawColour((i * j));
+                        DrawColour((768 * i) + j); // 16 bits per colour, rgb888 format.
                 }
             }
         }

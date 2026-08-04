@@ -79,11 +79,11 @@ namespace Motion
         // bus is 16 bit 
         uint16_t OnRead16(size_t addr) override;
         void OnWrite16(size_t addr, uint16_t value) override;
-
     private: 
         void UpdateColourmap(size_t addr, uint16_t value);
 
-        uint8_t colourMap[DC4_COLOUR_RAM_SIZE]; // safe to put in BSS ????
+        // this is 16 bit so we index it with logical map indices not bytes as it is more logical
+        uint16_t colourMap[DC4_COLOUR_RAM_SIZE >> 1]; // safe to put in BSS ????
         uint16_t flags; 
         CoherentExtensionDC4* extensionDC4; 
         Multibus* multibus;
