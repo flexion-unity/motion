@@ -25,15 +25,14 @@ namespace Motion
 
     #define LOG_PREFIX_DC4              "DC4"
 
-    #define DC4_FLAG_MAINTENANCE_LED    (1 << 0)
-    #define DC4_FLAG_REG_ADDR0          (1 << 1)  // mapping
-    #define DC4_FLAG_REG_ADDR1          (1 << 2)
-    #define DC4_FLAG_REG_ADDR2          (1 << 3)
-    #define DC4_FLAG_REG_ADDR3          (1 << 4)
-    #define DC4_FLAG_BUS_ADDRMAP        (1 << 5)
-    #define DC4_FLAG_REG_ADDRMAP        (1 << 6)
-    #define DC4_FLAG_RGB_MODE           (1 << 7)  // bypass colour ram, use direct rgb colour
-    #define DC4_FLAG_USE_UPPER_HALF     (1 << 8)  // dc4 use upper half of doubled double-width colour map 
+    #define DC4_FLAG_REG_ADDR0          (1 << 0)  // mapping
+    #define DC4_FLAG_REG_ADDR1          (1 << 1)
+    #define DC4_FLAG_REG_ADDR2          (1 << 2)
+    #define DC4_FLAG_REG_ADDR3          (1 << 3)
+    #define DC4_FLAG_BUS_ADDRMAP        (1 << 4)
+    #define DC4_FLAG_REG_ADDRMAP        (1 << 5)
+    #define DC4_FLAG_RGB_MODE           (1 << 6)  // bypass colour ram, use direct rgb colour
+    #define DC4_FLAG_USE_UPPER_HALF     (1 << 7)  // dc4 use upper half of doubled double-width colour map 
     #define DC4_FLAG_OPTIONAL_CLOCK     (1 << 11)
     #define DC4_FLAG_PIPELINE_DEPTH_4   (1 << 12)
     #define DC4_FLAG_PROM               (1 << 13) // different prom
@@ -69,7 +68,7 @@ namespace Motion
     class DC4 : public Component
     {
         friend class CoherentExtensionDC4;
-        
+
     public: 
         void Start() override;
         void Shutdown() override;

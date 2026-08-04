@@ -26,31 +26,51 @@ namespace Motion
             ImGui::Text("Alternate video format: %s", (dc4->flags & DC4_FLAG_PROM) ? "true" : "false");
             ImGui::Text("Freerun mode: %s", (dc4->flags & DC4_FLAG_FREERUN) ? "true" : "false");
 
-            int32_t x = 0, y = 0;
+            int32_t initialX = ImGui::GetWindowPos().x + ImGui::GetCursorPosX(); // make it easier to restart 
+            int32_t x = initialX, y = ImGui::GetWindowPos().y + ImGui::GetCursorPosY();
+
+            // parameters for drawing rects
+            int32_t rectSizeX = 16;
+            int32_t rectSizeY = 16;
+            int32_t borderSize = 1;
+
+            int32_t numMapped = 0;
 
             ImDrawList* windowDrawList = ImGui::GetWindowDrawList();
 
             // this is a lambda that draws rectangles for us
-            auto DrawColour = [](DC4* dc4, ImDrawList* windowDrawList, int32_t i, int32_t& x, int32_t& y)
+            auto DrawColour = [rectSizeX, rectSizeY, borderSize, &dc4, &windowDrawList, &numMapped, &initialX, &x, &y]
+            (int32_t i)
             {
                 uint32_t colour = (dc4->colourMap[i] << 24
                 | (dc4->colourMap[i + 0x200] << 16
                 | (dc4->colourMap[i + 0x400] << 8
                 | 0xFF)));
 
-                windowDrawList->AddRect(ImVec2(x, y), ImVec2(x + 16, y + 16), colour, 0.0f);
+                // draw colour with a white outline
+                windowDrawList->AddRectFilled(ImVec2(x + 1, y + 1), ImVec2(x + (rectSizeX - borderSize), y + (rectSizeY - borderSize)), colour, 0.0f);
+                windowDrawList->AddRect(ImVec2(x, y), ImVec2(x + rectSizeX, y + rectSizeY), 0xFFFFFFFF, 0.0f);
+               
+                numMapped++;
 
-                if (!(i & 0x10))
-                    y += 16;
-                
-                x += 16;
+                if ((numMapped % 32 == 0) && (numMapped > 0))
+                {
+                    ImGui::Dummy(ImVec2(0, 16)); // required of imgui
+                    y += rectSizeY;
+                    x = initialX;
+                }
+                else
+                    x += (rectSizeY);
+
             };
 
             // map 4096 colours
             if (singleMapMode)
             {
+                ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Colour map:");
+                
                 for (int32_t i = 0; i < 4096; i++)
-                    DrawColour(dc4, windowDrawList, i, x, y);
+                    DrawColour(i);
             }
             else
             {
@@ -58,10 +78,13 @@ namespace Motion
                 for (int32_t i = 0; i < 16; i++)
                 {
                     ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Map %d:", i);
+                    // restart drawing at the new cursor position
+                    initialX = ImGui::GetWindowPos().x + ImGui::GetCursorPosX();
+                    y = ImGui::GetWindowPos().y + ImGui::GetCursorPosY() + 16;
 
                     // draw each colour
                     for (int32_t j = 0; j < 256; j++)
-                        DrawColour(dc4, windowDrawList, (i * j), x, y);
+                        DrawColour((i * j));
                 }
             }
         }
