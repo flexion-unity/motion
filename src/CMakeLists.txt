@@ -54,12 +54,15 @@ add_executable(motion
     coherent/coherent_system.cpp
     component/keyboard/keyboard_iris.cpp
     component/multibus/multibus_debug.cpp
-    component/uc4/uc4_core.cpp
-    component/dc4/dc4_core.cpp
     render/sdl3/render_sdl3_texture.cpp
     render/render_core.cpp
     render/sdl3/render_sdl3_passes.cpp
     render/sdl3/render_sdl3_debug.cpp
-    component/dc4/dc4_debug.cpp
+
+    # "Juniper" (IRIS 2000T / 3000) graphics system
+    component/gpu/juniper/uc4/uc4_core.cpp
+    component/gpu/juniper/dc4/dc4_core.cpp
+    component/gpu/juniper/dc4/dc4_debug.cpp
+
 )
 

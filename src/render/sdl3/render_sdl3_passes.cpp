@@ -18,18 +18,6 @@ namespace Motion
     /// This basically implements a very basic SDL_GPU copy pass that does nothing other than upload a single texture representing the ntire screen
     void MainRenderPass::Render(Renderer* renderer, RenderTexture* texture)
     {
-        // draw a blue gradient as a TEST for the rendering system
-
-        float blue = 0.000;
-
-        for (int32_t y = 0; y < 768; y++)
-        {
-            for (int32_t x = 0; x < 1024; x++)
-                texture->SetPixel(x, y, Color(0.0, 0.0, (uint8_t)(blue * 256), 255.0));
-
-            blue += (1.0f/768.0f);
-        }
-
         // this rendering pass is onyl for SDL3
         RenderTextureSDL3* sdl3RenderTexture = static_cast<RenderTextureSDL3*>(texture);
         RendererSDL3* sdl3Renderer = static_cast<RendererSDL3*>(renderer);

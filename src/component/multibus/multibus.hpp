@@ -69,8 +69,20 @@ namespace Motion
             size_t ioStart;
             size_t ioEnd; 
             Component* component;
+
+            Slot(Component* component)
+            {
+                this->component = component;
+            }
+
         private: 
             bool active = false;
+
+            // parameterless constructor should be private
+            Slot()
+            {
+
+            }
         }; 
 
         // other stuff may be dependent on the multibus, so start it first

@@ -14,6 +14,23 @@
 
 namespace Motion
 {
+    void RendererSDL3::DrawInitialDisplay()
+    {
+        float blue = 0.000;
+        float green = 0.000;
+        
+        for (int32_t y = 0; y < 768; y++)
+        {
+            for (int32_t x = 0; x < 1024; x++)
+            {
+                screen->SetPixel(x, y, Color(0.0, (uint8_t)(green * 256), (uint8_t)(blue * 256), 255.0));
+                green += (1.0f/1024.0f);
+            }
+
+            blue += (1.0f/768.0f);
+        }  
+    }
+
     /// @brief Initialises the SDL renderer. A failure is reported as a FATAL_ERROR Log.
     void RendererSDL3::Init()
     {
@@ -100,6 +117,9 @@ namespace Motion
 
         // create our gpu transfer buffer
         CreateTransferBuffer();
+
+        // draw something so we know the renderer works
+        DrawInitialDisplay();
     }
 
     void RendererSDL3::CreateTransferBuffer()
@@ -169,7 +189,6 @@ namespace Motion
                 EventSystem::FireEvent(evt);
             }
         }
-
 
         // run the passes of the
         ImGui_ImplSDLGPU3_NewFrame();

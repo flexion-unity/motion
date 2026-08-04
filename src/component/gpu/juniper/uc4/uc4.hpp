@@ -11,3 +11,24 @@
     
     **** TODO ****
 */
+
+#include <component/addrspace.hpp>
+#include <component/component.hpp>
+#include <component/multibus/multibus.hpp>
+
+namespace Motion
+{
+    // Registers
+
+    class UC4 : public Component
+    {
+    public: 
+        void Start() override;
+        void Shutdown() override;
+        
+        const char* GetName() override { return "GPU UC4 board (Update Controller version 4)"; }; 
+
+    private: 
+
+    }; 
+}; 

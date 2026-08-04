@@ -78,5 +78,8 @@ namespace Motion
         SDL_GPUTexture* swapchainTexture;
 
         void CreateTransferBuffer();
+
+        /// @brief draw a simple initial display
+        void DrawInitialDisplay();
     };
 }
