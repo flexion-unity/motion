@@ -11,8 +11,7 @@
 #include <component/component.hpp>
 
 namespace Motion
-{
- 
+{    
     class Memory : public Component
     {
         uint8_t* ram;
@@ -35,7 +34,7 @@ namespace Motion
         bool IsEarlyStart() override { return true; };
 
     private: 
-        size_t GetRamCapacity() { return Emulation::GetMachine().ramCapacity; };
+        size_t GetRamCapacity() { return Emulation::GetMachine().totalRamInstalled; };
 
     };
 }

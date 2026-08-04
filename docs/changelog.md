@@ -70,3 +70,4 @@ Similar to a .plan file
     * replaced setextensiontype and setmenuname with getextensiontype and etmenuname that return hardcoded strings
 * Make placeholder screen only drawn without anything else being drawn
 * DC4/UC4 skeleton
+* reconfigurable ram sizes

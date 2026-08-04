@@ -65,7 +65,9 @@ Command line:
         Since the graphics system (and multibus) don't work yet this is the only way to do anything with the machine right now.
     startPaused (default is 1)
         Start the emulator paused, 0 will start the CPU immediately.
-
+    ramInstalled (default is 16777216)
+        RAM installed in bytes.
+        
 Notes:
     "Unmapped write" or "Unmapped read" warnings: Ignore them, they are fine.
 

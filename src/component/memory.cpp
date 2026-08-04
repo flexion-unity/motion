@@ -16,9 +16,10 @@ namespace Motion
     #define MEM_SEG1_START          0x1000000
     #define MEM_SEG2_START          0x2000000
 
+  
     void Memory::Start()
     {
-        auto capacity = Emulation::GetMachine().ramCapacity;
+        auto capacity = Emulation::GetMachine().totalRamInstalled;
         ram = new uint8_t[capacity];
         Logger::Log(LOG_PREFIX_EMU_MACHINE, std::format("System RAM is {} bytes", capacity).c_str(), LogChannels::Debug);
         

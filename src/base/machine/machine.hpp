@@ -6,6 +6,9 @@
 
 namespace Motion
 {
+    /// the amount of ram in the system
+    extern Cvar* ramInstalled;
+    
     class Machine
     {
         #define COMPONENTS_INITIAL_RESERVED     16  
@@ -19,7 +22,6 @@ namespace Motion
         {
             components.reserve(COMPONENTS_INITIAL_RESERVED);
             AddrSpace::maxAddr = 0xFFFFFFFF;                    // 32-bit address space by default
-            ramCapacity = 16777216;                             // Maximum RAM for IRIS 3130
         }
 
         char* GetName() { return name; };
@@ -71,7 +73,7 @@ namespace Motion
         void Shutdown();
 
         // not sure if this is a good idea?
-        size_t ramCapacity;
+        size_t totalRamInstalled;
 
         // Setters for private fields
     private: 
@@ -80,4 +82,5 @@ namespace Motion
 
         AddrSpace addressSpace;                     // The address space of the machine. Components can use this to read/write memory.  
     };
+
 };
