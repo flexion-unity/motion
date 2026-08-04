@@ -63,6 +63,10 @@ namespace Motion
         // not sure if this is right
         void SetIRQLine(int32_t irq) override { moiraCpu.setIPL(irq); };
 
+        /// @brief returns a boolean indicating if this cpu is in privileged mode. most cpus only have two levels of privilege and x86 has 4, but 2 are almost never used.
+        /// @return a boolean indicating if the cpu is in privileged mode
+        virtual bool IsPrivilegedMode() { return (moiraCpu.getSR() & 0x2000); }; // bit 13 is sr
+
     private:
         MC68020DebuggerSystem* system; 
     };

@@ -10,6 +10,7 @@
 #include <component/ip2/ip2_dip_switches.hpp>
 #include <component/keyboard/keyboard_iris.hpp>
 #include <component/multibus/multibus.hpp>
+#include <component/gpu/juniper/dc4/dc4.hpp>
 
 namespace Motion
 {
@@ -38,6 +39,7 @@ namespace Motion
         machine.AddComponent<DUART68681>();
         machine.AddComponent<IP2Switches>();
         machine.AddComponent<IP2Clock>();
+        machine.AddComponent<DC4>();
 
         forceEnterSerialMonitor = Cvar::Get("forceEnterSerialMonitor", "0");
 

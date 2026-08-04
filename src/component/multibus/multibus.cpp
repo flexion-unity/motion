@@ -129,6 +129,10 @@ namespace Motion
 
         slots[id] = slot;
         slots[id].active = true;
+
+        Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus slot {} now maps component {}, I/O range 0x{:x} to 0x{:x} (todo: impl memory)",
+        id + 1, slot.component->GetName(), slot.ioStart, slot.ioEnd).c_str());
+        
         return true; 
     }
 

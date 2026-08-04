@@ -14,10 +14,8 @@ namespace Motion
     void CoherentExtensionMultibus::AddUI()
     {
         Multibus* multibus = (Multibus*)component;
-
         int32_t slotId = 0;
-        
-        ImGui::SetNextWindowSize(ImVec2(400, 400));
+        ImGui::SetNextWindowSize(ImVec2(550, 400));
 
         if (ImGui::Begin("Multibus State"), &enabled)
         {
@@ -32,7 +30,7 @@ namespace Motion
                 slotId++;
             }
         }
-
+        
         ImGui::End();
     };
 };

@@ -26,7 +26,7 @@ namespace Motion
         void Start() override;
         void Shutdown() override;
         
-        const char* GetName() override { return "GPU UC4 board (Update Controller version 4)"; }; 
+        const char* GetName() override { return "GPU UC4 board (Update Controller v4)"; }; 
 
     private: 
 

@@ -56,7 +56,7 @@ namespace Motion
         void Start() override;
         void Shutdown() override;
         
-        const char* GetName() override { return "GPU DC4 board (Display Controller version 4)"; }; 
+        const char* GetName() override { return "GPU DC4 board (Display Controller v4)"; }; 
 
     private: 
         uint8_t colourMap[DC4_COLOUR_RAM_SIZE]; // safe to put in BSS ????
