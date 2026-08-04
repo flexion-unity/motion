@@ -17,7 +17,7 @@ namespace Motion
         int32_t slotId = 0;
         ImGui::SetNextWindowSize(ImVec2(550, 400));
 
-        if (ImGui::Begin("Multibus State"), &enabled)
+        if (ImGui::Begin("Multibus State", &enabled))
         {
             for (Multibus::Slot& slot : multibus->slots)
             {

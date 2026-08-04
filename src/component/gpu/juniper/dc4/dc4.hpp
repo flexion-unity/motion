@@ -10,6 +10,7 @@
     as well as non-paletted graphics modes.
 */
 
+#pragma once
 #include <component/addrspace.hpp>
 #include <component/component.hpp>
 #include <component/multibus/multibus.hpp>
@@ -18,9 +19,11 @@ namespace Motion
 {
     // Registers
     #define DC4_REG_START               0x50004000
-    #define DC4_REG_END                 0x50004801
-    #define DC4_REG_FLAGS               0x50004200
+    #define DC4_REG_END                 0x500047FF
+    #define DC4_REG_FLAGS               0x50004000
     #define DC4_MULTIBUS_SLOT           17
+
+    #define LOG_PREFIX_DC4              "DC4"
 
     #define DC4_FLAG_MAINTENANCE_LED    (1 << 0)
     #define DC4_FLAG_REG_ADDR0          (1 << 1)  // mapping
@@ -36,11 +39,16 @@ namespace Motion
     #define DC4_FLAG_PROM               (1 << 13) // different prom
     #define DC4_FLAG_FREERUN            (1 << 14) // probably diag only
 
-    #define DC4_REG_COLOURMAP_RED       0x50004400
-    #define DC4_REG_COLOURMAP_GREEN     0x50004600
-    #define DC4_REG_COLOURMAP_BLUE      0x50004800
+    #define DC4_REG_COLOURMAP_START     0x50004200
+    #define DC4_REG_COLOURMAP_END       0x500047FF
 
-    // Colour RAM stuff
+    #define DC4_REG_COLOURMAP_RED       0x50004200
+    #define DC4_REG_COLOURMAP_RED_END   0x500043FF
+    #define DC4_REG_COLOURMAP_GREEN     0x50004400
+    #define DC4_REG_COLOURMAP_GREEN_END 0x500045FF
+    #define DC4_REG_COLOURMAP_BLUE      0x50004600
+    #define DC4_REG_COLOURMAP_BLUE_END  0x500047FF
+
     #define DC4_COLOUR_RAM_SIZE         49152
 
     // Single map stuff
@@ -50,6 +58,14 @@ namespace Motion
     #define DC4_MULTIMAP_NUM_MAPS       64
     #define DC4_MULTIMAP_MASK           0xFF
 
+    class CoherentExtensionDC4 : public CoherentExtension
+    {
+    public:
+        CoherentExtensionDC4(Component* owner) : CoherentExtension(owner) {}
+
+        void AddUI() override;
+    };
+
     class DC4 : public Component
     {
     public: 
@@ -58,9 +74,17 @@ namespace Motion
         
         const char* GetName() override { return "GPU DC4 board (Display Controller v4)"; }; 
 
+        // Register I/O
+        // bus is 16 bit 
+        uint16_t OnRead16(size_t addr) override;
+        void OnWrite16(size_t addr, uint16_t value) override;
+
     private: 
+        void UpdateColourmap(size_t addr, uint16_t value);
+
         uint8_t colourMap[DC4_COLOUR_RAM_SIZE]; // safe to put in BSS ????
-   
+        uint16_t flags; 
+        CoherentExtensionDC4* extensionDC4; 
         Multibus* multibus;
     }; 
 }; 

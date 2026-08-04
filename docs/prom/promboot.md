@@ -136,6 +136,7 @@ Boot phase 6 (con_config): [gl2/stand/mon/init.c]
 59. The keyboard returned something. Woo. Now what happens depends on PROM version:
 
     (PROM Version >= 3.0.11)
+    
     Use this to determine the keyboard type. Read two bytes.
         0xAA -> IRIS 3000-type (Keytronics) keyboard.
         0x6A 0x00 -> IRIS 4D/60 USA keyboard

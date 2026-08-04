@@ -60,7 +60,7 @@ Command line:
     promPath
         the path of the PROM (basically the BIOS) to load.
         If you are messing around with different versions of the BIOS oyu can set this
-    forceUseSerialMonitor
+    forceEnterSerialMonitor
         Disconnects the keyboard from the emulated machine. This forces the PROM to enter serial communication mode over DUART0 Port B.
         Since the graphics system (and multibus) don't work yet this is the only way to do anything with the machine right now.
     startPaused (default is 1)

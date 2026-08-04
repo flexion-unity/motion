@@ -11,6 +11,7 @@
     
     **** TODO ****
 */
+#pragma once
 
 #include <component/addrspace.hpp>
 #include <component/component.hpp>
