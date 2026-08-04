@@ -11,6 +11,9 @@
     Eventually this could be extended for e.g. Clover2 tiled rendering.
 
     ANd yes it's a damn staatic class AGain!
+
+    Since this is a bitplane based virtual framebuffer, the calculation of the pixel positions etc is up to the GPU implmenting this
+    FB.
 */
 
 #include <Motion.hpp>
@@ -18,16 +21,32 @@
 
 namespace Motion
 {
-    enum VirtualFramebufferType
-    {
-
-    }; 
-    
     class VirtualFramebuffer
     {
     public:
+        static void Create(int32_t x, int32_t y, int32_t numBitplanes);
+        static void StartFrame();
+
+        static size_t GetMemorySize() { return sizeX * sizeY * numBitplanes; };
+
+        // Getters for private fields ( we wouldn't want a BOZO doing framebuffer = null; )
+        static uint8_t* GetPixels() { return pixels; };
+        static size_t GetSizeX() { return sizeX; };
+        static size_t GetSizeY() { return sizeY; };
+        static size_t GetNumBitplanes() { return numBitplanes; };
 
     private: 
+        inline static uint8_t* pixels;
 
+        inline static size_t sizeX;
+        inline static size_t sizeY;
+        inline static size_t numBitplanes;
     }; 
+
+    /// @brief a render pass that copies the physical framebuffer to the buffer screen
+    class CopyVirtualToPhysicalFbRenderPass : RenderPass
+    {
+        void Render(Renderer* renderer, RenderTexture* screen) override; 
+    }; 
+
 }; 

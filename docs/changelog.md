@@ -66,5 +66,7 @@ Similar to a .plan file
     * has a basic coherent extension
 * implemented early-start properly so we don't do the ugly crock of checking if a component exists in tick and then getitng it.
 * CPUMC68020::IsPrivilegedMode is a real thing now.
+* made Coherent eextensions control their own type and menu name
+    * replaced setextensiontype and setmenuname with getextensiontype and etmenuname that return hardcoded strings
 * Make placeholder screen only drawn without anything else being drawn
 * DC4/UC4 skeleton
