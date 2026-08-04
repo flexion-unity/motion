@@ -63,4 +63,8 @@ Similar to a .plan file
     * 20 slots, basic c++ array. slots are added by components and multibus stores a pointer to tehm.
     * we cache which slot is being accessed to prevent having to iterate through them.
         * TODO: Actually move this into the main emulation.
+    * has a basic coherent extension
 * implemented early-start properly so we don't do the ugly crock of checking if a component exists in tick and then getitng it.
+* CPUMC68020::IsPrivilegedMode is a real thing now.
+* Make placeholder screen only drawn without anything else being drawn
+* DC4/UC4 skeleton

@@ -63,6 +63,8 @@ add_executable(motion
     component/gpu/juniper/uc4/uc4_core.cpp
     component/gpu/juniper/dc4/dc4_core.cpp
     component/gpu/juniper/dc4/dc4_debug.cpp
+    component/gpu/virtualfb_core.cpp
+    component/gpu/virtualfb_copy_pass.cpp
 
 )
 

@@ -131,8 +131,8 @@ namespace Motion
         slots[id].active = true;
 
         Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus slot {} now maps component {}, I/O range 0x{:x} to 0x{:x} (todo: impl memory)",
-        id + 1, slot.component->GetName(), slot.ioStart, slot.ioEnd).c_str());
-        
+        id + 1, slot.component->GetName(), slot.ioStart, slot.ioEnd).c_str(), LogChannels::Debug);
+
         return true; 
     }
 
@@ -144,6 +144,7 @@ namespace Motion
                 Logger::Log(MULTIBUS_LOG_PREFIX,
                 std::format("Multibus::OnRead8: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
                 LogChannels::Warning);
+                return 0x00;
             }
 
         return lastSlotRead->component->OnRead8(addr);
@@ -157,6 +158,7 @@ namespace Motion
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
                 std::format("Multibus::OnRead16: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
                 LogChannels::Warning);
+                return 0x00;
             }
 
         return lastSlotRead->component->OnRead16(addr);
@@ -170,6 +172,7 @@ namespace Motion
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
                 std::format("Multibus::OnRead32: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
                 LogChannels::Warning);
+                return 0x00;
             }
 
         return lastSlotRead->component->OnRead32(addr);
@@ -183,6 +186,7 @@ namespace Motion
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
                 std::format("Multibus::OnWrite8: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                 LogChannels::Warning);
+                return;
             }
             
         lastSlotRead->component->OnWrite8(addr, value);
@@ -196,6 +200,7 @@ namespace Motion
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
                 std::format("Multibus::OnWrite16: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                 LogChannels::Warning);
+                return;
             }
 
         lastSlotRead->component->OnWrite16(addr, value);
@@ -209,6 +214,7 @@ namespace Motion
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
                 std::format("Multibus::OnWrite32: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                 LogChannels::Warning);
+                return;
             }
 
         lastSlotRead->component->OnWrite32(addr, value);       
