@@ -73,8 +73,6 @@ namespace Motion
                     ImGui::EndMenu();
                 }
 
-
-
                 // Add custom menu type extensions
                 for (CoherentExtension* extension : Coherent::extensions)
                 {
@@ -92,7 +90,6 @@ namespace Motion
 
                         // tell the extension that we clicked it in case they don't want to add any child menu options
                         clicked = ImGui::BeginMenu(name);
-
                         extension->enabled = clicked;
 
                         if (clicked)
@@ -194,9 +191,7 @@ namespace Motion
             // "left" (register) pane
             if (ImGui::BeginChild("RegisterPane", registerPaneSize))
             {
-                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));
-                ImGui::Text("Registers");
-                ImGui::PopStyleColor();
+                ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Registers");
 
                 for (auto aRegister : Coherent::currentSystem->registers)
                 {
@@ -239,9 +234,7 @@ namespace Motion
             // middle pane; disassembly pane
             if (ImGui::BeginChild("DisassemblyPane", disasmPaneSize))
             {
-                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));
-                ImGui::Text("Disassembly");
-                ImGui::PopStyleColor();
+                ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Disassembly");
 
                 // todo: MUST put in a buffer...
                 for (i = 0; i < 30; i++)
@@ -261,7 +254,6 @@ namespace Motion
             }
 
             ImGui::EndChild();
-
             ImGui::SameLine();
 
             // right pane: debug controls

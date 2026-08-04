@@ -71,3 +71,9 @@ Similar to a .plan file
 * Make placeholder screen only drawn without anything else being drawn
 * DC4/UC4 skeleton
 * reconfigurable ram sizes
+
+## 2026-08-04
+
+* DC4 colourmap emlation
+    * low 4 bits of flags set mapped colourmap, 0 = use 4096 colour map
+* CoherentUI::COLOUR_HEADER added, temporary until we have a proper theme system (the current one sucks and needs to be rewritten)

@@ -68,6 +68,8 @@ namespace Motion
 
     class DC4 : public Component
     {
+        friend class CoherentExtensionDC4;
+        
     public: 
         void Start() override;
         void Shutdown() override;

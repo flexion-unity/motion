@@ -57,10 +57,18 @@ namespace Motion
     {
         // check mapping info
         // DC4: bottom 3 bits are mapping info for multimap mode
-        // Flags = 0 = Singlemap mode. Otherwise it basically determines which one of 16 maps we write to.
-        uint32_t index = (flags & 0x0F) << 8 | (addr - DC4_REG_COLOURMAP_START);    
-    
-        colourMap[index] = value;
+        // Flags = 0 = Singlemap mode. Otherwise it basically determines which one of 16 256 colour maps we write to.
+
+        //0x20 is used 
+        uint32_t index = 0;
+
+        if (flags & DC4_FLAG_REG_ADDRMAP)
+            index = (flags & 0x0F) << 8 | (addr - DC4_REG_COLOURMAP_START);    
+        else
+            index = (addr - DC4_REG_COLOURMAP_START); // this indicates that it is single map.
+
+        colourMap[index] = value & 0xFF00;
+        colourMap[index + 1] = value & 0x00FF;
     }
 
     void DC4::Shutdown()

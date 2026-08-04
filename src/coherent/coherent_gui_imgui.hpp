@@ -57,6 +57,9 @@ namespace Motion
 
         static inline bool aboutActive = false;
 
+        // todo: should change based on theme. but the theme system should be redesigned
+        static constexpr ImVec4 COLOUR_HEADER = ImVec4(0.1f, 0.8f, 1.0f, 1.0f);
+
     private: 
         inline static char addrBufForWatchpoints[STRING_MAX_LONG] = {0};
         inline static char addrBufForCatchpoints[STRING_MAX_LONG] = {0};
