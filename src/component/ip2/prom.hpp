@@ -9,6 +9,7 @@ namespace Motion
 
     #define PROM_START_ADDRESS      0x30000000
     #define PROM_SRAM_START_ADDRESS 0x33000000
+    #define LOG_PREFIX_PROM         "Emulation - PROM"
 
     // FOR COMPONENTS, WE DON'T NEED TO BOUNDS CHECK BECAUSE WE ALREADY MAPPED IT!
 

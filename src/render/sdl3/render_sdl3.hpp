@@ -19,7 +19,7 @@
 namespace Motion
 {
     #define LOG_PREFIX_RENDER_SDL3          "Render - SDL3"
-    #define WINDOW_TITLE_DEFAULT            APP_NAME " - SGI Emulator (c) 2026 Starfrost"
+    #define WINDOW_TITLE_DEFAULT            APP_NAME " " APP_VERSION " - SGI Emulator (c) 2026 Starfrost"
 
     class RenderTextureSDL3 : public RenderTexture
     {

@@ -27,7 +27,7 @@ namespace Motion
         Logger::settings.postLogMessageIgnoresAnsiCodes = true; //coherent
         Logger::Init();
 
-        Logger::Log(APP_NAME " " APP_VERSION);
+        Logger::Log(APP_NAME " v" APP_VERSION " " APP_BUILD_DATE);
         Logger::Log(APP_SIGNON, LogChannels::Message);
         CommandLine::Parse(argc, argv);                     // parse command line
         Profile::Init();                                    // init config for user profile

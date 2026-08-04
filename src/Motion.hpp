@@ -35,7 +35,9 @@
 
 #define APP_NAME            "motion"
 #define APP_SIGNON          "The SGI Emulator\nEmulation engine © 2026 starfrost\nOriginal hardware and software by Silicon Graphics, Inc. © 1981-1989"
-#define APP_VERSION         "@ " __DATE__ " " __TIME__
+// This part will be replaced by some fancy GHA script later
+#define APP_VERSION         "0.1"
+#define APP_BUILD_DATE      "@ " __DATE__ " " __TIME__
 
 // Exit codes
 #define EXIT_SUCCESS        0
@@ -44,7 +46,6 @@
 // Log prefixes (these will all be moved)
 #define LOG_PREFIX_CORE     "Core"
 #define LOG_PREFIX_MAPPING  "Emulation - Memory Mapping"
-#define LOG_PREFIX_PROM     "Emulation - PROM"
 
 #define ARRAY_ELEMS(x)       sizeof(x)/sizeof(x[0])
 
