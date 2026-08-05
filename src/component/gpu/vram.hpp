@@ -25,11 +25,12 @@ namespace Motion
         // returs
         virtual int32_t GetInternalFbSizeX() { return 0; };
         virtual int32_t GetInternalFbSizeY() { return 0; };
-        virtual int32_t GetNumberOfBitplanes() { return realBitplanes; }; 
+
+        // We model the VRAM as a 1024*1024*4 type tihng.
+        virtual int32_t GetBytesPerPixel() { return 0; }; 
 
     protected: 
         uint8_t* vram; 
-        int32_t realBitplanes; // number of bitplanes
 
     };
 };
