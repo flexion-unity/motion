@@ -19,9 +19,12 @@ namespace Motion
         
         int32_t GetInternalFbSizeX() { return 1024; };
         int32_t GetInternalFbSizeY() { return 1024; };
+        virtual int32_t GetBytesPerPixel() { return 4; }; 
 
         const char* GetName() override { return "BP3 Bitplaned VRAM"; };
 
-      
+    private:
+        // implements our BPs
+        uint32_t writeMask;
     };
 };

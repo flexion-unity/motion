@@ -17,7 +17,7 @@ namespace Motion
 {
     void ComponentVRAM::Start()
     {
-        size_t vramSize = GetInternalFbSizeX() * GetInternalFbSizeY() * realBitplanes;
+        size_t vramSize = GetInternalFbSizeX() * GetInternalFbSizeY() * GetBytesPerPixel();
         vram = new uint8_t[vramSize];
 
         Logger::Log(std::format("Video RAM size is {} bytes", vramSize).c_str());

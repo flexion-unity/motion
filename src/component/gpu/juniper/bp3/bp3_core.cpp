@@ -51,6 +51,7 @@ namespace Motion
 
         Logger::Log(LOG_PREFIX_BP3, std::format("There are {} bitplanes.", realBitplanes).c_str());
 
+        writeMask = (1 << realBitplanes) - 1; 
         // only NOW call vram start once the real number of bitplanes was determined.
         ComponentVRAM::Start();
 
