@@ -69,6 +69,13 @@ namespace Motion
         else
             index = (addr - DC4_REG_COLOURMAP_START) >> 1; // this indicates that it is single map.
 
+        if (index < 0
+        || index >= (DC4_COLOUR_RAM_SIZE >> 1))
+        {
+            Logger::Log(LOG_PREFIX_DC4, std::format("DC4: Invalid colourmap colour index {} (byte {})", index, index << 1).c_str(), LogChannels::Warning);
+            return;
+        }
+
         // *16 bit* map index
         colourMap[index] = value;
     }

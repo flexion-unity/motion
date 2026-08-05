@@ -10,12 +10,26 @@
     ALL vram components are early start.
 */
 
+#pragma once
 #include <component/component.hpp>
 
 namespace Motion
 {
     class ComponentVRAM : public Component
     {
-        
+    public:
+        bool IsEarlyStart() override { return true; }; 
+        void Start() override; 
+        void Shutdown() override;
+
+        // returs
+        virtual int32_t GetInternalFbSizeX() { return 0; };
+        virtual int32_t GetInternalFbSizeY() { return 0; };
+        virtual int32_t GetNumberOfBitplanes() { return realBitplanes; }; 
+
+    protected: 
+        uint8_t* vram; 
+        int32_t realBitplanes; // number of bitplanes
+
     };
 };

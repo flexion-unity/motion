@@ -21,7 +21,7 @@ namespace Motion
     {
         auto capacity = Emulation::GetMachine().totalRamInstalled;
         ram = new uint8_t[capacity];
-        Logger::Log(LOG_PREFIX_EMU_MACHINE, std::format("System RAM is {} bytes", capacity).c_str(), LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_EMU_MACHINE, std::format("System RAM is {} bytes", capacity).c_str());
         
         AddrSpaceMapping mappingTd = AddrSpaceMapping();
 

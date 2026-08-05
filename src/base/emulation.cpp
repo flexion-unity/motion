@@ -11,6 +11,8 @@
 #include <component/keyboard/keyboard_iris.hpp>
 #include <component/multibus/multibus.hpp>
 #include <component/gpu/juniper/dc4/dc4.hpp>
+#include <component/gpu/juniper/uc4/uc4.hpp>
+#include <component/gpu/juniper/bp3/bp3.hpp>
 
 namespace Motion
 {
@@ -33,6 +35,7 @@ namespace Motion
         machine.AddComponent<Memory>();
         machine.AddComponent<MC68020>();
         machine.AddComponent<Multibus>();
+        machine.AddComponent<BP3>();
         machine.AddComponent<PROM>();
         machine.AddComponent<PROM_SRAM>();
         machine.AddComponent<IP2MMU>();
@@ -40,6 +43,7 @@ namespace Motion
         machine.AddComponent<IP2Switches>();
         machine.AddComponent<IP2Clock>();
         machine.AddComponent<DC4>();
+        machine.AddComponent<UC4>();
 
         forceEnterSerialMonitor = Cvar::Get("forceEnterSerialMonitor", "0");
 

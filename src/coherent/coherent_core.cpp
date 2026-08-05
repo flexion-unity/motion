@@ -96,7 +96,7 @@ namespace Motion
         }
 
         extensions.push_back(extension);
-        Logger::Log(COHERENT_LOG_PREFIX, std::format("Coherent registered an extension for the component {}", extension->component->GetName()).c_str(), LogChannels::Message);
+        Logger::Log(COHERENT_LOG_PREFIX, std::format("Coherent registered an extension for the component {}", extension->component->GetName()).c_str(), LogChannels::Debug);
     }
 
     //
