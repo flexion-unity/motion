@@ -9,7 +9,6 @@
     This part of the graphics system receives input from the GF2 (Graphics & Framebuffer 2) board and performs various 2D graphics actions such as stipple alpha,
     DDA-type lines and text (from a FONT rom). It uses a similar command interface to the FBC and GE on the GF2 board. It's required to perform all graphics actions.
     
-    **** TODO ****
 */
 #pragma once
 
@@ -21,6 +20,10 @@ namespace Motion
 {
     // Registers
 
+    #define UC4_REG_START           0x50003000
+    #define UC4_REG_END             0x50003fff
+    #define UC4_MULTIBUS_SLOT       18              // shown as 19
+
     class UC4 : public Component
     {
     public: 
@@ -30,6 +33,6 @@ namespace Motion
         const char* GetName() override { return "GPU UC4 board (Update Controller v4)"; }; 
 
     private: 
-
+        Multibus* multibus;
     }; 
 }; 
