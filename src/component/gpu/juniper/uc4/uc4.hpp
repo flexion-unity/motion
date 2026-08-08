@@ -76,10 +76,10 @@ namespace Motion
     // All buffers except DDA* ar e write only
     #define UC4_BUFFER_EDB          0x01
     #define UC4_BUFFER_ECB          0x02
-    #define UC4_BUFFER_XSB          0x03    // current x coord
-    #define UC4_BUFFER_XEB          0x04
-    #define UC4_BUFFER_YSB          0x05    // current y coord
-    #define UC4_BUFFER_YEB          0x06
+    #define UC4_BUFFER_XSB          0x03    // start of current x coord [xy logic]
+    #define UC4_BUFFER_XEB          0x04    // end of current x coord [xy logic]
+    #define UC4_BUFFER_YSB          0x05    // start of current y coord [xy logic]
+    #define UC4_BUFFER_YEB          0x06    // end of current y coord [xy logic]
     #define UC4_BUFFER_FMAB         0x07
     #define UC4_BUFFER_DDASAF       0x08
     #define UC4_BUFFER_DDASAI       0x09

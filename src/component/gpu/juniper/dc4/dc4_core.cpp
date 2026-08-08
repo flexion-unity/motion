@@ -133,10 +133,10 @@ namespace Motion
                         colourmapAddress = paletteValue;
 
                     // technically RGB161616 but treated as RGB 888. Huh.
-                    uint32_t colour = ((colourMap[paletteValue] & 0xFF) << 24) & 0xFF000000
-                        | ((colourMap[paletteValue + 256] & 0xFF) << 16) & 0x00FF0000
-                        | ((colourMap[paletteValue + 512] & 0xFF) << 8) & 0x0000FF00
-                        | 0xFF; // this is the alpha
+                    uint32_t colour = ((colourMap[paletteValue] & 0xFF))
+                        | ((colourMap[paletteValue + 256] & 0xFF) << 8) & 0x0000FF00
+                        | ((colourMap[paletteValue + 512] & 0xFF) << 16) & 0x00FF0000
+                        | (0xFF << 24) & 0xFF000000; // this is the alpha
 
                     screen->SetPixel(x, y, colour); // cap to 256 colours * 16 maps
                 }
