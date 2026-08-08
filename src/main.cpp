@@ -47,10 +47,10 @@ namespace Motion
         logDestinations = Cvar::Get("logDestinations", "-1");
 
         if (logChannels->GetValue() != -1)
-            Logger::settings.SetChannelMask((LogChannels)(int32_t)logChannels);
+            Logger::settings.SetChannelMask((LogChannels)logChannels->GetValue());
 
         if (logDestinations->GetValue() != -1)
-            Logger::settings.SetDestinations((LogDestination)(int32_t)logChannels);
+            Logger::settings.SetDestinations((LogDestination)logChannels->GetValue());
 
         Logger::Log(APP_NAME " v" APP_VERSION " " APP_BUILD_DATE);
         Logger::Log(APP_SIGNON, LogChannels::Message);

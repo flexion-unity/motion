@@ -84,6 +84,7 @@ Similar to a .plan file
     * basically linear. which bp3 planes exist apply a write mask, so if you have 16 bitplanes you write to memory basically anded with 0xffff
 * allow drawing of non-screen-sized texture (introduce RenderTextureDrawMode)
 * decouple window and renderer (window is now a renderer-backend-independent virtual Window class)
+* Move code for adding components from emulation to machine and make it a virtual method so that we can have multiple machines; add the machineName convar.
 
 TODO:
 
