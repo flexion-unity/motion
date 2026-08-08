@@ -41,26 +41,26 @@ namespace Motion
         ram[6] = 0x04;
     }
 
-    uint8_t Memory::OnRead8(size_t addr)
+    uint8_t Memory::Read8(size_t addr)
     {
         addr %= GetRamCapacity();
 
         if (addr >= GetRamCapacity())
         {
-            Logger::Log("Memory::OnRead8 - Tried to read from invalid RAM address!");
+            Logger::Log("Memory::Read8 - Tried to read from invalid RAM address!");
             return 0;
         }   
 
         return ram[addr];
     }
 
-    uint16_t Memory::OnRead16(size_t addr)
+    uint16_t Memory::Read16(size_t addr)
     {
         addr %= GetRamCapacity();
 
         if (addr >= GetRamCapacity())
         {
-            Logger::Log("Memory::OnRead16 - Tried to read from invalid RAM address!");
+            Logger::Log("Memory::Read16 - Tried to read from invalid RAM address!");
             return 0;
         } 
 
@@ -70,13 +70,13 @@ namespace Motion
         return value;
     }
 
-    uint32_t Memory::OnRead32(size_t addr)
+    uint32_t Memory::Read32(size_t addr)
     {
         addr %= GetRamCapacity();
 
         if (addr >= GetRamCapacity())
         {
-            Logger::Log("Memory::OnRead32 - Tried to read from invalid RAM address!");
+            Logger::Log("Memory::Read32 - Tried to read from invalid RAM address!");
             return 0;
         } 
 
@@ -88,26 +88,26 @@ namespace Motion
         return value;
     }
 
-    void Memory::OnWrite8(size_t addr, uint8_t value)
+    void Memory::Write8(size_t addr, uint8_t value)
     {
         addr %= GetRamCapacity();
 
         if (addr >= GetRamCapacity())
         {
-            Logger::Log("Memory::OnWrite8 - Tried to write to invalid RAM address!");
+            Logger::Log("Memory::Write8 - Tried to write to invalid RAM address!");
             return;
         } 
 
         ram[addr] = value;
     }
 
-    void Memory::OnWrite16(size_t addr, uint16_t value)
+    void Memory::Write16(size_t addr, uint16_t value)
     {
         addr %= GetRamCapacity();
 
         if (addr >= GetRamCapacity())
         {
-            Logger::Log("Memory::OnWrite16 - Tried to write to invalid RAM address!");
+            Logger::Log("Memory::Write16 - Tried to write to invalid RAM address!");
             return;
         } 
     
@@ -116,13 +116,13 @@ namespace Motion
         ram16[addr >> 1] = value;
     }
 
-    void Memory::OnWrite32(size_t addr, uint32_t value)
+    void Memory::Write32(size_t addr, uint32_t value)
     {
         addr %= GetRamCapacity();
         
         if (addr >= GetRamCapacity())
         {
-            Logger::Log("Memory::OnWrite32 - Tried to write to invalid RAM address!");
+            Logger::Log("Memory::Write32 - Tried to write to invalid RAM address!");
             return;
         } 
 

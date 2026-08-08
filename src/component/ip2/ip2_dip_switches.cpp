@@ -6,7 +6,7 @@ namespace Motion
     // STATUS REG 
     //
 
-    uint8_t IP2Switches::OnRead8(size_t addr)
+    uint8_t IP2Switches::Read8(size_t addr)
     { 
         // only two addresses, lazy mode
         // BIG ENDIAN !!!! 
@@ -16,12 +16,12 @@ namespace Motion
             return (switchState & 0xFF00);
     };
 
-    uint16_t IP2Switches::OnRead16(size_t addr) { return switchState; };
+    uint16_t IP2Switches::Read16(size_t addr) { return switchState; };
 
     // not sure how this behaves on real h/w, if its open bus, 0 or sign extended etc
-    uint32_t IP2Switches::OnRead32(size_t addr) { return switchState; };
+    uint32_t IP2Switches::Read32(size_t addr) { return switchState; };
     
-    void IP2Switches::OnWrite8(size_t addr, uint8_t value)
+    void IP2Switches::Write8(size_t addr, uint8_t value)
     {
         // BIG ENDIAN !!!! 
         if (addr & 0x01)
@@ -30,10 +30,10 @@ namespace Motion
             switchState = (value << 8) | (value & 0xFF);
     };
 
-    void IP2Switches::OnWrite16(size_t addr, uint16_t value) { switchState = value; };
+    void IP2Switches::Write16(size_t addr, uint16_t value) { switchState = value; };
 
     // not sure how this behaves on real h/w, if its open bus, 0 or sign extended etc
-    void IP2Switches::OnWrite32(size_t addr, uint32_t value) { switchState = value; }; 
+    void IP2Switches::Write32(size_t addr, uint32_t value) { switchState = value; }; 
 
     //
     // COHERENT debugger extension

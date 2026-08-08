@@ -37,7 +37,7 @@ namespace Motion
 
         }
 
-        uint8_t OnRead8(size_t addr) 
+        uint8_t Read8(size_t addr) 
         { 
             uint8_t ret = 0xFF;
 
@@ -55,7 +55,7 @@ namespace Motion
             return ret;
         }
 
-        void OnWrite8(size_t addr, uint8_t value)
+        void Write8(size_t addr, uint8_t value)
         {
 
             switch (addr)

@@ -17,7 +17,7 @@ namespace Motion
 {
     Cvar* logIP2DUART;
 
-    uint8_t DUART68681::OnRead8(size_t addr)
+    uint8_t DUART68681::Read8(size_t addr)
     {
         // must be computed BEFORE addr is masked down to a register index - GetDuartIONum looks at a bit far
         // above the low nibble that selects the register.
@@ -147,22 +147,22 @@ namespace Motion
         return ret;
     }
 
-    uint16_t DUART68681::OnRead16(size_t addr)
+    uint16_t DUART68681::Read16(size_t addr)
     {
         // big endian
-        return ((uint16_t)OnRead8(addr) << 8) | (uint16_t)OnRead8(addr + 1);
+        return ((uint16_t)Read8(addr) << 8) | (uint16_t)Read8(addr + 1);
     }
 
-    uint32_t DUART68681::OnRead32(size_t addr)
+    uint32_t DUART68681::Read32(size_t addr)
     {
         // big endian
-        return ((uint32_t)OnRead8(addr) << 24) | ((uint32_t)OnRead8(addr + 1) << 16) |
-               ((uint32_t)OnRead8(addr + 2) << 8) | (uint32_t)OnRead8(addr + 3);
+        return ((uint32_t)Read8(addr) << 24) | ((uint32_t)Read8(addr + 1) << 16) |
+               ((uint32_t)Read8(addr + 2) << 8) | (uint32_t)Read8(addr + 3);
     }
 
-    void DUART68681::OnWrite8(size_t addr, uint8_t value)
+    void DUART68681::Write8(size_t addr, uint8_t value)
     {
-        // must be computed BEFORE addr is masked down to a register index - see OnRead8
+        // must be computed BEFORE addr is masked down to a register index - see Read8
         auto duartId = GetDuartIONum(addr);
         addr = addr & (DUART_NUM_REGS - 1);
 
@@ -335,20 +335,20 @@ namespace Motion
             Logger::Log(DUART_LOG_PREFIX, std::format("DUART{} write8 0x{:x} to addr 0x{:x}", duartId, value, addr).c_str(), DUART_LOG_CHANNEL_NAME);
     }
 
-    void DUART68681::OnWrite16(size_t addr, uint16_t value)
+    void DUART68681::Write16(size_t addr, uint16_t value)
     {
         // big endian
-        OnWrite8(addr, (value) & 0xFF00);
-        OnWrite8(addr + 1, (value) & 0x00FF);
+        Write8(addr, (value) & 0xFF00);
+        Write8(addr + 1, (value) & 0x00FF);
     }
 
-    void DUART68681::OnWrite32(size_t addr, uint32_t value)
+    void DUART68681::Write32(size_t addr, uint32_t value)
     {
         // big endian
-        OnWrite8((addr), (value) & 0xFF000000);
-        OnWrite8((addr + 1), (value) & 0x00FF0000);
-        OnWrite8((addr + 2), (value) & 0x0000FF00);
-        OnWrite8((addr + 3), (value) & 0x000000FF);
+        Write8((addr), (value) & 0xFF000000);
+        Write8((addr + 1), (value) & 0x00FF0000);
+        Write8((addr + 2), (value) & 0x0000FF00);
+        Write8((addr + 3), (value) & 0x000000FF);
     }
 
     void DUART68681::SetBaudRate(int32_t duart, int32_t channelId, bool isRx, uint8_t data)

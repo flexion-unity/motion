@@ -77,8 +77,8 @@ namespace Motion
 
         // Register I/O
         // bus is 16 bit 
-        uint16_t OnRead16(size_t addr) override;
-        void OnWrite16(size_t addr, uint16_t value) override;
+        uint16_t Read16(size_t addr) override;
+        void Write16(size_t addr, uint16_t value) override;
     private: 
         void UpdateColourmap(size_t addr, uint16_t value);
 

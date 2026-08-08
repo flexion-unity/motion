@@ -35,7 +35,7 @@ namespace Motion
 
         if (mapping)
         {
-            return mapping->component->OnRead8(realAddr);
+            return mapping->component->Read8(realAddr);
         }
         else
         {
@@ -58,7 +58,7 @@ namespace Motion
 
         if (mapping)
         {
-            auto value = mapping->component->OnRead16(realAddr);
+            auto value = mapping->component->Read16(realAddr);
             // IRIS is a big-endian system
 
             return value;
@@ -85,7 +85,7 @@ namespace Motion
         if (mapping)
         {
             // IRIS is a big-endian system
-            auto value = mapping->component->OnRead32(realAddr);
+            auto value = mapping->component->Read32(realAddr);
 
             return value;
         }
@@ -157,7 +157,7 @@ namespace Motion
 
         if (mapping)
         {
-            return mapping->component->OnWrite8(realAddr, value);
+            return mapping->component->Write8(realAddr, value);
         }
         else
             Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU8 - Unmapped write of 0x{:x} to 0x{:x}!", value, realAddr).c_str(), LogChannels::Warning);
@@ -178,7 +178,7 @@ namespace Motion
         if (mapping)
         {
             // IRIS is a big-endian system
-            return mapping->component->OnWrite16(realAddr, value);
+            return mapping->component->Write16(realAddr, value);
         }
         else
             Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU16 - Unmapped write of 0x{:x} to 0x{:x}!", value, realAddr).c_str(), LogChannels::Warning);
@@ -198,7 +198,7 @@ namespace Motion
 
         if (mapping)
         {
-            return mapping->component->OnWrite32(realAddr, value);
+            return mapping->component->Write32(realAddr, value);
         }
         else
             Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU32 - Unmapped write of 0x{:x} to 0x{:x}!", value, addr).c_str(), LogChannels::Warning);

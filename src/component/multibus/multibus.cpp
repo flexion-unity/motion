@@ -136,88 +136,88 @@ namespace Motion
         return true; 
     }
 
-    uint8_t Multibus::OnRead8(size_t addr) 
+    uint8_t Multibus::Read8(size_t addr) 
     {
         if (!UseCachedReadSlot(addr))
             if (!SetCachedReadSlot(addr))
             {
                 Logger::Log(MULTIBUS_LOG_PREFIX,
-                std::format("Multibus::OnRead8: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
+                std::format("Multibus::Read8: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
                 LogChannels::Warning);
                 return 0x00;
             }
 
-        return lastSlotRead->component->OnRead8(addr);
+        return lastSlotRead->component->Read8(addr);
     }
 
-    uint16_t Multibus::OnRead16(size_t addr)
+    uint16_t Multibus::Read16(size_t addr)
     {
         if (!UseCachedReadSlot(addr))
             if (!SetCachedReadSlot(addr))
             {
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
-                std::format("Multibus::OnRead16: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
+                std::format("Multibus::Read16: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
                 LogChannels::Warning);
                 return 0x00;
             }
 
-        return lastSlotRead->component->OnRead16(addr);
+        return lastSlotRead->component->Read16(addr);
     }
 
-    uint32_t Multibus::OnRead32(size_t addr) 
+    uint32_t Multibus::Read32(size_t addr) 
     {
         if (!UseCachedReadSlot(addr))
             if (!SetCachedReadSlot(addr))
             {
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
-                std::format("Multibus::OnRead32: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
+                std::format("Multibus::Read32: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
                 LogChannels::Warning);
                 return 0x00;
             }
 
-        return lastSlotRead->component->OnRead32(addr);
+        return lastSlotRead->component->Read32(addr);
     }
 
-    void Multibus::OnWrite8(size_t addr, uint8_t value) 
+    void Multibus::Write8(size_t addr, uint8_t value) 
     {
         if (!UseCachedWriteSlot(addr))
             if (!SetCachedWriteSlot(addr))
             {
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
-                std::format("Multibus::OnWrite8: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
+                std::format("Multibus::Write8: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                 LogChannels::Warning);
                 return;
             }
             
-        lastSlotRead->component->OnWrite8(addr, value);
+        lastSlotRead->component->Write8(addr, value);
     }
 
-    void Multibus::OnWrite16(size_t addr, uint16_t value)
+    void Multibus::Write16(size_t addr, uint16_t value)
     {
         if (!UseCachedWriteSlot(addr))
             if (!SetCachedWriteSlot(addr))
             {
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
-                std::format("Multibus::OnWrite16: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
+                std::format("Multibus::Write16: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                 LogChannels::Warning);
                 return;
             }
 
-        lastSlotRead->component->OnWrite16(addr, value);
+        lastSlotRead->component->Write16(addr, value);
     }
     
-    void Multibus::OnWrite32(size_t addr, uint32_t value)
+    void Multibus::Write32(size_t addr, uint32_t value)
     {
         if (!UseCachedWriteSlot(addr))
             if (!SetCachedWriteSlot(addr))
             {
                 Logger::Log(MULTIBUS_LOG_PREFIX, 
-                std::format("Multibus::OnWrite32: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
+                std::format("Multibus::Write32: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                 LogChannels::Warning);
                 return;
             }
 
-        lastSlotRead->component->OnWrite32(addr, value);       
+        lastSlotRead->component->Write32(addr, value);       
     }
 
     void Multibus::Shutdown()

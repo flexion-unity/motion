@@ -63,13 +63,13 @@ namespace Motion
 
         const char* GetName() { return "IRIS 3130 System PROM Private SRAM [MCM2016HN16 - IP2/U95]"; };
 
-        uint8_t OnRead8(size_t addr) override 
+        uint8_t Read8(size_t addr) override 
         { 
             addr %= (size_t)SRAM_SIZE;
             return (sram[addr]); 
         }
 
-        uint16_t OnRead16(size_t addr) override 
+        uint16_t Read16(size_t addr) override 
         { 
             addr %= (size_t)SRAM_SIZE;
             uint16_t* rom16 = (uint16_t*)sram; 
@@ -78,7 +78,7 @@ namespace Motion
             return value;
         }
 
-        uint32_t OnRead32(size_t addr) override 
+        uint32_t Read32(size_t addr) override 
         { 
             addr %= (size_t)SRAM_SIZE;
             uint32_t* rom32 = (uint32_t*)sram; 
@@ -87,13 +87,13 @@ namespace Motion
             return rom32[addr >> 2]; 
         }
 
-        void OnWrite8(size_t addr, uint8_t value) 
+        void Write8(size_t addr, uint8_t value) 
         { 
             addr %= (size_t)SRAM_SIZE;
             sram[addr] = value; 
         }
 
-        void OnWrite16(size_t addr, uint16_t value) 
+        void Write16(size_t addr, uint16_t value) 
         { 
             addr %= (size_t)SRAM_SIZE;
             uint16_t* rom16 = (uint16_t*)sram; 
@@ -101,7 +101,7 @@ namespace Motion
             rom16[addr >> 1] = value; 
         }
 
-        void OnWrite32(size_t addr, uint32_t value)
+        void Write32(size_t addr, uint32_t value)
         { 
             addr %= (size_t)SRAM_SIZE;
             uint32_t* rom32 = (uint32_t*)sram; 

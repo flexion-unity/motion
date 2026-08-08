@@ -15,15 +15,15 @@ namespace Motion
 
     // all of this code should be macroised or turned into  utility functions in /platform/util
 
-    uint8_t IP2MMU::OnRead8(size_t addr)
+    uint8_t IP2MMU::Read8(size_t addr)
     {
         if (addr & 1)
-            return OnRead16(addr) & 0xFF;
+            return Read16(addr) & 0xFF;
         else
-            return OnRead16(addr) >> 8;
+            return Read16(addr) >> 8;
     }
 
-    uint16_t IP2MMU::OnRead16(size_t addr)
+    uint16_t IP2MMU::Read16(size_t addr)
     {
         uint32_t ret = 0xFF;
 
@@ -71,15 +71,15 @@ namespace Motion
         return ret;
     }
 
-    uint32_t IP2MMU::OnRead32(size_t addr)
+    uint32_t IP2MMU::Read32(size_t addr)
     {
-        return (OnRead16(addr) << 16
-        | OnRead16(addr + 2));
+        return (Read16(addr) << 16
+        | Read16(addr + 2));
     }
 
-    void IP2MMU::OnWrite8(size_t addr, uint8_t value)
+    void IP2MMU::Write8(size_t addr, uint8_t value)
     {
-        uint16_t val = OnRead16(addr);
+        uint16_t val = Read16(addr);
 
         // big endian
         if (addr & 1)
@@ -87,10 +87,10 @@ namespace Motion
         else
             val = (val | 0x00FF) & (value << 8);
 
-        OnWrite16(addr, val);
+        Write16(addr, val);
     }
 
-    void IP2MMU::OnWrite16(size_t addr, uint16_t value)
+    void IP2MMU::Write16(size_t addr, uint16_t value)
     {
         size_t index = 0;
 
@@ -138,10 +138,10 @@ namespace Motion
             Logger::Log(LOG_PREFIX_IP2MMU, std::format("IP2 MMU write 0x{:x} to address 0x{:x} (check debug window)", value, addr).c_str(), MMU_LOG_CHANNEL_NAME);   
     }
 
-    void IP2MMU::OnWrite32(size_t addr, uint32_t value)
+    void IP2MMU::Write32(size_t addr, uint32_t value)
     {
-        OnWrite16(addr, value >> 16);
-        OnWrite16(addr + 2, value);
+        Write16(addr, value >> 16);
+        Write16(addr + 2, value);
     }
 
     //

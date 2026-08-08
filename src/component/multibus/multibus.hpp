@@ -95,12 +95,12 @@ namespace Motion
         // NOTE: no attempt is made to prevent the addresses overlapping. the first slot in the range will be used.
         bool AddSlot(Slot slot, int32_t id);
 
-        uint8_t OnRead8(size_t addr) override;
-        uint16_t OnRead16(size_t addr) override;
-        uint32_t OnRead32(size_t addr) override;
-        void OnWrite8(size_t addr, uint8_t value) override;
-        void OnWrite16(size_t addr, uint16_t value) override;
-        void OnWrite32(size_t addr, uint32_t value) override;
+        uint8_t Read8(size_t addr) override;
+        uint16_t Read16(size_t addr) override;
+        uint32_t Read32(size_t addr) override;
+        void Write8(size_t addr, uint8_t value) override;
+        void Write16(size_t addr, uint16_t value) override;
+        void Write32(size_t addr, uint32_t value) override;
         // Fire a shared MultiBus IRQ.
         void FireMultibusIRQ(int32_t number);
     private:

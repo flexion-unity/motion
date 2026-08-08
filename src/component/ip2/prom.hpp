@@ -21,13 +21,13 @@ namespace Motion
 
         const char* GetName() { return "IRIS 3130 System PROM"; };
 
-        uint8_t OnRead8(size_t addr) override 
+        uint8_t Read8(size_t addr) override 
         { 
             addr %= (size_t)promSize->GetValue();
             return (rom[addr]); 
         };
 
-        uint16_t OnRead16(size_t addr) override 
+        uint16_t Read16(size_t addr) override 
         { 
             addr %= (size_t)promSize->GetValue();
             uint16_t* rom16 = (uint16_t*)rom; 
@@ -36,7 +36,7 @@ namespace Motion
             return value;
         };
 
-        uint32_t OnRead32(size_t addr) override 
+        uint32_t Read32(size_t addr) override 
         { 
             addr %= (size_t)promSize->GetValue();
             uint32_t* rom32 = (uint32_t*)rom; 
@@ -45,17 +45,17 @@ namespace Motion
             return value;
         };
 
-        void OnWrite8(size_t addr, uint8_t value) override
+        void Write8(size_t addr, uint8_t value) override
         { 
             Logger::Log(LOG_PREFIX_PROM, std::format("Tried to write 8-bit {:x} to PROM mapped {:x}", value, addr).c_str(), LogChannels::Warning);
         };
 
-        void OnWrite16(size_t addr, uint16_t value) override
+        void Write16(size_t addr, uint16_t value) override
         { 
             Logger::Log(LOG_PREFIX_PROM, std::format("Tried to write 16-bit {:x} to PROM mapped {:x}", value, addr).c_str(), LogChannels::Warning);
         };
 
-        void OnWrite32(size_t addr, uint32_t value) override
+        void Write32(size_t addr, uint32_t value) override
         { 
             Logger::Log(LOG_PREFIX_PROM, std::format("Tried to write 32-bit {:x} to PROM mapped {:x}", value, addr).c_str(), LogChannels::Warning);
         };

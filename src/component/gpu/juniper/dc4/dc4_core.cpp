@@ -26,7 +26,7 @@ namespace Motion
         Coherent::RegisterExtension(extensionDC4);
     }
 
-    uint16_t DC4::OnRead16(size_t addr)
+    uint16_t DC4::Read16(size_t addr)
     {
         uint16_t ret = 0x00;
         switch (addr)
@@ -43,7 +43,7 @@ namespace Motion
         return ret;
     }    
 
-    void DC4::OnWrite16(size_t addr, uint16_t value)
+    void DC4::Write16(size_t addr, uint16_t value)
     {
         uint16_t ret = 0x00;
         switch (addr)
