@@ -116,7 +116,7 @@ namespace Motion
             uint32_t vramAddress = 0;
 
             // kinda guessing 
-            for (int y = 0; y < DC4_SCREEN_SIZE_Y; y++)
+            for (int y = DC4_SCREEN_SIZE_Y; y >= 0; y--) // the Y coordinates are in an anti-logical direction
             {
                 for (int x = 0; x < DC4_SCREEN_SIZE_X; x++)
                 {
