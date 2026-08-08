@@ -126,6 +126,9 @@ namespace Motion
             case UC4_BUFFER_YEB: 
                 yeb = value;
                 break;
+            case UC4_BUFFER_FMAB:
+                fmab = value;
+                break;
             case UC4_BUFFER_DDASAF:
                 ddasaf = value;
                 break;

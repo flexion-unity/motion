@@ -107,7 +107,7 @@ namespace Motion
 
     // fun fact there is a dma functionality but it is not used by anything
 
-    #define UC4_FONT_ROM_SIZE       0x8000
+    #define UC4_FONT_ROM_SIZE       0x10000
 
     #define LOG_PREFIX_UC4          "UC4"
 
