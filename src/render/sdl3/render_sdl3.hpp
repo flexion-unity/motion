@@ -62,7 +62,7 @@ namespace Motion
         // Getters for private fields
         SDL_GPUDevice* GetGPUDevice() { return gpuDevice; };
         SDL_GPUTransferBuffer* GetGPUTransferBuffer() { return transfer; };
-        WindowSDL3& GetWindow() { return window; };
+        WindowSDL3& GetWindow() override { return window; };
         SDL_Window* GetInternalSDL3Window() { return window.GetInternalWindow(); };
 
         SDL_GPUCommandBuffer* GetCommandBuffer() { return commandBuffer; };

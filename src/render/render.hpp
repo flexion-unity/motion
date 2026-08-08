@@ -48,16 +48,16 @@ namespace Motion
         #define WINDOW_DEFAULT_SIZE_Y       768
 
     public:
-        virtual void Start() = 0; 
+        virtual void Start() { };
         int32_t GetWindowSizeX() { return sizeX; }
         int32_t GetWindowSizeY() { return sizeY; }
 
         /// @brief sets the window size 
         /// @param x the x coordinate of the size to set
         /// @param y the y coordinate of the size to set
-        virtual void SetWindowSize(int32_t x, int32_t y) = 0;
+        virtual void SetWindowSize(int32_t x, int32_t y) { };
 
-        virtual void Shutdown() = 0; 
+        virtual void Shutdown() { }; 
 
     protected:
         int32_t sizeX;
@@ -67,25 +67,55 @@ namespace Motion
     // The render texture draw type of the screen.
     enum RenderTextureDrawType
     {
-        Default = 0,  // Normal render. Source and destination are the same.
-        Scaled = 1,   // Scale the texture to the screen size while rendering
-        Cutoff = 2,   // Cut off the texture. ONly display part of ti.
+        Default = 0,            // Normal render. Source and destination are the same.
+        Scaled = 1,             // Scale the texture while rendering and optionally only render part of it. This one uses the srcSize and destSize fields.
+       
+        // Always draw this texture the same size of the window and only sample from the portion of this texture within the window.
+        // This is basically just a special case for the IRIS GPU.
+        DrawAsWindowSize = 2,   
     }; 
 
     // base class for render texture. this is so we could use something other than SDL in the future.
     class RenderTexture
     {
     public: 
-        RenderTexture(Renderer* renderer, int32_t sizeX, int32_t sizeY) 
+        /// @brief Constructor for a render texture with separate source and destination sizes.
+        /// @param renderer The renderer to use for this texture.
+        /// @param sizeX The source size of this texture, X coordinate.
+        /// @param sizeY The source size of this texture, Y coordinate.
+        /// @param drawType the draw type to use for this texture.
+        RenderTexture(Renderer* renderer, int32_t sizeX, int32_t sizeY, RenderTextureDrawType drawType = RenderTextureDrawType::Default) 
         { 
             this->renderer = renderer; 
             this->sizeX = sizeX;
             this->sizeY = sizeY;
+            // sensible defaults just i case
+            this->destSizeX = this->srcSizeX = sizeX;
+            this->destSizeY = this->srcSizeY = sizeY;
             this->stride = sizeX * DEFAULT_TEXTURE_BYTES_PER_PIXEL;
             this->pixels = new uint8_t[GetMemorySize()];
         };
+
+        /// @brief Constructor for a render texture with separate source and destination sizes.
+        /// @param renderer The renderer to use for this texture.
+        /// @param sizeX The source size of this texture, X coordinate.
+        /// @param sizeY The source size of this texture, Y coordinate.
+        /// @param srcSizeX The area of this texture to render, X coordinate.
+        /// @param srcSizeY The area of this texture to render, Y coordinate.
+        /// @param destSizeX The final scaled size to render this texture (see RenderTextureDrawType), X coordinate.
+        /// @param destSizeY The final scaled size to render this texture (see RenderTextureDrawType), Y coordinate. 
+        /// @param drawType the draw type to use for this texture.
+        RenderTexture(Renderer* renderer, int32_t sizeX, int32_t sizeY, 
+            int32_t srcSizeX, int32_t srcSizeY, int32_t destSizeX, int32_t destSizeY, RenderTextureDrawType drawType = RenderTextureDrawType::Default)
+        : RenderTexture(renderer, sizeX, sizeY, drawType)
+        {
+            this->srcSizeX = srcSizeX;
+            this->srcSizeY = srcSizeY;
+            this->destSizeX = destSizeX;
+            this->destSizeY = destSizeY;
+        }
         
-        uint32_t sizeX = 0, sizeY = 0, stride = 0; 
+        uint32_t sizeX = 0, sizeY = 0, srcSizeX = 0, srcSizeY = 0, destSizeX = 0, destSizeY = 0, stride = 0; 
 
         uint32_t GetPixel(int32_t x, int32_t y, Color color);
         Color GetPixel(int32_t x, int32_t y);
@@ -129,8 +159,6 @@ namespace Motion
     /// @brief Base renderer class. Other renderers inherit from this
     class Renderer
     {
-
-
     public:
         virtual void Init() { };
 
@@ -154,12 +182,16 @@ namespace Motion
             passes.push_back(pass);
         }
 
+        virtual Window& GetWindow() { return window; };
+
     protected: 
         int32_t windowSizeX = WINDOW_DEFAULT_SIZE_X, windowSizeY = WINDOW_DEFAULT_SIZE_Y;
         // vecotr of render passes
         std::vector<RenderPass*> passes = std::vector<RenderPass*>(); 
         RenderTexture* screen = nullptr;
 
+    private: // don't exposed to derived classes as it will be a different type of window.
+        Window window;
     };
 
 

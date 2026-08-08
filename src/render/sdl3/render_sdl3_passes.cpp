@@ -64,12 +64,31 @@ namespace Motion
         SDL_GPUBlitInfo blitInfo = SDL_GPUBlitInfo();
 
         blitInfo.source.texture = sdl3RenderTexture->GetRawTexture();
-
         blitInfo.destination.texture = swapchainTexture;
+
         blitInfo.source.x = blitInfo.destination.x = 0;
         blitInfo.source.y = blitInfo.destination.y = 0;
-        blitInfo.source.w = blitInfo.destination.w = texture->sizeX;
-        blitInfo.source.h = blitInfo.destination.h = texture->sizeY;
+
+        switch (texture->drawType)
+        {
+            case RenderTextureDrawType::DrawAsWindowSize:
+                blitInfo.source.w = renderer->GetWindow().GetWindowSizeX();
+                blitInfo.source.h = renderer->GetWindow().GetWindowSizeX();
+                blitInfo.destination.w = renderer->GetWindow().GetWindowSizeX();
+                blitInfo.destination.h = renderer->GetWindow().GetWindowSizeY();
+                break; 
+            case RenderTextureDrawType::Default:
+                blitInfo.source.w = blitInfo.destination.w = texture->sizeX;
+                blitInfo.source.h = blitInfo.destination.h = texture->sizeY;
+                break;
+            case RenderTextureDrawType::Scaled:
+                blitInfo.source.w = texture->srcSizeX;
+                blitInfo.source.h = texture->srcSizeY;
+                blitInfo.destination.w = texture->destSizeX;
+                blitInfo.destination.h = texture->destSizeY;
+                break;
+        }
+
         blitInfo.clear_color = (SDL_FColor)(0.0, 0.0, 0.0, 1.0);
         blitInfo.load_op = SDL_GPULoadOp::SDL_GPU_LOADOP_LOAD;
 
