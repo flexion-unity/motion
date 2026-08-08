@@ -22,6 +22,32 @@ namespace Motion
         slot.ioEnd = UC4_REG_END;
         multibus->AddSlot(slot, UC4_MULTIBUS_SLOT);
 
+        extensionUC4 = new CoherentExtensionUC4(this);
+        Coherent::RegisterExtension(extensionUC4);
+    }
+
+    uint16_t UC4::Read16(size_t addr) 
+    {
+        uint16_t value = 0xFF;
+
+        switch (addr)
+        {
+            case UC4_REG_UCR:
+                value = ucr;
+                break;
+        }
+
+        return 0xFF;
+    }
+
+    void UC4::Write16(size_t addr, uint16_t value)
+    {
+        switch (addr)
+        {
+            case UC4_REG_UCR:
+                ucr = value;
+                break; 
+        }
     }
 
     void UC4::Shutdown()

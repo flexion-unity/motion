@@ -21,8 +21,93 @@ namespace Motion
     // Registers
 
     #define UC4_REG_START           0x50003000
+
+    // (buffer_id<<1)
+    #define UC4_REG_BUFFER_IO       0x50003080
+    #define UC4_REG_UCR             0x50003180
+
+    #define UC4_UCR_BOARDENAB	    (1 << 8)	    // read/write
+    #define UC4_UCR_MBENAB	        (1 << 9)	    // read/write
+    #define UC4_UCR_INTRENAB	    (1 << 10)	    // read/write
+    #define UC4_UCR_DMAENAB	        (1 << 11)	    // read/write **** NOT USED ****
+    #define UC4_UCR_ZERO	        (1 << 12)	    // read only 
+    #define UC4_UCR_VERTICAL	    (1 << 13)	    // read only 
+    #define UC4_UCR_VERTINTR	    (1 << 14)	    // read only
+    #define UC4_UCR_BUSY	        (1 << 15)	    // read only
+
+    #define UC4_REG_BUFFER_CMD      0x50003200
+
     #define UC4_REG_END             0x50003fff
     #define UC4_MULTIBUS_SLOT       18              // shown as 19
+
+    // All "drawline" commands are Bresenham segment type acceleration
+    // The basic calculations are done by the GL2 and the UC does the task of actually plotting it.
+    #define UC4_CMD_READFONT	    0x00
+    #define UC4_CMD_WRITEFONT	    0x01
+    #define UC4_CMD_READREPEAT	    0x02
+    #define UC4_CMD_SETADDRS	    0x03
+    #define UC4_CMD_SAVEWORD	    0x04
+    #define UC4_CMD_DRAWWORD	    0x05
+    #define UC4_CMD_READLSTIP	    0x06
+    #define UC4_CMD_NOOP		    0x07
+    #define UC4_CMD_DRAWCHAR	    0x09
+    #define UC4_CMD_FILLRECT	    0x0A
+    #define UC4_CMD_FILLTRAP	    0x0B
+    #define UC4_CMD_DRAWLINE1	    0x0C
+    #define UC4_CMD_DRAWLINE2	    0x0D
+    #define UC4_CMD_DRAWLINE4	    0x0E
+    #define UC4_CMD_DRAWLINE5	    0x0F
+    #define UC4_CMD_SETSCRMASKX	    0x10
+    #define UC4_CMD_SETSCRMASKY	    0x11
+    #define UC4_CMD_SETCOLORCD	    0x14
+    #define UC4_CMD_SETCOLORAB	    0x15
+    #define UC4_CMD_SETWECD	        0x16
+    #define UC4_CMD_SETWEAB	        0x17
+    #define UC4_CMD_READPIXELCD	    0x18
+    #define UC4_CMD_READPIXELAB	    0x19
+    #define UC4_CMD_DRAWPIXELCD	    0x1A
+    #define UC4_CMD_DRAWPIXELAB	    0x1B
+    #define UC4_CMD_DRAWLINE11	    0x1C
+    #define UC4_CMD_DRAWLINE10	    0x1D
+    #define UC4_CMD_DRAWLINE8	    0x1E
+    #define UC4_CMD_DRAWLINE7	    0x1F
+
+    // *** Buffers *** (use UC4_CMD_SAVEWORD and UC4_CMD_LOADWORD to access)
+    // All buffers except DDA* ar e write only
+    #define UC4_BUFFER_EDB          0x01
+    #define UC4_BUFFER_ECB          0x02
+    #define UC4_BUFFER_XSB          0x03    // current x coord
+    #define UC4_BUFFER_XEB          0x04
+    #define UC4_BUFFER_YSB          0x05    // current y coord
+    #define UC4_BUFFER_YEB          0x06
+    #define UC4_BUFFER_FMAB         0x07
+    #define UC4_BUFFER_DDASAF       0x08
+    #define UC4_BUFFER_DDASAI       0x09
+    #define UC4_BUFFER_DDAEAF       0x0A
+    #define UC4_BUFFER_DDAEAI       0x0B
+    #define UC4_BUFFER_DDASDF       0x0C
+    #define UC4_BUFFER_DDASDI       0x0D
+    #define UC4_BUFFER_DDAEDF       0x0E
+    #define UC4_BUFFER_DDAEDI       0x0F
+    #define UC4_BUFFER_MDB          0x10
+    #define UC4_BUFFER_RPB          0x11
+    #define UC4_BUFFER_CFB          0x12
+
+    // yes this is actually how it is done
+    #define UC4_BUFFER_TO_ADDR(x)   (UC4_REG_BUFFER_IO | (x<<1))
+
+    // fun fact there is a dma functionality but it is not used by anything
+
+    #define UC4_FONT_ROM_SIZE       0x8000
+
+    // the coherent extension
+    class CoherentExtensionUC4 : public CoherentExtension
+    {
+    public: 
+        CoherentExtensionUC4(Component* component) : CoherentExtension(component) { };
+
+        void AddUI() override;
+    }; 
 
     class UC4 : public Component
     {
@@ -30,9 +115,22 @@ namespace Motion
         void Start() override;
         void Shutdown() override;
         
+        // Register I/O
+        // bus is 16 bit hopefully
+        uint16_t Read16(size_t addr) override;
+        void Write16(size_t addr, uint16_t value) override;
+
         const char* GetName() override { return "GPU UC4 board (Update Controller v4)"; }; 
 
     private: 
         Multibus* multibus;
+
+        uint8_t fontRom[UC4_FONT_ROM_SIZE];
+
+        // registers
+        uint16_t scrMaskX = 0, scrMaskY = 0;
+        uint16_t ucr; // update controller reset register?
+
+        CoherentExtensionUC4* extensionUC4; 
     }; 
 }; 
