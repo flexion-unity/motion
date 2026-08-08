@@ -61,6 +61,10 @@ namespace Motion
     #define DC4_SCREEN_SIZE_X           1024
     #define DC4_SCREEN_SIZE_Y           768
 
+    // logging
+    extern Cvar* logDC4; 
+    #define DC4_LOG_CHANNEL_NAME        "DC4"
+
     class CoherentExtensionDC4 : public CoherentExtension
     {
     public:
@@ -101,8 +105,9 @@ namespace Motion
         uint16_t flags; 
         CoherentExtensionDC4* extensionDC4; 
         ComponentVRAM* vram;
+        LogChannel dc4Channel;
         Multibus* multibus;
 
-        bool shutUpInvalidLog = false;
+        bool logEnabled = false;
     }; 
 }; 

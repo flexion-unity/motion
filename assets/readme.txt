@@ -1,4 +1,3 @@
-
 M  O  T  I  O  N
 The SGI Emulator 
 
@@ -11,7 +10,7 @@ Here's a basic guide for using the emulator:
 
 ROMs go in the ROMs folder
 
-Window:
+THE MAIN WINDOW:
 
 Emulator Log window - shows you the log of what is happening
 Coherent window - debugger
@@ -50,49 +49,54 @@ Coherent window - debugger
 
 Command line:
 +set - set a convar. Follow with a value, "1" to enable "0" to disable.
-    logIP2MMU 
-        Log the IP2 MMU (a custom TTL job by SGI).
-    logIP2DUART 
-        Enables debug log messages for the IP2 DUART (two Signetics SCN68681 DUARTs).
-    logIP2RTC
-        Enables debug log messages for  the IP2 RTC, which is currently a stub emulation. 
-    profileFolder - the location of the profile
-        RESET the profile - delete every folder in this folder.
+    Logging: (warnings and errors are always printed)
+        logIP2MMU 
+            Log the IP2 MMU (a custom TTL job by SGI).
+        logIP2DUART 
+            Enables debug log messages for the IP2 DUART (two Signetics SCN68681 DUARTs).
+        logIP2RTC
+            Enables debug log messages for the IP2 RTC, which is currently a stub emulation. 
+        logDC4
+            Enables debug log messages for the
+        logChannels
+            Provide a custom log channel mask. Default is -1, which means "use the emulator's default settings":
 
-        Profile files:
-            ip2_sram.bin: Private PROM SRAM.
-    promPath
-        the path of the PROM (basically the BIOS) to load.
-        If you are messing around with different versions of the BIOS oyu can set this
-    forceEnterSerialMonitor
-        Disconnects the keyboard from the emulated machine. This forces the PROM to enter serial communication mode over DUART0 Port B.
-        Since the graphics system (and multibus) don't work yet this is the only way to do anything with the machine right now.
-    startPaused (default is 1)
-        Start the emulator paused, 0 will start the CPU immediately.
-    ramInstalled (default is 16777216)
-        RAM installed in bytes.
-        Must be between 0 (in which case only the serial PROM console will be available) and 33534432 / 32MB (anything above 16MB was never available as an 
-        official config, but seems to work).
-    numBitplanes (default is 32)
-        The number of BP3 boards to install. Affects maximum graphics bit depth and available graphics modes.
-        Must be a multiple of 4 and between 4 and 32. There is no real reason to change this since oyu can use mapped modes with more bitplanes.
-    logChannels
-        Provide a custom log channel mask. Default is -1, which means "use the emulator's default settings":
+            Masks:
+                0x00000001 - Allow Message level logs to be displayed.
+                0x00000002 - Allow Warning level logs to be displayed.
+                0x00000004 - Allow Error level logs to be displayed.
+                0x00000008 - Allow FatalError level logs to be displayed.
+                0x00000010 - Allow UnsafeShutdown level logs to be displayed.
 
-        Masks:
-            0x00000001 - Allow Message level logs to be displayed.
-            0x00000002 - Allow Warning level logs to be displayed.
-            0x00000004 - Allow Error level logs to be displayed.
-            0x00000008 - Allow FatalError level logs to be displayed.
-            0x00000010 - Allow UnsafeShutdown level logs to be displayed.
+        logDestinations
+            Provide a custom log destination mask. Default is -1, which means "use the emulator's default settings".
 
-    logDestinations
-        Provide a custom log destination mask. Default is -1, which means "use the emulator's default settings".
+            Masks:
+                0x00000001 - Log all messages to stdout.
+                0x00000002 - Log all messages to stderr.
+                0x00000004 - Log all messages to file.
+    Configuration: 
 
-        Masks:
-            0x00000001 - Log all messages to stdout.
-            0x00000002 - Log all messages to stderr.
-            0x00000004 - Log all messages to file.
+        profileFolder - the location of the profile
+            RESET the profile - delete every folder in this folder.
+
+            Profile files:
+                ip2_sram.bin: Private PROM SRAM.
+        promPath
+            the path of the PROM (basically the BIOS) to load.
+            If you are messing around with different versions of the BIOS oyu can set this
+        forceEnterSerialMonitor
+            Disconnects the keyboard from the emulated machine. This forces the PROM to enter serial communication mode over DUART0 Port B.
+            Since the graphics system (and multibus) don't work yet this is the only way to do anything with the machine right now.
+        startPaused (default is 1)
+            Start the emulator paused, 0 will start the CPU immediately.
+        ramInstalled (default is 16777216)
+            RAM installed in bytes.
+            Must be between 0 (in which case only the serial PROM console will be available) and 33534432 / 32MB (anything above 16MB was never available as an 
+            official config, but seems to work).
+        numBitplanes (default is 32)
+            The number of bitplanes (one BP3 board is 4 bitplanes) to install. Affects maximum graphics bit depth and available graphics modes.
+            Must be a multiple of 4 and between 4 and 32. There is no real reason to change this since oyu can use mapped modes with more bitplanes.
 
 Notes:
     "Unmapped write" or "Unmapped read" warnings: Ignore them, they are fine.

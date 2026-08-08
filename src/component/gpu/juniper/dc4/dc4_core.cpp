@@ -11,6 +11,8 @@
 
 namespace Motion
 {
+    Cvar* logDC4; 
+
     void DC4::Start()
     {
         // multibus is early start, guaranteed
@@ -25,6 +27,13 @@ namespace Motion
 
         extensionDC4 = new CoherentExtensionDC4(this);
         Coherent::RegisterExtension(extensionDC4);
+
+        dc4Channel = LogChannel(DC4_LOG_CHANNEL_NAME, ConsoleColor::BrightCyan, ConsoleColor::White);
+
+        logEnabled = logDC4->GetValue();
+
+        if (logEnabled)
+            Logger::SetChannelEnabled(DC4_LOG_CHANNEL_NAME);
     }
 
     uint16_t DC4::Read16(size_t addr)
@@ -39,7 +48,7 @@ namespace Motion
                 Logger::Log(LOG_PREFIX_DC4, std::format("UNKNOWN DC4 Read16 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Warning);
                 break;
         }
-        Logger::Log(LOG_PREFIX_DC4, std::format("DC4 Read16 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_DC4, std::format("DC4 Read16 0x{:x} from 0x{:x}", ret, addr).c_str(), DC4_LOG_CHANNEL_NAME);
         
         return ret;
     }    
@@ -60,7 +69,7 @@ namespace Motion
                 break;
         }
 
-        Logger::Log(LOG_PREFIX_DC4, std::format("DC4 Write16 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_DC4, std::format("DC4 Write16 0x{:x} to 0x{:x}", value, addr).c_str(), DC4_LOG_CHANNEL_NAME);
     }
 
     void DC4::UpdateColourmap(size_t addr, uint16_t value)
