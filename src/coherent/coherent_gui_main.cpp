@@ -181,7 +181,7 @@ namespace Motion
                     }
 
                     ImGui::SameLine();
-                    ImGui::Text("Clock Speed: %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
+                    ImGui::Text("Clock Speed: %.2f MHz", ((float)Emulation::GetMachine()->FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
                 }
                 
             }  

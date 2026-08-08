@@ -1,14 +1,17 @@
-ROMs go here
 
 M  O  T  I  O  N
 The SGI Emulator 
 
+Version 0.1.0
+Copyright (C) 2026 starfrost
+
 Currently this emulator targets the 68020-based IRIS 3000 series machines only.
 
-Copyright (C) 2026 
+Here's a basic guide for using the emulator:
 
-A basic guide for using the emulator. May be out of date it is always changing 
-Last updated: July 30, 2026 (v0.0730)
+ROMs go in the ROMs folder
+
+Window:
 
 Emulator Log window - shows you the log of what is happening
 Coherent window - debugger
@@ -36,12 +39,13 @@ Coherent window - debugger
 
     MENU ITEMS:
 
-    Peripherals - lets you access the peripheral debuggers.
-        IP2 MMU - Debug SGI's TTL MMU and view the pagetable.
-        DUART - Debug the serial DUARTs.
+        Peripherals - lets you access the peripheral debuggers.
+            IP2 MMU - Debug SGI's TTL MMU and view the pagetable.
+            DUART - Debug the serial DUARTs.
+            DC4 - Debug the GPU's display contrroller (DC4) board
 
     Style - lets you change style. The styles currently suck
-    System Configuration - reconfigure the IRIS's back panel switches.
+    Backpanel Switches - reconfigure the IRIS's back panel switches.
     Serial Console - Access the PROM console if enabled and view information about the state of the UARTs, ? is help.
 
 Command line:

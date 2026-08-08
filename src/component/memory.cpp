@@ -19,7 +19,7 @@ namespace Motion
   
     void Memory::Start()
     {
-        auto capacity = Emulation::GetMachine().totalRamInstalled;
+        auto capacity = Emulation::GetMachine()->totalRamInstalled;
         ram = new uint8_t[capacity];
         Logger::Log(LOG_PREFIX_EMU_MACHINE, std::format("System RAM is {} bytes", capacity).c_str());
         

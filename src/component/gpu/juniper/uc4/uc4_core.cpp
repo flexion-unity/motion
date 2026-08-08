@@ -14,7 +14,7 @@ namespace Motion
     void UC4::Start()
     {
         // multibus is early start, guaranteed
-        multibus = Emulation::GetMachine().FindComponentByType<Multibus>();
+        multibus = Emulation::GetMachine()->FindComponentByType<Multibus>();
 
         Multibus::Slot slot = Multibus::Slot(this);
 

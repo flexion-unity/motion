@@ -1,3 +1,12 @@
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    machine.hpp: Implements the shared code between all machines.
+*/
+
 #include <base/machine/machine.hpp>
 #include <coherent/coherent.hpp>
 
@@ -7,6 +16,8 @@ namespace Motion
 
     void Machine::Start()
     {
+        AddComponents();
+
         ramInstalled = Cvar::Get("ramInstalled", "16777216");
         totalRamInstalled = ramInstalled->GetValue();
 
@@ -30,7 +41,7 @@ namespace Motion
 
     void Machine::Tick()
     {
-        for (Component *component : components)
+        for (Component* component : components)
         {
             // 0 clockspeed = run AFAP
             // THis may not be a good idea. We may have to add fake cycles.

@@ -21,7 +21,7 @@ namespace Motion
     {
         if (!duart)
         {
-            duart = Emulation::GetMachine().FindComponentByType<DUART68681>();
+            duart = Emulation::GetMachine()->FindComponentByType<DUART68681>();
 
             // if still no duart return
             if (!duart)

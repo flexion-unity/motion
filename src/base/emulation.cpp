@@ -1,23 +1,13 @@
 #include <base/emulation.hpp>
 #include <component/component.hpp>
 #include <component/memory.hpp>
-#include <component/cpu/mc68020.hpp>
-#include <component/ip2/prom.hpp>
-#include <component/ip2/prom_sram.hpp>
-#include <component/ip2/ip2_mmu.hpp>
-#include <component/ip2/ip2_rtc.hpp>
-#include <component/ip2/ip2_duart.hpp>
-#include <component/ip2/ip2_dip_switches.hpp>
-#include <component/keyboard/keyboard_iris.hpp>
-#include <component/multibus/multibus.hpp>
-#include <component/gpu/juniper/dc4/dc4.hpp>
-#include <component/gpu/juniper/uc4/uc4.hpp>
-#include <component/gpu/juniper/bp3/bp3.hpp>
+#include <coherent/coherent.hpp>
+#include <base/machine/machines.hpp>
 
 namespace Motion
-{
-    Cvar* forceEnterSerialMonitor;
-    
+{    
+    Cvar* machineName;
+
     void Emulation::Init()
     {
         // TEMP
@@ -27,31 +17,34 @@ namespace Motion
         Start();
     }   
 
+    /// @brief Determines the users machine type.
+    void Emulation::DetermineMachineType()
+    {
+        machineName = Cvar::Get("machineName", "iris3130");
+
+        bool machineFound = false;
+
+        if (!strcmp(machineName->GetString(), "iris3130"))
+        {
+            machineFound = true;
+            machine = new IRIS3130();
+        }
+
+        if (!machineFound)
+        {
+            Logger::Log(std::format("Invalid machine {} selected. Defaulting to IRIS 3130...", machineName->GetString()).c_str(), LogChannels::Warning);
+            machine = new IRIS3130();
+        }
+
+        Logger::Log(std::format("Initialising machine {}...", machine->GetName()).c_str());
+    }
+
     void Emulation::Start()
     {
         Logger::Log("Starting emulation...");
-           
-        // this will be temporary until there is a
-        machine.AddComponent<Memory>();
-        machine.AddComponent<MC68020>();
-        machine.AddComponent<Multibus>();
-        machine.AddComponent<BP3>();
-        machine.AddComponent<PROM>();
-        machine.AddComponent<PROM_SRAM>();
-        machine.AddComponent<IP2MMU>();
-        machine.AddComponent<DUART68681>();
-        machine.AddComponent<IP2Switches>();
-        machine.AddComponent<IP2Clock>();
-        machine.AddComponent<DC4>();
-        machine.AddComponent<UC4>();
-
-        forceEnterSerialMonitor = Cvar::Get("forceEnterSerialMonitor", "0");
-
-        // temporary debug solution utnil the graphics system works
-        if (!forceEnterSerialMonitor->GetValue())
-            machine.AddComponent<KeyboardIris>();
-            
-        machine.Start();
+    
+        DetermineMachineType();
+        machine->Start();
 
         // enter the coherent debugger
         Coherent::Enter();
@@ -75,7 +68,7 @@ namespace Motion
 
     void Emulation::OnEvent(Event& evt)
     {
-        machine.OnEvent(evt);
+        machine->OnEvent(evt);
     }
      
     void Emulation::Reset()
@@ -89,7 +82,7 @@ namespace Motion
     void Emulation::SingleStep()
     {
         if (paused)
-            machine.SingleStep();
+            machine->SingleStep();
     }
 
     void Emulation::Tick()
@@ -101,7 +94,7 @@ namespace Motion
                 Coherent::Tick();
 
             if (!paused)
-                machine.Tick();
+                machine->Tick();
         }
     }
 
@@ -118,7 +111,7 @@ namespace Motion
             emuThread->join();
 
         Coherent::Leave();
-        machine.Shutdown();
+        machine->Shutdown();
         AddrSpace::Shutdown();
     }
 
@@ -127,5 +120,7 @@ namespace Motion
         Coherent::Shutdown();
         Stop();
         renderer->Shutdown();
+
+        delete machine; 
     }
 }

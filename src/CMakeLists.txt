@@ -66,5 +66,6 @@ add_executable(motion
     component/gpu/juniper/bp3/bp3_core.cpp
     component/gpu/vram.cpp
     render/sdl3/render_sdl3_window.cpp
+    base/machine/machine_iris3130.cpp
 )
 

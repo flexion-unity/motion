@@ -9,6 +9,7 @@
 #pragma once
 #include <Motion.hpp>
 #include <component/component.hpp>
+#include <base/emulation.hpp>
 
 namespace Motion
 {    
@@ -34,7 +35,7 @@ namespace Motion
         bool IsEarlyStart() override { return true; };
 
     private: 
-        size_t GetRamCapacity() { return Emulation::GetMachine().totalRamInstalled; };
+        size_t GetRamCapacity() { return Emulation::GetMachine()->totalRamInstalled; };
 
     };
 }

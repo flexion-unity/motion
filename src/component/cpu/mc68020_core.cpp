@@ -8,7 +8,7 @@ namespace Motion
         // ensure we are in reset so e.g. the MMUs don't try and map everything
         isInReset = true;
 
-        Logger::Log("*yawn* I'm a Motorola 68020!");
+        Logger::Log(LOG_PREFIX_68020, "*yawn* I'm a Motorola 68020!", LogChannels::Debug);
 
         moiraCpu.setModel(Motion::Lisburn::Model::M68020);
 
@@ -49,7 +49,7 @@ namespace Motion
         Coherent::SetSystem(system);
         // convert to nanoseconds
 
-        Logger::Log("Resetting Lisburn...");
+        Logger::Log(LOG_PREFIX_68020, "Resetting CPU...");
         moiraCpu.reset();
 
         // moira has a didReset delegate, but due to various design reasons (mostly include cycles) we can't use it 

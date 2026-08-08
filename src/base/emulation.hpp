@@ -17,8 +17,7 @@ namespace Motion
     // Temp until convars are a thi9ng
     #define CONFIG_PATH "Motion.cfg"
     
-    // this is extremely temporary
-    extern Cvar* forceEnterSerialMonitor;
+    extern Cvar* machineName;
 
     class Emulation
     {
@@ -34,7 +33,7 @@ namespace Motion
         static void Shutdown();     
 
         // Called by components to e.g. get the address space
-        static Machine& GetMachine() { return machine; }
+        static Machine* GetMachine() { return machine; }
         
         static bool IsRunning() { return running; }    
         static void SetRunning(bool value) { running = value; };
@@ -56,11 +55,15 @@ namespace Motion
         inline static FileStream config; 
 
         /// @brief the machine that is being emulated
-        inline static Machine machine;
+        inline static Machine* machine;
 
         /// @brief TEMP
         inline static Renderer* renderer;
 
+        /// @brief the thread that the emulation runs on
         inline static std::thread* emuThread;
+
+        /// @brief initialises the machine based on the convar values.
+        inline static void DetermineMachineType();
     };
 }

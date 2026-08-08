@@ -1,3 +1,12 @@
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    machine.hpp: Shared code between all machines.
+*/
+
 #pragma once
 
 #include <Motion.hpp>
@@ -24,10 +33,9 @@ namespace Motion
             AddrSpace::maxAddr = 0xFFFFFFFF;                    // 32-bit address space by default
         }
 
-        char* GetName() { return name; };
-        void SetName(char* name) { strncpy(name, this->name, STRING_MAX_SHORT ); };
+
         char* GetFriendlyName() { return friendlyName; };
-        void SetFriendlyName(char* friendlyName) { strncpy(friendlyName, this->name, STRING_MAX_SHORT ); };
+        void SetFriendlyName(char* friendlyName) { strncpy(friendlyName, this->friendlyName, STRING_MAX_SHORT ); };
 
         template <std::derived_from<Component> T>   
         T* AddComponent()  
@@ -70,14 +78,22 @@ namespace Motion
         // should this really be from emulation::event or should we use Emulation::GetMachine::OnEvent...
         void OnEvent(Event& evt);
 
+        /// @brief Called on shutdown.
         void Shutdown();
+
+        // Virtuals
+        virtual void AddComponents() { };
+        virtual int32_t GetInternalScreenSizeX() { return 0; };
+        virtual int32_t GetInternalScreenSizeY() { return 0; };
+        virtual int32_t GetRealScreenSizeX() { return 0; };
+        virtual int32_t GetRealScreenSizeY() { return 0; };
+        virtual const char* GetName() { return "*****EMULATOR BUG***** Name this Machine"; };
 
         // not sure if this is a good idea?
         size_t totalRamInstalled;
 
         // Setters for private fields
     private: 
-        char name[STRING_MAX_SHORT] = {0};          // Emulator's name for this machine
         char friendlyName[STRING_MAX_LONG] = {0};   // User's name for this machine
 
         AddrSpace addressSpace;                     // The address space of the machine. Components can use this to read/write memory.  

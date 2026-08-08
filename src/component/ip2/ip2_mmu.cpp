@@ -153,7 +153,7 @@ namespace Motion
         // IN order to minimise overhead, only get the CPU once (otherwise, everything would be massively slowed down)
         // ensure it irght here
         if (!cpu)
-            cpu = Emulation::GetMachine().FindComponentByType<ComponentCPU>();
+            cpu = Emulation::GetMachine()->FindComponentByType<ComponentCPU>();
 
         // don't map in reset
         if (cpu->GetIsInReset())

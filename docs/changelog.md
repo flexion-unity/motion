@@ -74,7 +74,7 @@ Similar to a .plan file
 
 ## 2026-08-04
 
-* DC4 colourmap emlation
+* DC4 colourmap emulation
     * low 4 bits of flags set mapped colourmap, 0 = use 4096 colour map
 * CoherentUI::COLOUR_HEADER added, temporary until we have a proper theme system (the current one sucks and needs to be rewritten)
 
@@ -82,4 +82,9 @@ Similar to a .plan file
 
 * VRAM addressing + BP3 board emumlation
     * basically linear. which bp3 planes exist apply a write mask, so if you have 16 bitplanes you write to memory basically anded with 0xffff
+* allow drawing of non-screen-sized texture (introduce RenderTextureDrawMode)
+* decouple window and renderer (window is now a renderer-backend-independent virtual Window class)
+
+TODO:
+
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE

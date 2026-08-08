@@ -34,7 +34,7 @@ namespace Motion
         
         // guaranteed, the CPU Initialises before this.
         if (!cpu)
-            cpu = Emulation::GetMachine().FindComponentByType<ComponentCPU>();
+            cpu = Emulation::GetMachine()->FindComponentByType<ComponentCPU>();
 
         // add the multibus state
         multibusExtension = new CoherentExtensionMultibus(this);

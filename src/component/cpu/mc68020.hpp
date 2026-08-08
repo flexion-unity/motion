@@ -8,7 +8,8 @@
 
 namespace Motion
 {
-    #define MOIRA_DISASM_BUF_SIZE    512
+    #define MOIRA_DISASM_BUF_SIZE   512
+    #define LOG_PREFIX_68020        "68020 CPU"
 
     /// @brief Debugger extensions for Lisburn
     /// if it deals with the debugger it goes in here. if it doesn't it doesn't 

@@ -1,3 +1,12 @@
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    dc4_core.cpp: DC4 DAC & Palette RAM emulation
+*/
+
 #include <component/gpu/juniper/dc4/dc4.hpp>
 
 namespace Motion
@@ -5,7 +14,7 @@ namespace Motion
     void DC4::Start()
     {
         // multibus is early start, guaranteed
-        multibus = Emulation::GetMachine().FindComponentByType<Multibus>();
+        multibus = Emulation::GetMachine()->FindComponentByType<Multibus>();
 
         Multibus::Slot slot = Multibus::Slot(this);
 

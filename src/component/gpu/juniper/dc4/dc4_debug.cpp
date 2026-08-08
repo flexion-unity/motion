@@ -1,3 +1,12 @@
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    dc4_debug.cpp: DC4 coherent extension
+*/
+
 #include <component/gpu/juniper/dc4/dc4.hpp>
 
 namespace Motion
