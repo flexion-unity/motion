@@ -50,8 +50,8 @@ namespace Motion
                 break;
             case UC4_CMD_WRITEFONT:
                 fmab &= UC4_FONT_ROM_SIZE - 1; 
-                fontRom[fmab] = (value & 0xFF00);
-                fontRom[fmab + 1] = (value >> 8) & 0xFF;
+                fontRom[fmab] = (value & 0xFF00) >> 8;
+                fontRom[fmab + 1] = value & 0xFF;
                 fmab += 2; 
                 break;
             case UC4_CMD_DRAWCHAR:
