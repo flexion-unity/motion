@@ -95,7 +95,7 @@ namespace Motion
 
     // yes this is actually how it is done
     #define UC4_BUFFER_TO_ADDR(x)   (UC4_REG_BUFFER_IO | (x<<1))
-    #define UC4_ADDR_TO_BUFFER(x)   (addr - 0x80) >> 1
+    #define UC4_ADDR_TO_BUFFER(x)   (addr - UC4_REG_BUFFER_IO) >> 1
 
     // fun fact there is a dma functionality but it is not used by anything
 
@@ -115,7 +115,7 @@ namespace Motion
     class UC4 : public Component
     {
         friend class CoherentExtensionUC4;
-        
+
     public: 
         void Start() override;
         void Shutdown() override;

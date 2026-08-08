@@ -124,10 +124,21 @@ namespace Motion
                     // get our palette address
                     uint32_t paletteValue = vram->Read32(vramAddress) & 0xFFF;
 
+                    uint16_t colourmapAddress = 0;
+
+
                     if (isMultimap)
-                        screen->SetPixel(x, y, colourMap[GetMultimapAddress(paletteValue & 0xFF)]); // cap to 256 colours * 16 maps
+                        colourmapAddress = GetMultimapAddress(paletteValue & 0xFF);
                     else
-                        screen->SetPixel(x, y, colourMap[paletteValue]);
+                        colourmapAddress = paletteValue;
+
+                    // technically RGB161616 but treated as RGB 888. Huh.
+                    uint32_t colour = ((colourMap[paletteValue] & 0xFF) << 24) & 0xFF000000
+                        | ((colourMap[paletteValue + 1] & 0xFF) << 16) & 0x00FF0000
+                        | ((colourMap[paletteValue + 2] & 0xFF) << 8) & 0x0000FF00
+                        | 0xFF; // this is the alpha
+
+                    screen->SetPixel(x, y, colour); // cap to 256 colours * 16 maps
                 }
             }
 

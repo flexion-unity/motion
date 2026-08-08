@@ -32,8 +32,8 @@ namespace Motion
 
             ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Buffers");
             ImGui::Text("EDB: 0x%x ECB: 0x%x", uc4->edb, uc4->ecb);
-            ImGui::Text("Current X: 0x%x XEB (error?): 0x%x", uc4->xsb, uc4->xeb);
-            ImGui::Text("Current Y: 0x%x YEB (error?): 0x%x", uc4->ysb, uc4->yeb);
+            ImGui::Text("Current X: %d XEB (error?): 0x%x", uc4->xsb, uc4->xeb);
+            ImGui::Text("Current Y: %d YEB (error?): 0x%x", uc4->ysb, uc4->yeb);
             ImGui::Text("FMAB: 0x%x", uc4->fmab);
             ImGui::Text("DDASAF: 0x%x DDASAI: 0x%x", uc4->ddasaf, uc4->ddasai);
             ImGui::Text("DDAEAF: 0x%x DDAEAI: 0x%x", uc4->ddaeaf, uc4->ddaeai);
