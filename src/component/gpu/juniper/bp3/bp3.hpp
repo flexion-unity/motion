@@ -23,6 +23,14 @@ namespace Motion
         // We model our VRAM as a 1024*1024*32 bits and mask all writes to the appropriate number of bitplanes.
         virtual int32_t GetBytesPerPixel() { return 4; }; 
 
+        // Register I/O
+        uint8_t OnRead8(size_t addr) override;
+        uint16_t OnRead16(size_t addr) override;
+        uint32_t OnRead32(size_t addr) override;
+        void OnWrite8(size_t addr, uint8_t value) override;
+        void OnWrite16(size_t addr, uint16_t value) override;
+        void OnWrite32(size_t addr, uint32_t value) override; 
+        
         const char* GetName() override { return "BP3 Bitplaned VRAM"; };
 
     private:

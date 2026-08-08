@@ -58,6 +58,44 @@ namespace Motion
         // don't need to update to match.
     }
 
+    // These are the same as memory read but due to the bitplane organisation we need to apply the write mask
+
+    uint8_t BP3::OnRead8(size_t addr)
+    {
+        return vram[addr];
+    }
+
+    uint16_t BP3::OnRead16(size_t addr) 
+    {
+        uint16_t value = *(uint16_t*)vram[addr >> 1];
+        return TOBE16(value);
+    }
+
+    uint32_t BP3::OnRead32(size_t addr) 
+    {
+        uint32_t value = *(uint32_t*)vram[addr >> 2];
+        return TOBE32(value);
+    }
+
+    void BP3::OnWrite8(size_t addr, uint8_t value)
+    {
+        vram[addr] = value & writeMask;
+    }
+
+    void BP3::OnWrite16(size_t addr, uint16_t value)
+    {
+        uint16_t* vram16 = (uint16_t*)vram;
+        TOBE16(addr);
+        vram16[addr >> 2] = value & writeMask;
+    }
+    
+    void BP3::OnWrite32(size_t addr, uint32_t value)
+    {
+        uint32_t* vram32 = (uint32_t*)vram;
+        TOBE32(addr);
+        vram32[addr >> 2] = value & writeMask;
+    }
+    
     void BP3::Shutdown()
     {
         ComponentVRAM::Shutdown();

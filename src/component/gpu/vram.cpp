@@ -23,6 +23,7 @@ namespace Motion
         Logger::Log(std::format("Video RAM size is {} bytes", vramSize).c_str());
     }
 
+
     void ComponentVRAM::Shutdown()
     {
         delete vram;

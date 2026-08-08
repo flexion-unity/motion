@@ -29,6 +29,7 @@ namespace Motion
         // We model the VRAM as a 1024*1024*4 type tihng.
         virtual int32_t GetBytesPerPixel() { return 0; }; 
 
+
     protected: 
         uint8_t* vram; 
 

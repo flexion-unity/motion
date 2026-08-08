@@ -85,7 +85,6 @@ namespace Motion
 
         // IRIS is a big-endian system.
         TOBE32(value);
-
         return value;
     }
 
@@ -131,7 +130,6 @@ namespace Motion
         // IRIS is a big-endian system.
         TOBE32(value);
         ram32[addr >> 2] = value;
-
     }
 
     void Memory::Shutdown()
