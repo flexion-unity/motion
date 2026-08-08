@@ -68,13 +68,15 @@ namespace Motion
     uint16_t BP3::OnRead16(size_t addr) 
     {
         uint16_t value = *(uint16_t*)vram[addr >> 1];
-        return TOBE16(value);
+        TOBE16(value); // TODO: FIX THIS TERRIBLE SYNTAX
+        return value;
     }
 
     uint32_t BP3::OnRead32(size_t addr) 
     {
         uint32_t value = *(uint32_t*)vram[addr >> 2];
-        return TOBE32(value);
+        TOBE32(value);
+        return value;
     }
 
     void BP3::OnWrite8(size_t addr, uint8_t value)
