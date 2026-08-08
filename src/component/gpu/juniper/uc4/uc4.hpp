@@ -100,6 +100,8 @@ namespace Motion
 
     #define UC4_FONT_ROM_SIZE       0x8000
 
+    #define LOG_PREFIX_UC4          "UC4"
+
     // the coherent extension
     class CoherentExtensionUC4 : public CoherentExtension
     {

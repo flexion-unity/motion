@@ -29,7 +29,8 @@ namespace Motion
         Coherent::RegisterExtension(extensionDC4);
 
         dc4Channel = LogChannel(DC4_LOG_CHANNEL_NAME, ConsoleColor::BrightCyan, ConsoleColor::White);
-
+        logDC4 = Cvar::Get("logDC4", "0");
+        
         logEnabled = logDC4->GetValue();
 
         if (logEnabled)
@@ -48,6 +49,7 @@ namespace Motion
                 Logger::Log(LOG_PREFIX_DC4, std::format("UNKNOWN DC4 Read16 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Warning);
                 break;
         }
+
         Logger::Log(LOG_PREFIX_DC4, std::format("DC4 Read16 0x{:x} from 0x{:x}", ret, addr).c_str(), DC4_LOG_CHANNEL_NAME);
         
         return ret;

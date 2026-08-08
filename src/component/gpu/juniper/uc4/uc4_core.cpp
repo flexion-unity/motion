@@ -28,16 +28,17 @@ namespace Motion
 
     uint16_t UC4::Read16(size_t addr) 
     {
-        uint16_t value = 0xFF;
+        uint16_t ret = 0xFF;
 
         switch (addr)
         {
             case UC4_REG_UCR:
-                value = ucr;
+                ret = ucr;
                 break;
         }
 
-        return 0xFF;
+        Logger::Log(LOG_PREFIX_UC4, std::format("UC4 Read16 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
+        return ret;
     }
 
     void UC4::Write16(size_t addr, uint16_t value)
@@ -48,6 +49,8 @@ namespace Motion
                 ucr = value;
                 break; 
         }
+
+        Logger::Log(LOG_PREFIX_UC4, std::format("UC4 Write16 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
     }
 
     void UC4::Shutdown()
