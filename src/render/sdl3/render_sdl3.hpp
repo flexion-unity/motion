@@ -4,7 +4,7 @@
 
     Copyright (c)2026 starfrost
 
-    render_sdl3.hpp: Implements SDL3 + IMGUI SDL3GPU 
+    render_sdl3.hpp: Defines interface to SDL3 + IMGUI SDL3GPU renderer
 */
 
 #pragma once
@@ -36,6 +36,18 @@ namespace Motion
         Renderer* renderer;
     };
 
+    class WindowSDL3 : public Window
+    {
+    public: 
+        void Start() override; 
+        void Shutdown() override; 
+
+        void SetWindowSize(int32_t x, int32_t y);
+        SDL_Window* GetInternalWindow() { return window; };
+    private:
+        SDL_Window* window; 
+    };
+
     /// @brief Base renderer class. Other renderers inherit from this
     class RendererSDL3 : public Renderer
     {
@@ -50,20 +62,16 @@ namespace Motion
         // Getters for private fields
         SDL_GPUDevice* GetGPUDevice() { return gpuDevice; };
         SDL_GPUTransferBuffer* GetGPUTransferBuffer() { return transfer; };
-        SDL_Window* GetWindow() { return window; };
+        WindowSDL3& GetWindow() { return window; };
+        SDL_Window* GetInternalSDL3Window() { return window.GetInternalWindow(); };
 
         SDL_GPUCommandBuffer* GetCommandBuffer() { return commandBuffer; };
         SDL_GPUTexture* GetSwapchainTexture() { return swapchainTexture; };
 
         // Setters for private fields
 
-        /// @brief sets the window size 
-        /// @param x the x coordinate of the size to set
-        /// @param y the y coordinate of the size to set
-        void SetWindowSize(int32_t x, int32_t y) override;
-
     private:
-        SDL_Window* window;
+        WindowSDL3 window;
 
         SDL_GPUDevice* gpuDevice;
         

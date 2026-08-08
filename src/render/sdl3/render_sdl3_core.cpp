@@ -36,19 +36,15 @@ namespace Motion
     /// @brief Initialises the SDL renderer. A failure is reported as a FATAL_ERROR Log.
     void RendererSDL3::Init()
     {
-        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL3 renderer...");
+        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL3...");
 
         // maybe we should rebase against release/3.4.x
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS)) //noreturn (SDL_INIT_AUDIO currently broken! )
             Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to initialise SDL3: {}!", SDL_GetError()).c_str(), LogChannels::FatalError);
 
-        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL window...", LogChannels::Debug);
-
-        window = SDL_CreateWindow(WINDOW_TITLE_DEFAULT, windowSizeX, windowSizeY, 0);
-
-        if (!window) // noreturn
-            Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to initialise SDL Window!", SDL_GetError()).c_str(), LogChannels::FatalError);
-
+        window.SetWindowSize(WINDOW_DEFAULT_SIZE_X, WINDOW_DEFAULT_SIZE_Y);
+        window.Start();
+    
         Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL GPU device...", LogChannels::Debug);
 
         gpuDevice = SDL_CreateGPUDevice(
@@ -69,7 +65,7 @@ namespace Motion
 
         Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL GPU renderer...", LogChannels::Debug);
 
-        renderer = SDL_CreateGPURenderer(gpuDevice, window);
+        renderer = SDL_CreateGPURenderer(gpuDevice, window.GetInternalWindow());
 
         if (!renderer) // noreturn
             Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to initialise SDL GPU Renderer!", SDL_GetError()).c_str(), LogChannels::FatalError);
@@ -77,13 +73,13 @@ namespace Motion
         Logger::Log(LOG_PREFIX_RENDER_SDL3, "Claiming window for GPU device...", LogChannels::Debug);
 
         // Claim the window for the gpu device
-        if (!SDL_ClaimWindowForGPUDevice(gpuDevice, window)) // noreturn
+        if (!SDL_ClaimWindowForGPUDevice(gpuDevice, window.GetInternalWindow())) // noreturn
             Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to claim SDL window for GPU device!", SDL_GetError()).c_str(), LogChannels::FatalError);
  
         Logger::Log(LOG_PREFIX_RENDER_SDL3, "Setting swapchain parameters...", LogChannels::Debug);
 
         // Set SDR
-        SDL_SetGPUSwapchainParameters(gpuDevice, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
+        SDL_SetGPUSwapchainParameters(gpuDevice, window.GetInternalWindow(), SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
 
         Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising IMGUI core...", LogChannels::Debug);
 
@@ -99,11 +95,11 @@ namespace Motion
 
         Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising IMGUI backend...", LogChannels::Debug);
 
-        ImGui_ImplSDL3_InitForSDLGPU(window);
+        ImGui_ImplSDL3_InitForSDLGPU(window.GetInternalWindow());
 
         ImGui_ImplSDLGPU3_InitInfo initInfo = {};
         initInfo.Device = gpuDevice;
-        initInfo.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpuDevice, window);
+        initInfo.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpuDevice, window.GetInternalWindow());
         initInfo.MSAASamples = SDL_GPU_SAMPLECOUNT_1;
         initInfo.SwapchainComposition = SDL_GPU_SWAPCHAINCOMPOSITION_SDR;
         initInfo.PresentMode = SDL_GPU_PRESENTMODE_VSYNC; // VSync enabled? Make it a convar?
@@ -111,7 +107,7 @@ namespace Motion
         ImGui_ImplSDLGPU3_Init(&initInfo);
 
         // create our screen texture
-        screen = new RenderTextureSDL3(this, windowSizeX, windowSizeY);
+        screen = new RenderTextureSDL3(this, window.GetWindowSizeX(), window.GetWindowSizeY());
 
         // never goes out of scope, never deleted. lol!
         MainRenderPass* renderPass = new MainRenderPass();
@@ -209,7 +205,7 @@ namespace Motion
         bool isMinimised = (data->DisplaySize.x < 0.0f | data->DisplaySize.y < 0.0f);
         commandBuffer = SDL_AcquireGPUCommandBuffer(gpuDevice);
         
-        SDL_AcquireGPUSwapchainTexture(commandBuffer, window, &swapchainTexture, nullptr, nullptr);
+        SDL_AcquireGPUSwapchainTexture(commandBuffer, window.GetInternalWindow(), &swapchainTexture, nullptr, nullptr);
 
         if (swapchainTexture && !isMinimised)
         {
@@ -238,13 +234,6 @@ namespace Motion
         SDL_SubmitGPUCommandBuffer(commandBuffer);
     }
 
-    // Allow resizing the window
-    void RendererSDL3::SetWindowSize(int32_t x, int32_t y)
-    {
-        if (window)
-            SDL_SetWindowSize(window, x, y);
-    }
-
     /// @brief Shut down the renderer.
     void RendererSDL3::Shutdown()
     {
@@ -266,11 +255,12 @@ namespace Motion
         ImGui_ImplSDL3_Shutdown();
         ImGui::DestroyContext();
 
-        SDL_ReleaseWindowFromGPUDevice(gpuDevice, window);
+        SDL_ReleaseWindowFromGPUDevice(gpuDevice, window.GetInternalWindow());
         SDL_DestroyRenderer(renderer);
         SDL_DestroyGPUDevice(gpuDevice);
-        SDL_DestroyWindow(window);
 
+        window.Shutdown();
+        
         SDL_Quit();
     }
 }

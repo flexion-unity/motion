@@ -67,10 +67,34 @@ Command line:
         Start the emulator paused, 0 will start the CPU immediately.
     ramInstalled (default is 16777216)
         RAM installed in bytes.
+        Must be between 0 (in which case only the serial PROM console will be available) and 33534432 / 32MB (anything above 16MB was never available as an 
+        official config, but seems to work).
+    numBitplanes (default is 32)
+        The number of BP3 boards to install. Affects maximum graphics bit depth and available graphics modes.
+        Must be a multiple of 4 and between 4 and 32. There is no real reason to change this since oyu can use mapped modes with more bitplanes.
         
 Notes:
     "Unmapped write" or "Unmapped read" warnings: Ignore them, they are fine.
 
+    If the PROM spits out a screen of the type:
+
+        Fault Information (vector offset: xxxx):
+        Exception: xxxxxxxxxxxxxxxxxx (Vector #xx)
+
+        Processor Registers (ssp: xxxxxxxx):
+            pc: xxxxxxxx  sr: xxxx
+
+        Board Registers:
+            text (base/limit): xxxx/xxxx
+            stk  (base/limit): xxxx/xxxx
+            status: xxxx parctl: xx mbp: xx
+
+    Then it crashed. Unless you were using the edit memory commands this should never happen.
+    If you did not intend to crash the machine and weren't trying to edit memory, take a screenshot of the screen and send it to me. 
+
+    UNIX panic advice: 
+        You can't run unix on here yet.
+        
 Not done:
     - Reconfigurable machines
     - Debugger commands

@@ -40,6 +40,37 @@ namespace Motion
         Color() : Color(0, 0, 0, 0) { };
     }; 
 
+    /// @brief this is the renderer independent window class
+    class Window
+    {  
+        // THis is the iris 3130's screen resolution. DON'T HARDCODE IT! MAKE IT A CVAR LATER
+        #define WINDOW_DEFAULT_SIZE_X       1024
+        #define WINDOW_DEFAULT_SIZE_Y       768
+
+    public:
+        virtual void Start() = 0; 
+        int32_t GetWindowSizeX() { return sizeX; }
+        int32_t GetWindowSizeY() { return sizeY; }
+
+        /// @brief sets the window size 
+        /// @param x the x coordinate of the size to set
+        /// @param y the y coordinate of the size to set
+        virtual void SetWindowSize(int32_t x, int32_t y) = 0;
+
+        virtual void Shutdown() = 0; 
+
+    protected:
+        int32_t sizeX;
+        int32_t sizeY;
+    }; 
+
+    // The render texture draw type of the screen.
+    enum RenderTextureDrawType
+    {
+        Default = 0,  // Normal render. Source and destination are the same.
+        Scaled = 1,   // Scale the texture to the screen size while rendering
+        Cutoff = 2,   // Cut off the texture. ONly display part of ti.
+    }; 
 
     // base class for render texture. this is so we could use something other than SDL in the future.
     class RenderTexture
@@ -66,6 +97,7 @@ namespace Motion
 
         uint64_t GetMemorySize() { return (sizeX * sizeY) << 2; };
 
+        RenderTextureDrawType drawType = RenderTextureDrawType::Default;
     protected:
         Renderer* renderer; 
         uint8_t* pixels;
@@ -97,9 +129,7 @@ namespace Motion
     /// @brief Base renderer class. Other renderers inherit from this
     class Renderer
     {
-        // THis is the iris 3130's screen resolution. DON'T HARDCODE IT!
-        #define WINDOW_SIZE_X       1024
-        #define WINDOW_SIZE_Y       768
+
 
     public:
         virtual void Init() { };
@@ -125,7 +155,7 @@ namespace Motion
         }
 
     protected: 
-        int32_t windowSizeX = WINDOW_SIZE_X, windowSizeY = WINDOW_SIZE_Y;
+        int32_t windowSizeX = WINDOW_DEFAULT_SIZE_X, windowSizeY = WINDOW_DEFAULT_SIZE_Y;
         // vecotr of render passes
         std::vector<RenderPass*> passes = std::vector<RenderPass*>(); 
         RenderTexture* screen = nullptr;
