@@ -109,10 +109,6 @@ namespace Motion
                 lines[i].id = i;
         }
 
-        /// @brief Check if this Component is a serial port.
-        /// @return TRUE since this is a serial port (component determination truth value)
-        bool IsSerialPort() override { return true; };
-
         /// @brief Get one of this component's raw serial lines.
         /// @param lineNum The line number to get (e.g. DUART chip/channel index).
         SerialLine& GetLine(int32_t lineNum) { return lines[lineNum % SERIAL_MAX_LINES]; };

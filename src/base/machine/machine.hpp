@@ -12,6 +12,7 @@
 #include <Motion.hpp>
 #include <component/addrspace.hpp>
 #include <component/component.hpp>
+#include <render/render.hpp>
 
 namespace Motion
 {
@@ -79,6 +80,10 @@ namespace Motion
 
         /// @brief Called on shutdown.
         void Shutdown();
+
+        /// @brief render something to the scren
+        /// @param screen the screen to render to
+        void Render(RenderTexture* screen);
 
         // Virtuals
         virtual void AddComponents() { };

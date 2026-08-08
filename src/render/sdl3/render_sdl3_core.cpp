@@ -210,7 +210,10 @@ namespace Motion
 
         if (swapchainTexture && !isMinimised)
         {
-           // run our render passes
+            // any component which needs to render now renders
+            Emulation::Render(screen);
+
+            // run our render passes
             for (RenderPass* pass : passes)
                 pass->Render(this, screen);
     

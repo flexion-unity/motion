@@ -10,6 +10,7 @@
 #pragma once
 #include <Motion.hpp>
 #include <base/event/event.hpp>
+#include <render/render.hpp>
 
 namespace Motion
 {
@@ -40,20 +41,11 @@ namespace Motion
         virtual void Write16(size_t addr, uint16_t value) { };
         virtual void Write32(size_t addr, uint32_t value) { };
 
+        /// @brief Called when it is time for this component to render.
+        /// @param texture the texture to render to
+        virtual void Render(RenderTexture* screen) { }; 
+
         // Component type determination truth values
-
-        /// @brief True if this component is a CPU.
-        /// @return A boolean indicating if this is a CPU. Note: Type equality checks could work for this but I think this is faster than RTTI, since it runs every 
-        /// tick
-        virtual bool IsCPU() { return false; };
-
-        /// @brief True if this component is a serial port.
-        /// @return A boolean indicating if this is a Serial Port.
-        virtual bool IsSerialPort() { return false; };
-
-        /// @brief True if this component is an MMU.
-        /// @return A boolean indicating if this is a Serial Port.
-        virtual bool IsMMU() { return false; }; 
 
         /// @brief get the name of this component. immutable const char*.
         virtual const char* GetName() { return "Name this component by overriding Component::GetName!"; };

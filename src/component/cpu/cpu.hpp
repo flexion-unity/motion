@@ -9,11 +9,6 @@ namespace Motion
     class ComponentCPU : public Component
     {
     public:
-
-        /// @brief See Motion::Component::IsCPU
-        /// @return See Motion::Component::IsCPU
-        bool IsCPU() override { return true; };
-
         /// @brief get the name of this component. immutable const char*.
         const char* GetName() { return "CPU Generic Base Class (error)"; };
 

@@ -123,9 +123,8 @@ namespace Motion
         void SetPixel(int32_t x, int32_t y, Color color); 
         void SetPixel(int32_t x, int32_t y, uint32_t color);
 
-        // setter for private
+        // getters for private fields
         uint8_t* GetPixels() { return pixels; };
-
         uint64_t GetMemorySize() { return (sizeX * sizeY) << 2; };
 
         RenderTextureDrawType drawType = RenderTextureDrawType::Default;
@@ -173,9 +172,11 @@ namespace Motion
         // Getters for private fields
         int32_t GetWindowSizeX() { return windowSizeX; }; 
         int32_t GetWindowSizeY() { return windowSizeY; }; 
+        RenderTexture* GetScreen() { return screen; };
 
         // Setters for private fields
         virtual void SetWindowSize(int32_t x, int32_t y) { };
+        
         
         void AddRenderPass(RenderPass* pass)
         {

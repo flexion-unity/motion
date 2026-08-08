@@ -26,6 +26,7 @@ namespace Motion
         static void Start();            // Start emulation
         static void Frame();            // render a frame
         static void Tick();             // run one tick of the system
+        static void Render(RenderTexture* screen);  // render
         static void OnEvent(Event& evt);   // fire an event
         static void Reset();            // reset the emulation
         static void SingleStep();       // run one emulation tick

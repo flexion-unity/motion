@@ -18,7 +18,7 @@ namespace Motion
     {
         // components are added earlier so the renderer can read the screen size
         AddComponents();
-        
+
         ramInstalled = Cvar::Get("ramInstalled", "16777216");
         totalRamInstalled = ramInstalled->GetValue();
 
@@ -81,9 +81,17 @@ namespace Motion
 
     void Machine::OnEvent(Event &evt)
     {
-        for (Component *component : components)
+        for (Component* component : components)
         {
             component->OnEvent(evt);
+        }
+    }
+
+    void Machine::Render(RenderTexture* screen)
+    {
+        for (Component* component : components)
+        {
+            component->Render(screen);
         }
     }
 

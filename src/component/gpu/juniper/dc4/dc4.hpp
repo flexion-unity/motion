@@ -14,6 +14,7 @@
 #include <component/addrspace.hpp>
 #include <component/component.hpp>
 #include <component/multibus/multibus.hpp>
+#include <component/gpu/vram.hpp>
 
 namespace Motion
 {
@@ -57,6 +58,9 @@ namespace Motion
     #define DC4_MULTIMAP_NUM_MAPS       64
     #define DC4_MULTIMAP_MASK           0xFF
 
+    #define DC4_SCREEN_SIZE_X           1024
+    #define DC4_SCREEN_SIZE_Y           768
+
     class CoherentExtensionDC4 : public CoherentExtension
     {
     public:
@@ -79,13 +83,26 @@ namespace Motion
         // bus is 16 bit 
         uint16_t Read16(size_t addr) override;
         void Write16(size_t addr, uint16_t value) override;
+
+        // This may be the worst interface ever invented.
+        // It's only used by other Enhanced IRIS / GF2 / Juniper stuff though.
+
+        // This is the DAC
+        // TODO: Limit the refresh rate by running this on its own thread like iris.
+        void Render(RenderTexture* render) override; 
+
     private: 
         void UpdateColourmap(size_t addr, uint16_t value);
+
+        uint16_t GetMultimapAddress(uint32_t offset) { return (((3 * (flags & 0x0F) << 8)) + ((offset - DC4_REG_COLOURMAP_START) >> 1));};
 
         // this is 16 bit so we index it with logical map indices not bytes as it is more logical
         uint16_t colourMap[DC4_COLOUR_RAM_SIZE >> 1]; // safe to put in BSS ????
         uint16_t flags; 
         CoherentExtensionDC4* extensionDC4; 
+        ComponentVRAM* vram;
         Multibus* multibus;
+
+        bool shutUpInvalidLog = false;
     }; 
 }; 

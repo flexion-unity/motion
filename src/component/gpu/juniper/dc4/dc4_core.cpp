@@ -15,6 +15,7 @@ namespace Motion
     {
         // multibus is early start, guaranteed
         multibus = Emulation::GetMachine()->FindComponentByType<Multibus>();
+        vram = Emulation::GetMachine()->FindComponentByType<ComponentVRAM>();
 
         Multibus::Slot slot = Multibus::Slot(this);
 
@@ -74,7 +75,7 @@ namespace Motion
         uint32_t index = 0;
 
         if (flags & DC4_FLAG_REG_ADDRMAP)
-            index = ((3 * (flags & 0x0F) << 8)) + ((addr - DC4_REG_COLOURMAP_START) >> 1);    
+            index = GetMultimapAddress(addr); 
         else
             index = (addr - DC4_REG_COLOURMAP_START) >> 1; // this indicates that it is single map.
 
@@ -89,6 +90,39 @@ namespace Motion
         colourMap[index] = value;
     }
 
+    void DC4::Render(RenderTexture* screen)
+    {
+        // rgb mode
+        if (flags & DC4_FLAG_RGB_MODE)
+        {
+            // if its rgb mode, just slam it in for now. we can deeal with the other 8 bits later.
+            // NOTE: The screen is 1024*1024 but only the top 768 lines are shown nso we can do this
+            memcpy(screen->GetPixels(), vram->GetPixels(), (DC4_SCREEN_SIZE_X * DC4_SCREEN_SIZE_Y) << 2); // always 4mb
+        }
+        else // slow path
+        {
+            bool isMultimap = (flags & DC4_FLAG_REG_ADDRMAP);
+            uint32_t vramAddress = 0;
+
+            // kinda guessing 
+            for (int y = 0; y < DC4_SCREEN_SIZE_Y; y++)
+            {
+                for (int x = 0; x < DC4_SCREEN_SIZE_X; x++)
+                {
+                    vramAddress += 4; 
+                    // get our palette address
+                    uint32_t paletteValue = vram->Read32(vramAddress) & 0xFFF;
+
+                    if (isMultimap)
+                        screen->SetPixel(x, y, colourMap[GetMultimapAddress(paletteValue & 0xFF)]); // cap to 256 colours * 16 maps
+                    else
+                        screen->SetPixel(x, y, colourMap[paletteValue]);
+                }
+            }
+
+        }
+    }
+    
     void DC4::Shutdown()
     {
         delete extensionDC4;

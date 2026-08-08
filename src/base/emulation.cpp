@@ -88,6 +88,11 @@ namespace Motion
             machine->SingleStep();
     }
 
+    void Emulation::Render(RenderTexture* screen)
+    {
+        machine->Render(screen);
+    }
+
     void Emulation::Tick()
     {
         while (running)

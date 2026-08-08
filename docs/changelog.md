@@ -86,6 +86,11 @@ Similar to a .plan file
 * decouple window and renderer (window is now a renderer-backend-independent virtual Window class)
 * Move code for adding components from emulation to machine and make it a virtual method so that we can have multiple machines; add the machineName convar.
 * user overridable log destination / channel mask behaviour with logDestinations and logChannels cvar
+* issue: currently renderer is dependent on some of the methods of machine
+    * currently solved by initialising and starting the machine separately.
+* OnRead/OnWrite* methods is now just Read*/Write*
+* removed component determination truth value obtaining methods (ismmu, iscpu, isserialport) as they are useless
+    * since we only really call the templated FindComponentByType methods once in start...
 
 TODO:
 
