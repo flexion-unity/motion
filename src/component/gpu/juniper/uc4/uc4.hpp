@@ -114,6 +114,8 @@ namespace Motion
 
     class UC4 : public Component
     {
+        friend class CoherentExtensionUC4;
+        
     public: 
         void Start() override;
         void Shutdown() override;
