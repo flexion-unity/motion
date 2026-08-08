@@ -73,7 +73,7 @@ namespace Motion
         {
             case RenderTextureDrawType::DrawAsWindowSize:
                 blitInfo.source.w = renderer->GetWindow().GetWindowSizeX();
-                blitInfo.source.h = renderer->GetWindow().GetWindowSizeX();
+                blitInfo.source.h = renderer->GetWindow().GetWindowSizeY();
                 blitInfo.destination.w = renderer->GetWindow().GetWindowSizeX();
                 blitInfo.destination.h = renderer->GetWindow().GetWindowSizeY();
                 break; 

@@ -56,7 +56,7 @@ Command line:
         Enables debug log messages for the IP2 DUART (two Signetics SCN68681 DUARTs).
     logIP2RTC
         Enables debug log messages for  the IP2 RTC, which is currently a stub emulation. 
-    profileLocation - the location of the profile
+    profileFolder - the location of the profile
         RESET the profile - delete every folder in this folder.
 
         Profile files:

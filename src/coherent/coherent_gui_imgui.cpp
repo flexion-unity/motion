@@ -20,6 +20,4 @@ namespace Motion
         auto targetCursorX = ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - contentSize.x;
         ImGui::SetCursorPosX(targetCursorX);
     }
-
-   
 }

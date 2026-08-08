@@ -15,7 +15,7 @@ namespace Motion
 
         DetermineMachineType();
 
-        // the renderer is dependent on specific information like the real internal fb size of the machine
+        // the renderer is dependent on specific information like the real internal fb size of the machine's GPU
         // TODO: a real config system that can get us away from this ?
         renderer->Init();
         Coherent::Init();
