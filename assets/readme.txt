@@ -76,7 +76,24 @@ Command line:
     numBitplanes (default is 32)
         The number of BP3 boards to install. Affects maximum graphics bit depth and available graphics modes.
         Must be a multiple of 4 and between 4 and 32. There is no real reason to change this since oyu can use mapped modes with more bitplanes.
-        
+    logChannels
+        Provide a custom log channel mask. Default is -1, which means "use the emulator's default settings":
+
+        Masks:
+            0x00000001 - Allow Message level logs to be displayed.
+            0x00000002 - Allow Warning level logs to be displayed.
+            0x00000004 - Allow Error level logs to be displayed.
+            0x00000008 - Allow FatalError level logs to be displayed.
+            0x00000010 - Allow UnsafeShutdown level logs to be displayed.
+
+    logDestinations
+        Provide a custom log destination mask. Default is -1, which means "use the emulator's default settings".
+
+        Masks:
+            0x00000001 - Log all messages to stdout.
+            0x00000002 - Log all messages to stderr.
+            0x00000004 - Log all messages to file.
+
 Notes:
     "Unmapped write" or "Unmapped read" warnings: Ignore them, they are fine.
 
