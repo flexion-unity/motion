@@ -25,7 +25,9 @@ namespace Motion
     {
     public:
         // THIS ALLOCATES THE TEXTURE RIGHT THERE!
-        RenderTextureSDL3(Renderer* renderer, uint32_t sizeX, uint32_t sizeY);
+        RenderTextureSDL3(Renderer* renderer, uint32_t sizeX, uint32_t sizeY, RenderTextureDrawType drawType  = RenderTextureDrawType::Default);
+        RenderTextureSDL3(Renderer* renderer, int32_t sizeX, int32_t sizeY, int32_t srcSizeX, int32_t srcSizeY, int32_t destSizeX, int32_t destSizeY, 
+            RenderTextureDrawType drawType = RenderTextureDrawType::Default);
         ~RenderTextureSDL3();
 
         // getters for privates

@@ -85,6 +85,7 @@ Similar to a .plan file
 * allow drawing of non-screen-sized texture (introduce RenderTextureDrawMode)
 * decouple window and renderer (window is now a renderer-backend-independent virtual Window class)
 * Move code for adding components from emulation to machine and make it a virtual method so that we can have multiple machines; add the machineName convar.
+* user overridable log destination / channel mask behaviour with logDestinations and logChannels cvar
 
 TODO:
 

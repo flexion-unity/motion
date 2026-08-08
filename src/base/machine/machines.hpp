@@ -24,7 +24,5 @@ namespace Motion
 
         int32_t GetInternalScreenSizeX() override { return 1024; };
         int32_t GetInternalScreenSizeY() override { return 1024; };
-        int32_t GetRealScreenSizeX() override { return 1024; };
-        int32_t GetRealScreenSizeY() override { return 768; };
     }; 
 }; 

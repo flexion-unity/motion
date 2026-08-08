@@ -38,8 +38,8 @@ namespace Motion
     {
         Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL3...");
 
-        // maybe we should rebase against release/3.4.x
-        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS)) //noreturn (SDL_INIT_AUDIO currently broken! )
+        
+        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS))
             Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to initialise SDL3: {}!", SDL_GetError()).c_str(), LogChannels::FatalError);
 
         window.SetWindowSize(WINDOW_DEFAULT_SIZE_X, WINDOW_DEFAULT_SIZE_Y);
@@ -107,7 +107,8 @@ namespace Motion
         ImGui_ImplSDLGPU3_Init(&initInfo);
 
         // create our screen texture
-        screen = new RenderTextureSDL3(this, window.GetWindowSizeX(), window.GetWindowSizeY());
+        screen = new RenderTextureSDL3(this, Emulation::GetMachine()->GetInternalScreenSizeX(), 
+        Emulation::GetMachine()->GetInternalScreenSizeY(), RenderTextureDrawType::DrawAsWindowSize);
 
         // never goes out of scope, never deleted. lol!
         MainRenderPass* renderPass = new MainRenderPass();

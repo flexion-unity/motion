@@ -92,6 +92,7 @@ namespace Motion
             // sensible defaults just i case
             this->destSizeX = this->srcSizeX = sizeX;
             this->destSizeY = this->srcSizeY = sizeY;
+            this->drawType = drawType;
             this->stride = sizeX * DEFAULT_TEXTURE_BYTES_PER_PIXEL;
             this->pixels = new uint8_t[GetMemorySize()];
         };

@@ -12,6 +12,11 @@ namespace Motion
     {
         // TEMP
         renderer = new RendererSDL3();
+
+        DetermineMachineType();
+
+        // the renderer is dependent on specific information like the real internal fb size of the machine
+        // TODO: a real config system that can get us away from this ?
         renderer->Init();
         Coherent::Init();
         Start();
@@ -36,16 +41,14 @@ namespace Motion
             machine = new IRIS3130();
         }
 
-        Logger::Log(std::format("Initialising machine {}...", machine->GetName()).c_str());
+        Logger::Log(std::format("Adding components for machine {}...", machine->GetName()).c_str());
     }
 
     void Emulation::Start()
     {
         Logger::Log("Starting emulation...");
-    
-        DetermineMachineType();
-        machine->Start();
 
+        machine->Start();
         // enter the coherent debugger
         Coherent::Enter();
 

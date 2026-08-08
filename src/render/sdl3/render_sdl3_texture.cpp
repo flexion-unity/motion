@@ -12,7 +12,14 @@
 
 namespace Motion
 {
-    RenderTextureSDL3::RenderTextureSDL3(Renderer* renderer, uint32_t sizeX, uint32_t sizeY) : RenderTexture::RenderTexture(renderer, sizeX, sizeY)
+    RenderTextureSDL3::RenderTextureSDL3(Renderer* renderer, uint32_t sizeX, uint32_t sizeY, RenderTextureDrawType drawType) 
+    : RenderTextureSDL3::RenderTextureSDL3(renderer, sizeX, sizeY, sizeX, sizeY, sizeX, sizeY, drawType)
+    {
+
+    }
+
+    RenderTextureSDL3::RenderTextureSDL3(Renderer* renderer, int32_t sizeX, int32_t sizeY, int32_t srcSizeX, int32_t srcSizeY, int32_t destSizeX, int32_t destSizeY, 
+        RenderTextureDrawType drawType) : RenderTexture::RenderTexture(renderer, sizeX, sizeY, srcSizeX, srcSizeY, destSizeX, destSizeY, drawType)
     {
         this->renderer = renderer;
 

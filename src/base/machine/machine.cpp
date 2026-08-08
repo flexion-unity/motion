@@ -16,8 +16,9 @@ namespace Motion
 
     void Machine::Start()
     {
+        // components are added earlier so the renderer can read the screen size
         AddComponents();
-
+        
         ramInstalled = Cvar::Get("ramInstalled", "16777216");
         totalRamInstalled = ramInstalled->GetValue();
 

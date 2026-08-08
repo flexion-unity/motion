@@ -33,7 +33,6 @@ namespace Motion
             AddrSpace::maxAddr = 0xFFFFFFFF;                    // 32-bit address space by default
         }
 
-
         char* GetFriendlyName() { return friendlyName; };
         void SetFriendlyName(char* friendlyName) { strncpy(friendlyName, this->friendlyName, STRING_MAX_SHORT ); };
 
@@ -85,8 +84,6 @@ namespace Motion
         virtual void AddComponents() { };
         virtual int32_t GetInternalScreenSizeX() { return 0; };
         virtual int32_t GetInternalScreenSizeY() { return 0; };
-        virtual int32_t GetRealScreenSizeX() { return 0; };
-        virtual int32_t GetRealScreenSizeY() { return 0; };
         virtual const char* GetName() { return "*****EMULATOR BUG***** Name this Machine"; };
 
         // not sure if this is a good idea?
