@@ -111,6 +111,9 @@ namespace Motion
 
     #define LOG_PREFIX_UC4          "UC4"
 
+    // As it turns out this is a very common operation because of how the write enable code works.
+    #define APPLY_WE_CODE(newV, orig, mask) (orig & ~mask) | (newV & mask)
+
     // the coherent extension
     class CoherentExtensionUC4 : public CoherentExtension
     {
@@ -186,7 +189,6 @@ namespace Motion
         // Methods
         uint16_t ReadBuffer(size_t addr);
         void WriteBuffer(size_t addr, uint16_t value);
-
         void ParseCommand(size_t addr, uint16_t value);
     }; 
 }; 

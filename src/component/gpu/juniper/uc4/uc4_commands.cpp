@@ -22,7 +22,7 @@ namespace Motion
 
         uint32_t commandId = UC4_ADDR_TO_COMMAND(addr);
         uint32_t bufferNum = 0; 
-        uint32_t fntAddr;
+        uint32_t fntAddr = fmab;
 
         switch (commandId)
         {
@@ -44,31 +44,34 @@ namespace Motion
                     for (int32_t x = xsb; x < xeb; x++)
                     {
                         auto vramAddr = vram->GetVramAddress(x, y);
-                        vram->Write32(vramAddr, colorcode & wecode);
+                        vram->Write32(vramAddr, APPLY_WE_CODE(colorcode, vram->Read32(vramAddr), wecode));
                     }
                 }
                 break;
             case UC4_CMD_WRITEFONT:
-                fmab &= UC4_FONT_ROM_SIZE - 1; 
+                // why does this code work
                 fontRom[fmab] = (value & 0xFF00) >> 8;
-                fontRom[fmab + 1] = value & 0xFF;
-                fmab += 2; 
+                fmab++;
+                fmab &= UC4_FONT_ROM_SIZE - 1; 
                 break;
             case UC4_CMD_DRAWCHAR:
 
                 // TODO: character at 0x40 is a stipple pattern
                 for (int32_t y = ysb; y < yeb; y++)
                 {
+                    uint8_t row = fontRom[fntAddr];
+                    
                     for (int32_t x = xsb; x < xeb; x++)
                     {
+                        bool bit = (row >> (7 - (x & 7))) & 1;
                         auto vramAddr = vram->GetVramAddress(x, y);
-                        
-                        // 1 byte per pixel
-                        vram->Write32(vramAddr, fontRom[fmab]);
 
-                        fntAddr++;
-                        fntAddr &= UC4_FONT_ROM_SIZE - 1; 
+                        // 1 byte per pixel
+                        vram->Write32(vramAddr, APPLY_WE_CODE((bit) ? colorcode : 0, vram->Read32(vramAddr), wecode)); // use a temp, as gl2 loads the fmab value before each char. so i assume it is not autoadvancing
                     }
+
+                    fntAddr++;
+                    fntAddr &= UC4_FONT_ROM_SIZE - 1; 
                 }
                 break; 
         }
