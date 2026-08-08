@@ -17,6 +17,21 @@ namespace Motion
         Emulation::SetRunning(false);
     }
 
+    void mainThread()
+    {
+        while (Emulation::IsRunning())
+            Emulation::Frame();
+
+        Logger::Log("Shutting down...");
+
+        // shut down the emulation
+        Emulation::Shutdown();
+        Logger::Shutdown();
+    }
+    
+    Cvar* logChannels;
+    Cvar* logDestinations;
+
     int main(int argc, char** argv)
     {
         Logger::settings.SetAppName(APP_NAME);
@@ -26,24 +41,23 @@ namespace Motion
         Logger::settings.sendAnsiCodesToFile = false;
         Logger::settings.postLogMessageIgnoresAnsiCodes = true; //coherent
         Logger::Init();
+        CommandLine::Parse(argc, argv);                     // parse command line
+
+        logChannels = Cvar::Get("logChannels", "-1");
+        logDestinations = Cvar::Get("logDestinations", "-1");
+
+        if (logChannels->GetValue() != -1)
+            Logger::settings.SetChannelMask((LogChannels)(int32_t)logChannels);
+
+        if (logDestinations->GetValue() != -1)
+            Logger::settings.SetDestinations((LogDestination)(int32_t)logChannels);
 
         Logger::Log(APP_NAME " v" APP_VERSION " " APP_BUILD_DATE);
         Logger::Log(APP_SIGNON, LogChannels::Message);
-        CommandLine::Parse(argc, argv);                     // parse command line
         Profile::Init();                                    // init config for user profile
         Emulation::Init();                                  // start emulation thread
-        
-        // run the emulation
-        // todo: needs to run on its own thread
 
-        while (Emulation::IsRunning())
-            Emulation::Frame();
-
-        Logger::Log("Shutting down...");
-
-        // shut down the emulation
-        Emulation::Shutdown();
-        Logger::Shutdown();
+        mainThread();
 
         return EXIT_SUCCESS;
     }

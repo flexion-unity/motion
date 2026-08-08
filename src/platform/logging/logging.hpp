@@ -1,5 +1,5 @@
 // 
-// Starfrost Shared Logging System-NG (NextGen) Version 5.3.0
+// Starfrost Shared Logging System-NG (NextGen) Version 5.3.1
 // Copyright © 2023-2026 starfrost
 //
 // This is a completely rewritten, C++ header only version of SSLS. 
@@ -18,6 +18,8 @@
 //                                      Add SetChannelEnabled(const char*, bool) to allow a channel to be enabled based on its name.
 //                                      Add ChannelExists(const char*) to check if a channel exists.
 //                                      Fix channel masks in settings not doing anything.
+// 5.3.1            August 8, 2026      Add GetChannelMask to get the channel mask.
+
 #pragma once
 
 // Includes
@@ -41,9 +43,9 @@
 
 // Strings, change to localise or whatever
 
-#define STRING_VERSION                  "5.3.0 (July 23, 2026)"                  // Version number as a string (we don't need it in any other form)
+#define STRING_VERSION                  "5.3.1 (August 8, 2026)"                // Version number as a string (we don't need it in any other form)
 #define STRING_SIGN_ON                  "SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
-#define STRING_ANSI_PREFIX              "\x1B["                                 // Some ANSI command prefixes use this
+#define STRING_ANSI_PREFIX              "\x1B["                                 // Some ANSI commands use this as a prefix
 
 #ifdef LOGGER_USE_NAMESPACE
 namespace LOGGER_NAMESPACE
@@ -138,8 +140,12 @@ namespace LOGGER_NAMESPACE
         /// @param destinations The mask of the log destinations to set. See the LogDesitnations enum for further information
         void SetDestinations(LogDestination destinations) { this->destinations = destinations; };
         
+        /// @brief Gets the mask of log channels.
+        /// only provided as a utility.
+        LogChannels GetChannelMask() { return channelMask; }; 
+
         /// @brief Sets the mask of log channels.
-        /// @param channelMask  The mask of the log destinations to set. See the LogDesitnations enum for further information
+        /// @param channelMask The mask of the log destinations to set. See the LogDesitnations enum for further information
         void SetChannelMask(LogChannels channelMask) { this->channelMask = channelMask; }; 
 
         /// @brief Set the filename for the logging system to use.
