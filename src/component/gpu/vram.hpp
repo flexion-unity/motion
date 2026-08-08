@@ -29,6 +29,12 @@ namespace Motion
         // We model the VRAM as a 1024*1024*4 type tihng.
         virtual int32_t GetBytesPerPixel() { return 0; }; 
 
+        /// @brief get the vram address for a coordinate
+        /// @param x the x coordinate
+        /// @param y the y coordinate
+        /// @return the vram address that maps to that coordinate.
+        virtual size_t GetVramAddress(int32_t x, int32_t y) { return 0; };
+
         uint8_t* GetPixels() { return vram; };
     protected: 
         uint8_t* vram; 

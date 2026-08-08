@@ -51,7 +51,12 @@ namespace Motion
 
         Logger::Log(LOG_PREFIX_BP3, std::format("There are {} bitplanes.", realBitplanes).c_str());
 
-        writeMask = (1 << realBitplanes) - 1; 
+        // bad code
+        if (realBitplanes == 32)
+            writeMask = 0xFFFFFFFF;
+        else
+            writeMask = (1 << (realBitplanes)) - 1; 
+
         // only NOW call vram start once the real number of bitplanes was determined.
         ComponentVRAM::Start();
 
@@ -69,7 +74,7 @@ namespace Motion
     {
         uint16_t* vram16 = (uint16_t*)vram; // shutup compiler
         uint16_t value = vram16[addr >> 1];
-        TOBE16(value); // TODO: FIX THIS TERRIBLE SYNTAX
+        //TOBE16(value); // TODO: FIX THIS TERRIBLE SYNTAX
         return value;
     }
 
@@ -77,7 +82,7 @@ namespace Motion
     {
         uint32_t* vram32 = (uint32_t*)vram; // shutup compiler
         uint32_t value = vram32[addr >> 2];        
-        TOBE32(value);
+        //TOBE32(value);
         return value;
     }
 
@@ -89,15 +94,25 @@ namespace Motion
     void BP3::Write16(size_t addr, uint16_t value)
     {
         uint16_t* vram16 = (uint16_t*)vram;
-        TOBE16(addr);
+        //TOBE16(value);
         vram16[addr >> 2] = value & writeMask;
     }
     
     void BP3::Write32(size_t addr, uint32_t value)
     {
         uint32_t* vram32 = (uint32_t*)vram;
-        TOBE32(addr);
+        //TOBE32(value);
         vram32[addr >> 2] = value & writeMask;
+    }
+
+    /// @brief get a vram address
+    /// @param x the x coordinate to get
+    /// @param y the y coordinate to get
+    /// @return the vram address of (x,y)
+    size_t BP3::GetVramAddress(int32_t x, int32_t y)
+    {
+        // size is always 1024x1024
+        return (y * 4096) + (x << 2);
     }
     
     void BP3::Shutdown()

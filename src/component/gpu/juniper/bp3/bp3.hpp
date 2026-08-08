@@ -23,6 +23,8 @@ namespace Motion
         // We model our VRAM as a 1024*1024*32 bits and mask all writes to the appropriate number of bitplanes.
         virtual int32_t GetBytesPerPixel() { return 4; }; 
 
+        size_t GetVramAddress(int32_t x, int32_t y) override;
+
         // Register I/O
         uint8_t Read8(size_t addr) override;
         uint16_t Read16(size_t addr) override;

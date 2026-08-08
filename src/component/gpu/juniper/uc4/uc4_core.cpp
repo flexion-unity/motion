@@ -15,6 +15,7 @@ namespace Motion
     {
         // multibus is early start, guaranteed
         multibus = Emulation::GetMachine()->FindComponentByType<Multibus>();
+        vram = Emulation::GetMachine()->FindComponentByType<ComponentVRAM>();
 
         Multibus::Slot slot = Multibus::Slot(this);
 
@@ -90,14 +91,15 @@ namespace Motion
             case UC4_REG_UCR:
                 ucr = value;
                 break; 
-            case UC4_REG_BUFFER_CMD:
+            case UC4_REG_COMMAND ... UC4_COMMAND_TO_ADDR(UC4_CMD_LAST):
+                ParseCommand(addr, value);
                 break; 
             default:
                 WriteBuffer(addr, value);
                 break;
         }
 
-        Logger::Log(LOG_PREFIX_UC4, std::format("UC4 Write16 0x{:x} to 0x{:x}", addr, value).c_str(), LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_UC4, std::format("UC4 Write16 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
     }
 
     void UC4::WriteBuffer(size_t addr, uint16_t value)

@@ -68,5 +68,6 @@ add_executable(motion
     render/sdl3/render_sdl3_window.cpp
     base/machine/machine_iris3130.cpp
     component/gpu/juniper/uc4/uc4_debug.cpp
+    component/gpu/juniper/uc4/uc4_commands.cpp
 )
 

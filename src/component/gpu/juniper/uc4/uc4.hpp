@@ -15,6 +15,7 @@
 #include <component/addrspace.hpp>
 #include <component/component.hpp>
 #include <component/multibus/multibus.hpp>
+#include <component/gpu/vram.hpp>
 
 namespace Motion
 {
@@ -35,7 +36,7 @@ namespace Motion
     #define UC4_UCR_VERTINTR	    (1 << 14)	    // read only **** vblank INTERUPT ****
     #define UC4_UCR_BUSY	        (1 << 15)	    // read only
 
-    #define UC4_REG_BUFFER_CMD      0x50003200
+    #define UC4_REG_COMMAND      0x50003200
 
     #define UC4_REG_END             0x50003fff
     #define UC4_MULTIBUS_SLOT       18              // shown as 19
@@ -72,6 +73,8 @@ namespace Motion
     #define UC4_CMD_DRAWLINE8	    0x1E
     #define UC4_CMD_DRAWLINE7	    0x1F
 
+    #define UC4_CMD_LAST            UC4_CMD_DRAWLINE7
+
     // *** Buffers *** (use UC4_CMD_SAVEWORD and UC4_CMD_LOADWORD to access)
     // All buffers except DDA* ar e write only
     #define UC4_BUFFER_EDB          0x01
@@ -93,9 +96,14 @@ namespace Motion
     #define UC4_BUFFER_RPB          0x11    // repeat register
     #define UC4_BUFFER_CFB          0x12    // config
 
-    // yes this is actually how it is done
+    // buffersa re in the 50003080...500030ff space 
     #define UC4_BUFFER_TO_ADDR(x)   (UC4_REG_BUFFER_IO | (x<<1))
     #define UC4_ADDR_TO_BUFFER(x)   (addr - UC4_REG_BUFFER_IO) >> 1
+
+    #define UC4_COMMAND_TO_ADDR(x)  (UC4_REG_COMMAND | (x<<1))
+    #define UC4_ADDR_TO_COMMAND(x)  (addr - UC4_REG_COMMAND) >> 1
+
+    #define UC4_NUM_FRAMEBUFFERS    2
 
     // fun fact there is a dma functionality but it is not used by anything
 
@@ -128,11 +136,10 @@ namespace Motion
         const char* GetName() override { return "GPU UC4 board (Update Controller v4)"; }; 
 
     private: 
-
-
         // Fields
 
         Multibus* multibus;
+        ComponentVRAM* vram; 
 
         uint8_t fontRom[UC4_FONT_ROM_SIZE];
 
@@ -140,7 +147,7 @@ namespace Motion
         uint16_t scrMaskX = 0, scrMaskY = 0;
         uint16_t ucr; // update controller reset register?
 
-        CoherentExtensionUC4* extensionUC4; 
+        CoherentExtensionUC4* extensionUC4;
 
         // the buffers
 
@@ -162,8 +169,24 @@ namespace Motion
         uint16_t repeat = 0;
         uint16_t config = 0;
 
+        // command stuff
+
+        // there are two buffers
+        struct Buffer
+        {
+            // figure out what is actually oging here
+            uint8_t dummy;
+        };
+
+        uint32_t colorcode;         // The current colour to render with.
+        uint32_t wecode;            // a mask (basically how many bp's there are?)
+
+        Buffer buffers[UC4_NUM_FRAMEBUFFERS] = {0};
+
         // Methods
         uint16_t ReadBuffer(size_t addr);
         void WriteBuffer(size_t addr, uint16_t value);
+
+        void ParseCommand(size_t addr, uint16_t value);
     }; 
 }; 
