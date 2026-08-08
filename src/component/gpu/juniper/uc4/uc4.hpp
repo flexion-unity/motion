@@ -32,7 +32,7 @@ namespace Motion
     #define UC4_UCR_DMAENAB	        (1 << 11)	    // read/write **** NOT USED ****
     #define UC4_UCR_ZERO	        (1 << 12)	    // read only 
     #define UC4_UCR_VERTICAL	    (1 << 13)	    // read only 
-    #define UC4_UCR_VERTINTR	    (1 << 14)	    // read only
+    #define UC4_UCR_VERTINTR	    (1 << 14)	    // read only **** vblank INTERUPT ****
     #define UC4_UCR_BUSY	        (1 << 15)	    // read only
 
     #define UC4_REG_BUFFER_CMD      0x50003200
@@ -89,12 +89,13 @@ namespace Motion
     #define UC4_BUFFER_DDASDI       0x0D
     #define UC4_BUFFER_DDAEDF       0x0E
     #define UC4_BUFFER_DDAEDI       0x0F
-    #define UC4_BUFFER_MDB          0x10
-    #define UC4_BUFFER_RPB          0x11
-    #define UC4_BUFFER_CFB          0x12
+    #define UC4_BUFFER_MDB          0x10    // mode register
+    #define UC4_BUFFER_RPB          0x11    // repeat register
+    #define UC4_BUFFER_CFB          0x12    // config
 
     // yes this is actually how it is done
     #define UC4_BUFFER_TO_ADDR(x)   (UC4_REG_BUFFER_IO | (x<<1))
+    #define UC4_ADDR_TO_BUFFER(x)   (addr - 0x80) >> 1
 
     // fun fact there is a dma functionality but it is not used by anything
 
@@ -125,6 +126,10 @@ namespace Motion
         const char* GetName() override { return "GPU UC4 board (Update Controller v4)"; }; 
 
     private: 
+
+
+        // Fields
+
         Multibus* multibus;
 
         uint8_t fontRom[UC4_FONT_ROM_SIZE];
@@ -134,5 +139,29 @@ namespace Motion
         uint16_t ucr; // update controller reset register?
 
         CoherentExtensionUC4* extensionUC4; 
+
+        // the buffers
+
+        uint16_t edb = 0;
+        uint16_t ecb = 0;
+        uint16_t xsb = 0;       // current x position
+        uint16_t xeb = 0;
+        uint16_t ysb = 0;       // current y position
+        uint16_t yeb = 0;
+        uint16_t fmab = 0;
+
+        // digital differential analyser stuff
+        uint16_t ddasaf = 0, ddasai = 0;
+        uint16_t ddaeaf = 0, ddaeai = 0;
+        uint16_t ddasdf = 0, ddasdi = 0;
+        uint16_t ddaedf = 0, ddaedi = 0;
+
+        uint16_t mode = 0;
+        uint16_t repeat = 0;
+        uint16_t config = 0;
+
+        // Methods
+        uint16_t ReadBuffer(size_t addr);
+        void WriteBuffer(size_t addr, uint16_t value);
     }; 
 }; 

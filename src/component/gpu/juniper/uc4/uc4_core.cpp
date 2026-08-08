@@ -26,6 +26,8 @@ namespace Motion
         Coherent::RegisterExtension(extensionUC4);
     }
 
+    // I/O
+
     uint16_t UC4::Read16(size_t addr) 
     {
         uint16_t ret = 0xFF;
@@ -35,10 +37,50 @@ namespace Motion
             case UC4_REG_UCR:
                 ret = ucr;
                 break;
+            default: // ???
+                ret = ReadBuffer(addr);
+                break;
         }
 
         Logger::Log(LOG_PREFIX_UC4, std::format("UC4 Read16 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
         return ret;
+    }
+
+    // only DDA buffers can be read
+    uint16_t UC4::ReadBuffer(size_t addr)
+    {
+        uint16_t bufferNumber = UC4_ADDR_TO_BUFFER(addr);
+        uint16_t ret = 0xFF; 
+
+        switch (bufferNumber)
+        {
+            case UC4_BUFFER_DDASAF:
+                ret = ddasaf;
+                break;
+            case UC4_BUFFER_DDASAI:
+                ret = ddasai;
+                break;
+            case UC4_BUFFER_DDASDF:
+                ret = ddasdf;
+                break;
+            case UC4_BUFFER_DDASDI:
+                ret = ddasaf;
+                break;
+            case UC4_BUFFER_DDAEDF:
+                ret = ddaedf;
+                break;
+            case UC4_BUFFER_DDAEDI:
+                ret = ddaedf;
+                break;
+            case UC4_BUFFER_DDAEAF:
+                ret = ddaeaf;
+                break;      
+            case UC4_BUFFER_DDAEAI:
+                ret = ddaeai;
+                break;  
+        }
+
+        return ret; 
     }
 
     void UC4::Write16(size_t addr, uint16_t value)
@@ -48,9 +90,74 @@ namespace Motion
             case UC4_REG_UCR:
                 ucr = value;
                 break; 
+            case UC4_REG_BUFFER_CMD:
+                break; 
+            default:
+                WriteBuffer(addr, value);
+                break;
         }
 
-        Logger::Log(LOG_PREFIX_UC4, std::format("UC4 Write16 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_UC4, std::format("UC4 Write16 0x{:x} to 0x{:x}", addr, value).c_str(), LogChannels::Debug);
+    }
+
+    void UC4::WriteBuffer(size_t addr, uint16_t value)
+    {
+        uint16_t bufferNumber = UC4_ADDR_TO_BUFFER(addr);
+
+        switch (bufferNumber)
+        {
+            case UC4_BUFFER_EDB:
+                edb = value;
+                break;
+            case UC4_BUFFER_ECB:
+                ecb = value;
+                break;
+            case UC4_BUFFER_XSB:
+                xsb = value;
+                break;
+            case UC4_BUFFER_XEB:
+                xeb = value;
+                break;
+            case UC4_BUFFER_YSB:
+                ysb = value;
+                break;
+            case UC4_BUFFER_YEB: 
+                yeb = value;
+                break;
+            case UC4_BUFFER_DDASAF:
+                ddasaf = value;
+                break;
+            case UC4_BUFFER_DDASAI:
+                ddasai = value;
+                break;
+            case UC4_BUFFER_DDASDF:
+                ddasdf = value;
+                break;
+            case UC4_BUFFER_DDASDI:
+                ddasdi = value;
+                break;
+            case UC4_BUFFER_DDAEDF:
+                ddaedf = value;
+                break;
+            case UC4_BUFFER_DDAEDI:
+                ddaedi = value;
+                break;
+            case UC4_BUFFER_DDAEAF:
+                ddaeaf = value;
+                break;      
+            case UC4_BUFFER_DDAEAI:
+                ddaeai = value;
+                break;            
+            case UC4_BUFFER_CFB:
+                config = value;
+                break;
+            case UC4_BUFFER_MDB:
+                mode = value;
+                break;
+            case UC4_BUFFER_RPB:
+                repeat = value;
+                break;
+        }
     }
 
     void UC4::Shutdown()
