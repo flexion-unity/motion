@@ -70,7 +70,7 @@ jobs:
         with:
             msystem: UCRT64
             update: true
-            install: mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-gcc
+            install: mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-zip
 
       - name: Configure
         run: >
@@ -89,8 +89,13 @@ jobs:
           ls -lR dist
           file "dist/motion-v${{github.run_number}}-${{ matrix.name }}/motion"
 
-      - name: Package
+      - name: Package (tarball)
+        if: runner.os != 'Windows'
         run: tar -czf "motion-v${{github.run_number}}-${{ matrix.name }}.tar.gz" -C dist "motion-v${{github.run_number}}-${{ matrix.name }}"
+
+      - name: Package (zip file)
+        if: runner.os == 'Windows'
+        run: zip -r "motion-v${{github.run_number}}-${{ matrix.name }}.zip" "motion-v${{github.run_number}}-${{ matrix.name }}"
 
       - uses: actions/upload-artifact@v7
         with:
@@ -117,7 +122,7 @@ jobs:
           merge-multiple: true
       - name: Compute datestamp
         id: version
-        run: echo "version=v$(date -u +'%Y.%m.%d-%H%M')" >> "$GITHUB_OUTPUT"
+        run: echo "version=Build ${{github.run_number}} at $(date -u +'%Y.%m.%d-%H%M')" >> "$GITHUB_OUTPUT"
 
       - name: Name archives
         env:
