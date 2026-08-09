@@ -87,13 +87,13 @@ namespace Motion
             return rom32[addr >> 2]; 
         }
 
-        void Write8(size_t addr, uint8_t value) 
+        void Write8(size_t addr, uint8_t value) override
         { 
             addr %= (size_t)SRAM_SIZE;
             sram[addr] = value; 
         }
 
-        void Write16(size_t addr, uint16_t value) 
+        void Write16(size_t addr, uint16_t value) override
         { 
             addr %= (size_t)SRAM_SIZE;
             uint16_t* rom16 = (uint16_t*)sram; 
@@ -101,7 +101,7 @@ namespace Motion
             rom16[addr >> 1] = value; 
         }
 
-        void Write32(size_t addr, uint32_t value)
+        void Write32(size_t addr, uint32_t value) override
         { 
             addr %= (size_t)SRAM_SIZE;
             uint32_t* rom32 = (uint32_t*)sram; 

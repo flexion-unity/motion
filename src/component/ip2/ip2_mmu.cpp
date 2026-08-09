@@ -171,17 +171,17 @@ namespace Motion
 
         uint16_t finalPageNumber = 0;
 
-        if (segment == MMU_SEGMENT_TEXTDATA)
+        if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_TEXTDATA))
         {
             limitValue = textdataLimit;
             baseValue = textdataBase;
         }
-        else if (segment == MMU_SEGMENT_STACK)
+        else if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_STACK))
         {
             limitValue = stackLimit;
             baseValue = stackBase;
         }
-        else if (segment == MMU_SEGMENT_KERNEL)
+        else if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_KERNEL))
         {
             baseValue = osBase;
             limitValue = 0xFFFF; // ??? hwere is register ???
@@ -197,7 +197,7 @@ namespace Motion
         
         // stack is mapped in reverse
         // MAME bit: "packed into a right-aligned field in the output.""
-        if (segment == MMU_SEGMENT_STACK)
+        if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_STACK))
         {
             // bits 23-12
             pageNumber = ((addr & 0xFFF000) >> 12) ^ 0x3FFF;

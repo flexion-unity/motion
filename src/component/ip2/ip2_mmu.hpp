@@ -114,7 +114,7 @@ namespace Motion
             ComponentMMU::Shutdown();
         }
 
-        const char* GetName() { return "IRIS 3130 TTL MMU"; };
+        const char* GetName() override { return "IRIS 3130 TTL MMU"; };
 
         // Register I/O
         uint8_t Read8(size_t addr) override;

@@ -29,7 +29,7 @@ namespace Motion
         void Write32(size_t addr, uint32_t value) override;
 
         /// @brief get the name of this component. immutable const char*.
-        const char* GetName() { return "System RAM"; };
+        const char* GetName() override { return "System RAM"; };
 
         // other stuff may be dependent on the memory, so start it first
         bool IsEarlyStart() override { return true; };

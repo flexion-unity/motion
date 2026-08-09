@@ -19,7 +19,7 @@ namespace Motion
         void Start() override;
         void Shutdown() override;
 
-        const char* GetName() { return "IRIS 3130 System PROM"; };
+        const char* GetName() override { return "IRIS 3130 System PROM"; };
 
         uint8_t Read8(size_t addr) override 
         { 
