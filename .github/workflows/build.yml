@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       release:
-        description: 'Create a datestamped release from this build'
+        description: 'Create a release from this build'
         type: boolean
         default: false
       release_version:
