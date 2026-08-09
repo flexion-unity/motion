@@ -82,25 +82,25 @@ jobs:
         run: cmake --build build --parallel
 
       - name: Stage install tree
-        run: cmake --install build --prefix "dist/motion-v${{github.run_number}}-${{ matrix.name }}"
+        run: cmake --install build --prefix "dist/motion-build${{github.run_number}}-${{ matrix.name }}"
 
       - name: Show what we produced
         run: |
           ls -lR dist
-          file "dist/motion-v${{github.run_number}}-${{ matrix.name }}/motion"
+          file "dist/motion-build${{github.run_number}}-${{ matrix.name }}/motion"
 
       - name: Package (tarball)
         if: runner.os != 'Windows'
-        run: tar -czf "motion-v${{github.run_number}}-${{ matrix.name }}.tar.gz" -C dist "motion-v${{github.run_number}}-${{ matrix.name }}"
+        run: tar -czf "motion-build${{github.run_number}}-${{ matrix.name }}.tar.gz" -C dist "motion-build${{github.run_number}}-${{ matrix.name }}"
 
       - name: Package (zip file)
         if: runner.os == 'Windows'
-        run: zip -r "motion-v${{github.run_number}}-${{ matrix.name }}.zip" "motion-v${{github.run_number}}-${{ matrix.name }}"
+        run: zip -r "motion-build${{github.run_number}}-${{ matrix.name }}.zip" "motion-build${{github.run_number}}-${{ matrix.name }}"
 
       - uses: actions/upload-artifact@v7
         with:
-          name: motion-v${{github.run_number}}-${{ matrix.name }}
-          path: motion-v${{github.run_number}}-${{ matrix.name }}.tar.gz
+          name: motion-build${{github.run_number}}-${{ matrix.name }}
+          path: motion-build${{github.run_number}}-${{ matrix.name }}.tar.gz
           if-no-files-found: error
 
   release:
