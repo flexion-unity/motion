@@ -103,7 +103,9 @@ Similar to a .plan file
 * Bugfixing for v0.1 release:
     - Add UC4 mode / config debug.
     - Add Coherent::Exception and break on exception
-
+    - Fix DC4 window scroll
+    - Fix reset
+    
 TODO:
 
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE

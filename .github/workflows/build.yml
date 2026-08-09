@@ -30,6 +30,7 @@ jobs:
             runner: ubuntu-24.04-arm
           - name: win64
             runner: windows-latest
+            shell: msys2 {0}
           - name: macos-universal
             runner: macos-latest
             cmake_extra: '-DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"'
@@ -55,6 +56,7 @@ jobs:
         if: runner.os == 'macOS'
         run: brew list ninja >/dev/null 2>&1 || brew install ninja
 
+      # Win64
       - name: Install build dependencies (Win64)
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
@@ -79,12 +81,12 @@ jobs:
           file "dist/motion-${{ matrix.name }}/motion"
 
       - name: Package
-        run: tar -czf "motion-${{ matrix.name }}.tar.gz" -C dist "motion-${{ matrix.name }}"
+        run: tar -czf "motion-v${{github.run_number}}-${{ matrix.name }}.tar.gz" -C dist "motion-${{ matrix.name }}"
 
       - uses: actions/upload-artifact@v7
         with:
           name: motion-${{ matrix.name }}
-          path: motion-${{ matrix.name }}.tar.gz
+          path: motion-v${{github.run_number}}-${{ matrix.name }}.tar.gz
           if-no-files-found: error
 
   release:
