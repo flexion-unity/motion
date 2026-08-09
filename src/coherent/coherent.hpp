@@ -268,6 +268,8 @@ namespace Motion
             currentSystem->SetRunState(CoherentSystem::RunState::Paused);
         }
 
+        static void Exception(uint32_t exception);
+
         /// This is the base class for all types of guards.
         class Guard
         {

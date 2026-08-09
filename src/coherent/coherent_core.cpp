@@ -152,4 +152,13 @@ namespace Motion
     {
         return watchpoints[addr];
     }
+
+    void Coherent::Exception(uint32_t exception)
+    {
+        if (breakOnException)
+        {
+            Logger::Log(COHERENT_LOG_PREFIX, std::format("Broke on exception 0x{:x}!!!", exception).c_str());
+            currentSystem->SetRunState(CoherentSystem::RunState::Paused);
+        }
+    }     
 }

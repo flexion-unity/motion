@@ -322,10 +322,10 @@ protected:
     //
     
     // Called before an exception is executed
-    virtual void willExecute(M68kException exc, u16 vector) { }
+    virtual void willExecuteException(M68kException exc, u16 vector) { }
     
     // Called after an exception has been executed
-    virtual void didExecute(M68kException exc, u16 vector) { }
+    virtual void didExecuteException(M68kException exc, u16 vector) { }
     
     // Called when an interrupt is about to be processed
     virtual void willInterrupt(u8 level) { }

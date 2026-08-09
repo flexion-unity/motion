@@ -250,7 +250,7 @@ Moira::execAddressError(StackFrame frame, int delay)
     u16 status = getSR();
 
     // Inform the delegate
-    willExecute(M68kException::ADDRESS_ERROR, 3);
+    willExecuteException(M68kException::ADDRESS_ERROR, 3);
 
     // Emulate additional delay
     sync(delay);
@@ -278,7 +278,7 @@ Moira::execAddressError(StackFrame frame, int delay)
     jumpToVector<C>(3);
 
     // Inform the delegate
-    didExecute(M68kException::ADDRESS_ERROR, 3);
+    didExecuteException(M68kException::ADDRESS_ERROR, 3);
 }
 
 template <Core C> void
@@ -287,7 +287,7 @@ Moira::execBusError(StackFrame frame, int delay)
     u16 status = getSR();
 
     // Inform the delegate
-    willExecute(M68kException::BUS_ERROR, 2);
+    willExecuteException(M68kException::BUS_ERROR, 2);
 
     // Emulate additional delay
     sync(delay);
@@ -315,7 +315,7 @@ Moira::execBusError(StackFrame frame, int delay)
     jumpToVector<C>(2);
 
     // Inform the delegate
-    didExecute(M68kException::BUS_ERROR, 2);
+    didExecuteException(M68kException::BUS_ERROR, 2);
 }
 
 void
@@ -338,7 +338,7 @@ Moira::execException(M68kException exc, int nr)
     u16 vector = (exc == M68kException::TRAP) ? u16(exc) + u16(nr) : (exc == M68kException::BKPT) ? 4 : u16(exc);
 
     // Inform the delegate
-    willExecute(exc, vector);
+    willExecuteException(exc, vector);
 
     // Remember the exception vector
     exception = vector;
@@ -464,7 +464,7 @@ Moira::execException(M68kException exc, int nr)
     }
 
     // Inform the delegate
-    didExecute(exc, vector);
+    didExecuteException(exc, vector);
 }
 
 void
