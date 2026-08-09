@@ -198,7 +198,7 @@ namespace Motion
             delete duartExtension;
         }
 
-        const char* GetName() { return "Dual Signetics SCN68681 DUART (IP2/U130 & U131)"; };
+        const char* GetName() override { return "Dual Signetics SCN68681 DUART (IP2/U130 & U131)"; };
 
         int GetDuartIONum(size_t addr) { return (addr & 0x800000) ? 1 : 0; }
 

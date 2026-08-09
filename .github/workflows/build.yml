@@ -26,14 +26,21 @@ jobs:
         include:
           - name: linux-x86_64
             runner: ubuntu-24.04
+            shell: bash
           - name: linux-arm64
             runner: ubuntu-24.04-arm
+            shell: bash
           - name: win64
             runner: windows-latest
             shell: msys2 {0}
           - name: macos-universal
             runner: macos-latest
+            shell: zsh
             cmake_extra: '-DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"'
+
+    defaults:
+      run:
+        shell: ${{matrix.shell}}
 
     steps:
       - uses: actions/checkout@v7
@@ -58,10 +65,12 @@ jobs:
 
       # Win64
       - name: Install build dependencies (Win64)
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows'  
         uses: msys2/setup-msys2@v2
         with:
             msystem: UCRT64
+            update: true
+            install: mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-gcc
 
       - name: Configure
         run: >
@@ -73,19 +82,19 @@ jobs:
         run: cmake --build build --parallel
 
       - name: Stage install tree
-        run: cmake --install build --prefix "dist/motion-${{ matrix.name }}"
+        run: cmake --install build --prefix "dist/motion-v${{github.run_number}}-${{ matrix.name }}"
 
       - name: Show what we produced
         run: |
           ls -lR dist
-          file "dist/motion-${{ matrix.name }}/motion"
+          file "dist/motion-v${{github.run_number}}-${{ matrix.name }}/motion"
 
       - name: Package
-        run: tar -czf "motion-v${{github.run_number}}-${{ matrix.name }}.tar.gz" -C dist "motion-${{ matrix.name }}"
+        run: tar -czf "motion-v${{github.run_number}}-${{ matrix.name }}.tar.gz" -C dist "motion-v${{github.run_number}}-${{ matrix.name }}"
 
       - uses: actions/upload-artifact@v7
         with:
-          name: motion-${{ matrix.name }}
+          name: motion-v${{github.run_number}}-${{ matrix.name }}
           path: motion-v${{github.run_number}}-${{ matrix.name }}.tar.gz
           if-no-files-found: error
 

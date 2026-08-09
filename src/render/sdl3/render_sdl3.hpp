@@ -44,7 +44,7 @@ namespace Motion
         void Start() override; 
         void Shutdown() override; 
 
-        void SetWindowSize(int32_t x, int32_t y);
+        void SetWindowSize(int32_t x, int32_t y) override;
         SDL_Window* GetInternalWindow() { return window; };
     private:
         SDL_Window* window; 

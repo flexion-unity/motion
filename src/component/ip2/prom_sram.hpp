@@ -61,7 +61,7 @@ namespace Motion
             }
         }
 
-        const char* GetName() { return "IRIS 3130 System PROM Private SRAM [MCM2016HN16 - IP2/U95]"; };
+        const char* GetName() override { return "IRIS 3130 System PROM Private SRAM [MCM2016HN16 - IP2/U95]"; };
 
         uint8_t Read8(size_t addr) override 
         { 

@@ -17,11 +17,11 @@ namespace Motion
 
         // these get the internal fb size
         
-        int32_t GetInternalFbSizeX() { return 1024; };
-        int32_t GetInternalFbSizeY() { return 1024; };
+        int32_t GetInternalFbSizeX() override { return 1024; };
+        int32_t GetInternalFbSizeY() override { return 1024; };
 
         // We model our VRAM as a 1024*1024*32 bits and mask all writes to the appropriate number of bitplanes.
-        virtual int32_t GetBytesPerPixel() { return 4; }; 
+        virtual int32_t GetBytesPerPixel() override { return 4; }; 
 
         size_t GetVramAddress(int32_t x, int32_t y) override;
 
