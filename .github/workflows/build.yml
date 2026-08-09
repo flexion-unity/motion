@@ -75,7 +75,7 @@ jobs:
             msystem: UCRT64
             update: true
             install: mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-gcc zip
-            
+
       - name: Set variables based on OS (Windows)
         if: runner.os == 'Windows'
         run: echo "ARCHIVE_EXTENSION=.tar.gz" >> $GITHUB_ENV
@@ -107,7 +107,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: motion-build${{github.run_number}}-${{ matrix.name }}
-          path: motion-build${{github.run_number}}-${{ matrix.name }}.{{env.ARCHIVE_EXTENSION}}
+          path: motion-build${{github.run_number}}-${{ matrix.name }}.${{env.ARCHIVE_EXTENSION}}
           if-no-files-found: error
 
   release:
@@ -153,7 +153,7 @@ jobs:
             --notes "$(printf '%s\n' \
               '### macOS' \
               '' \
-              'These builds are unsigned, so macOS may refuse to run them with "Apple could not verify motion is free of malware". Clear the quarantine flag:' \
+              'These builds are unsigned, so macOS may refuse to run them with "Apple could not verify motion is free of malware". In order to fix this, clear the quarantine flag:' \
               '' \
               '```sh' \
               'xattr -d com.apple.quarantine motion' \
