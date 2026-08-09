@@ -78,11 +78,11 @@ jobs:
 
       - name: Set variables based on OS (Windows)
         if: runner.os == 'Windows'
-        run: echo "ARCHIVE_EXTENSION=.tar.gz" >> $GITHUB_ENV
+        run: echo "ARCHIVE_EXTENSION=zip" >> $GITHUB_ENV
 
       - name: Set variables based on OS (non-Windows)
         if: runner.os != 'Windows'
-        run: echo "ARCHIVE_EXTENSION=.zip" >> $GITHUB_ENV
+        run: echo "ARCHIVE_EXTENSION=tar.gz" >> $GITHUB_ENV
 
       - name: Configure
         run: >
