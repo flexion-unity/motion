@@ -34,7 +34,7 @@ namespace Motion
         mappingTd.component = this;
         AddrSpace::AddMapping(mappingTd);
 
-        // TEMPorary code 
+        // This code is TEMPORARY for Version 0.1.x ONLY 
         ram[0] = 0x33; // initial sp=0x33000800
         ram[1] = 0x00;
         ram[2] = 0x08;

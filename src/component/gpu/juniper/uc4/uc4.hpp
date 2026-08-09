@@ -36,7 +36,7 @@ namespace Motion
     #define UC4_UCR_VERTINTR	    (1 << 14)	    // read only **** vblank INTERUPT ****
     #define UC4_UCR_BUSY	        (1 << 15)	    // read only
 
-    #define UC4_REG_COMMAND      0x50003200
+    #define UC4_REG_COMMAND         0x50003200
 
     #define UC4_REG_END             0x50003fff
     #define UC4_MULTIBUS_SLOT       18              // shown as 19
@@ -95,6 +95,28 @@ namespace Motion
     #define UC4_BUFFER_MDB          0x10    // mode register
     #define UC4_BUFFER_RPB          0x11    // repeat register
     #define UC4_BUFFER_CFB          0x12    // config
+
+    #define UC4_MODE_SWIZZLE        (1 << 0)
+    #define UC4_MODE_DOUBLE_BUFFER  (1 << 1)
+    #define UC4_MODE_DEPTH_CUE      (1 << 2)
+    #define UC4_MODE_MB_SETADDR     (1 << 5)
+
+    #define UC4_CFG_DISP_A              (1 << 0)
+    #define UC4_CFG_DISP_B              (1 << 1)
+    #define UC4_CFG_UPDATE_A            (1 << 2)
+    #define UC4_CFG_UPDATE_B            (1 << 3)
+    #define UC4_CFG_SCREEN_MASK         (1 << 4)
+    #define UC4_CFG_INVERT              (1 << 5)
+    #define UC4_CFG_FINISH_LINE         (1 << 6)
+    #define UC4_CFG_LOAD_LINE_STIPPLE   (1 << 7)
+    #define UC4_CFG_PFICD               (1 << 8)
+    #define UC4_CFG_PFIREAD             (1 << 9)
+    #define UC4_CFG_PFICOLUMN           (1 << 10)
+    #define UC4_CFG_PFIXDOWN            (1 << 11)
+    #define UC4_CFG_PFIYDOWN            (1 << 12)
+    #define UC4_CFG_ALLPATTERN          (1 << 13)
+    #define UC4_CFG_PATTERN32           (1 << 14)
+    #define UC4_CFG_PATTERN64           (1 << 15)
 
     // buffersa re in the 50003080...500030ff space 
     #define UC4_BUFFER_TO_ADDR(x)   (UC4_REG_BUFFER_IO | (x<<1))
