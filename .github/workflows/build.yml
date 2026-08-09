@@ -10,6 +10,10 @@ on:
         description: 'Create a datestamped release from this build'
         type: boolean
         default: false
+      release_version:
+        description: 'Version to stamp this release as'
+        type: string
+        default: v0.1.0
 
 concurrency:
   group: build-${{ github.ref }}
@@ -95,7 +99,7 @@ jobs:
 
       - name: Package (zip file)
         if: runner.os == 'Windows'
-        run: zip -r "motion-build${{github.run_number}}-${{ matrix.name }}.zip" "motion-build${{github.run_number}}-${{ matrix.name }}"
+        run: zip -r "motion-build${{github.run_number}}-${{ matrix.name }}.zip" "dist/motion-build${{github.run_number}}-${{ matrix.name }}"
 
       - uses: actions/upload-artifact@v7
         with:
@@ -122,7 +126,7 @@ jobs:
           merge-multiple: true
       - name: Compute datestamp
         id: version
-        run: echo "version=Build ${{github.run_number}} at $(date -u +'%Y.%m.%d-%H%M')" >> "$GITHUB_OUTPUT"
+        run: echo "version=${{inputs.release_version}}.${{github.run_number}}" >> "$GITHUB_OUTPUT"
 
       - name: Name archives
         env:
