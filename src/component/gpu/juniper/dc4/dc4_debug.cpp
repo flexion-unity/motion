@@ -35,8 +35,11 @@ namespace Motion
             ImGui::Text("Alternate video format: %s", (dc4->flags & DC4_FLAG_PROM) ? "true" : "false");
             ImGui::Text("Freerun mode: %s", (dc4->flags & DC4_FLAG_FREERUN) ? "true" : "false");
 
-            int32_t initialX = ImGui::GetWindowPos().x + ImGui::GetCursorPosX(); // make it easier to restart 
-            int32_t x = initialX, y = ImGui::GetWindowPos().y + ImGui::GetCursorPosY();
+            float scrollX = ImGui::GetScrollX(), scrollY = ImGui::GetScrollY();
+            int32_t initialOriginX = (ImGui::GetWindowPos().x - scrollX);
+            int32_t initialOriginY = (ImGui::GetWindowPos().y - scrollY);
+            int32_t initialX = (initialOriginX + ImGui::GetCursorPosX()); // make it easier to restart 
+            int32_t x = initialX, y = initialOriginY + ImGui::GetCursorPosY();
 
             // parameters for drawing rects
             int32_t rectSizeX = 16;
@@ -91,9 +94,10 @@ namespace Motion
                 for (int32_t i = 0; i < 16; i++)
                 {
                     ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Map %d:", i);
+
                     // restart drawing at the new cursor position
-                    initialX = ImGui::GetWindowPos().x + ImGui::GetCursorPosX();
-                    y = ImGui::GetWindowPos().y + ImGui::GetCursorPosY() + 16;
+                    int32_t initialX = (initialOriginX + ImGui::GetCursorPosX()); // make it easier to restart 
+                    y = initialOriginY + ImGui::GetCursorPosY();
 
                     // draw each colour
                     for (int32_t j = 0; j < 256; j++)

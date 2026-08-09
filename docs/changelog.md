@@ -99,6 +99,11 @@ Similar to a .plan file
 * After 11 hour marathon programming session (you can tell when a milesotne is apporacing)
     * PROM graphics
 
+## 2026-08-09
+* Bugfixing for v0.1 release:
+    - Add UC4 mode / config debug.
+    - Add Coherent::Exception and break on exception
+
 TODO:
 
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE
