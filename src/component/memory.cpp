@@ -34,11 +34,15 @@ namespace Motion
         mappingTd.component = this;
         AddrSpace::AddMapping(mappingTd);
 
-        // Temporary code 
+        // TEMPorary code 
         ram[0] = 0x33; // initial sp=0x33000800
+        ram[1] = 0x00;
         ram[2] = 0x08;
+        ram[3] = 0x00;
         ram[4] = 0x30; // initial pc=0x30000400 (otherwise you start executing the vector base)
+        ram[5] = 0x00;
         ram[6] = 0x04;
+        ram[7] = 0x00;
     }
 
     uint8_t Memory::Read8(size_t addr)

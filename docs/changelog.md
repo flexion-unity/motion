@@ -91,6 +91,13 @@ Similar to a .plan file
 * OnRead/OnWrite* methods is now just Read*/Write*
 * removed component determination truth value obtaining methods (ismmu, iscpu, isserialport) as they are useless
     * since we only really call the templated FindComponentByType methods once in start...
+* UC4 command system
+    * UC_WECODEAB, UC_WECODECD, UC_COLORCODEAB, UC_COLORCODECD UC_FILLRECT, UC_WRITEFONT, UC_DRAWCHAR all work.
+* UC4 I/O system
+    * All buffers
+
+* After 11 hour marathon programming session (you can tell when a milesotne is apporacing)
+    * PROM graphics
 
 TODO:
 
