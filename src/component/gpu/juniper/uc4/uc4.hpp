@@ -214,7 +214,8 @@ namespace Motion
         uint16_t ReadBuffer(size_t addr);
         void WriteBuffer(size_t addr, uint16_t value);
         void ParseCommand(size_t addr, uint16_t value);
-
+        
+        LogChannel uc4Channel;
         bool logEnabled;
     }; 
 }; 

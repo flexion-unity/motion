@@ -28,7 +28,9 @@ namespace Motion
         extensionUC4 = new CoherentExtensionUC4(this);
         Coherent::RegisterExtension(extensionUC4);
 
-        logUC4 = Cvar::Get("logDC4", "0");
+        uc4Channel = LogChannel(UC4_LOG_CHANNEL_NAME, ConsoleColor::BrightCyan, ConsoleColor::White);
+        Logger::AddChannel(uc4Channel);
+        logUC4 = Cvar::Get("logUC4", "0");
         
         logEnabled = logUC4->GetValue();
 
