@@ -35,6 +35,6 @@ namespace Motion
 
     void ComponentVRAM::Shutdown()
     {
-        delete vram;
+        delete[] vram;
     }
 }

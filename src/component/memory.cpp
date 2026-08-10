@@ -146,6 +146,6 @@ namespace Motion
     void Memory::Shutdown()
     {
         delete memoryEditor;
-        delete ram;
+        delete[] ram;
     }
 }

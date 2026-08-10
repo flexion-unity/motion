@@ -187,8 +187,9 @@ namespace Motion
 
         void Shutdown()
         {
-            for (auto reg : registers)
-                delete reg;
+            // don't bother cleaning these up on shutdown for now since the entire process is going away
+            //for (auto* reg : registers)
+                //delete reg;
 
             registers.clear();
         }
