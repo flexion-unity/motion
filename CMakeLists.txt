@@ -18,6 +18,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/$<CONFIG>)
 # Install path
 set(ROM_SRC_DIR "${CMAKE_SOURCE_DIR}/roms")
 set(ROM_DST_DIR "${CMAKE_BINARY_DIR}/output/$<CONFIG>/roms")
+set(ASSET_SRC_DIR "${CMAKE_SOURCE_DIR}/assets")
+set(ASSET_DST_DIR "${CMAKE_BINARY_DIR}/output/$<CONFIG>/")
 
 project(motion)
 
@@ -75,6 +77,9 @@ moira)                              # 68k
 # install
 add_custom_target(InstallAssets 
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${ROM_SRC_DIR}" "${ROM_DST_DIR}"
+    COMMENT "Updating ROMs..."
+
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${ASSET_SRC_DIR}" "${ASSET_DST_DIR}"
     COMMENT "Updating ROMs..."
 )
 

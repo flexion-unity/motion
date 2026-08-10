@@ -14,9 +14,10 @@ Release Notes
     * Added a very bad and crude memory / VRAM viewer.
     * Use SDL HiDPI flag on window creation.
     * Add logDC4 convar and suppress DC4 Logging by default 
-    * Fix log channels never actually being Added
+    * Fix log channels never actually being added
+        * Fix custom log channels never being used
     * ASAN -O2 now added by default on debug builds 
-    
+
 0.1.0 (August 9, 2026)
     * Initial release.
     Has CPU, MMU, serial, dip switches, dummy RTC, SRAM, partial multibus, mostly complete UC4, partial DC4 emulation
