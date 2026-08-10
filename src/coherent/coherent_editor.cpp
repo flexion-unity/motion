@@ -13,7 +13,7 @@ namespace Motion
 {
     void CoherentEditor::AddUI()
     {
-        ImGui::SetNextWindowSize(ImVec2(500, 400));
+        ImGui::SetNextWindowSize(ImVec2(500, 350));
 
         if (!settings.buf)
         {
@@ -45,7 +45,7 @@ namespace Motion
 
             bool updateMemoryView = false; 
 
-            if (ImGui::InputTextWithHint("##InputStartRendering", "Start showing memory at...", startAddressInputAtBuf, STRING_MAX_SHORT,
+            if (ImGui::InputTextWithHint("##InputStartRendering", "View memory starting at...", startAddressInputAtBuf, STRING_MAX_SHORT,
             ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsHexadecimal))
             {
                 updateMemoryView = true;
@@ -69,7 +69,10 @@ namespace Motion
 
                 startAddressInputAtBuf[0] = '\0'; // null terminate to clear the box
             }
+
             size_t currentAddress = startDrawingAt;
+
+            ImGui::Text("Viewing: 0x%.8lx-0x%.8lx", startDrawingAt, startDrawingAt + settings.loadAtOnce);
 
             if (!addressIsValid)
                 ImGui::Text("Nothing to see here...");
@@ -106,7 +109,7 @@ namespace Motion
 
     void CoherentEditor::SetDefaultSettings()
     {
-        settings.loadAtOnce = 0x140; //test
+        settings.loadAtOnce = 0x100; //test
         settings.lineSize = 16; 
     }
 }; 
