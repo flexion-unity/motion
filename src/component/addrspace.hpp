@@ -13,6 +13,8 @@
 #include <component/component.hpp>
 #include <component/mmu/mmu.hpp>
 
+#define LOG_PREFIX_MAPPING  "Emulation - Memory Mapping"
+
 namespace Motion
 {
     // This class implements an address space mapping.
