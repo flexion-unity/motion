@@ -41,18 +41,62 @@ namespace Motion
 
         if (ImGui::Begin(name, &enabled))
         {
-            for (int32_t i = 0; i < settings.loadAtOnce; i += settings.lineSize)
+            // temporary thing for v0.1.1 since we already wrote some code to do this
+
+            bool updateMemoryView = false; 
+
+            if (ImGui::InputTextWithHint("##InputStartRendering", "Start showing memory at...", startAddressInputAtBuf, STRING_MAX_SHORT,
+            ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsHexadecimal))
             {
-                ImGui::Text("%.8x:\t", i);
-                ImGui::SameLine();
+                updateMemoryView = true;
+                startAddressInputAtBuf[0] = '\0'; // null terminate
+                ImGui::SetKeyboardFocusHere(-1);
+            }
 
-                for (int32_t j = 0; j < settings.lineSize; j++)
+            ImGui::SameLine();
+
+            if (ImGui::Button("Go"))
+                updateMemoryView = true; 
+
+            if (updateMemoryView)
+            {
+                auto addr = (size_t)strtol(startAddressInputAtBuf, NULL, 16);
+
+                addressIsValid = (addr >= 0
+                && addr < settings.bufSize);
+
+                if (addressIsValid)
+                    startDrawingAt = addr;
+            }
+            size_t currentAddress = startDrawingAt;
+
+            if (!addressIsValid)
+                ImGui::Text("Nothing to see here...");
+            else
+            {
+                for (currentAddress = startDrawingAt; currentAddress < (startDrawingAt + settings.loadAtOnce); currentAddress += settings.lineSize)
                 {
-                    ImGui::Text("%.2x", settings.buf[i + j]);
+                    ImGui::Text("%.8lx:\t", currentAddress);
                     ImGui::SameLine();
-                }
 
-                ImGui::NewLine();
+                    for (int32_t j = 0; j < settings.lineSize; j++)
+                    {
+                        ImGui::Text("%.2x", settings.buf[currentAddress + j]);
+                        ImGui::SameLine();
+
+                        // in the case where the user's chosen address partially overlaps the end of the buffer.
+                        if ((currentAddress + j) >= settings.bufSize)
+                            goto done; 
+                    }
+
+                    ImGui::NewLine();
+
+                    // in the case where the user's chosen address partially overlaps the end of the buffer.
+                    if (currentAddress >= settings.bufSize)
+                        goto done; 
+                }
+                
+            done:
             }
         }
 
@@ -61,7 +105,7 @@ namespace Motion
 
     void CoherentEditor::SetDefaultSettings()
     {
-        settings.loadAtOnce = 0x10000; //test
+        settings.loadAtOnce = 0x140; //test
         settings.lineSize = 16; 
     }
 }; 

@@ -38,5 +38,12 @@ namespace Motion
         Settings settings; 
 
         bool shutupFatalError = false;
+
+        size_t startDrawingAt = 0; 
+        char startAddressInputAtBuf[STRING_MAX_SHORT] = {0};
+        
+        /// @brief determines if the current address to be viewed is valid
+        bool addressIsValid = true; 
+
     }; 
 }
