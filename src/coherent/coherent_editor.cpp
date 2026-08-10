@@ -49,7 +49,6 @@ namespace Motion
             ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsHexadecimal))
             {
                 updateMemoryView = true;
-                startAddressInputAtBuf[0] = '\0'; // null terminate
                 ImGui::SetKeyboardFocusHere(-1);
             }
 
@@ -67,6 +66,8 @@ namespace Motion
 
                 if (addressIsValid)
                     startDrawingAt = addr;
+
+                startAddressInputAtBuf[0] = '\0'; // null terminate to clear the box
             }
             size_t currentAddress = startDrawingAt;
 
