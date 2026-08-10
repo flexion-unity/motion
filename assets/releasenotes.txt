@@ -1,0 +1,10 @@
+M  O  T  I  O  N
+The SGI Emulator
+
+Release Notes
+
+0.2.0
+
+0.1.0
+    * Initial release.
+    Has CPU, MMU, serial, dip switches, dummy RTC, SRAM, partial multibus, mostly complete UC4, partial DC4 emulation
