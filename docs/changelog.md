@@ -114,10 +114,14 @@ Similar to a .plan file
     * add memory / vram viewer
 
 ## 2026-08-11
-* add program state system
+* add program state system for launcher
     * program state is now controlled by top level Program class
     * decoupled emulator state from program, renderer is now controlled by the program
-    * removed renderer dependency on machine
+    * removed renderer dependency on machine code. 
+        * added SetScreenSize to allow the screen texture to be re-created (recreates the transfer buffer too) based on the fb size of the selected machine
+    * split event system from render code so that, only the emulator can pump events.
+        * Renderer::PumpEmulatorEventSystem is a temporary thing.
+
     
 TODO:
 
