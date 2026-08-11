@@ -16,7 +16,7 @@ namespace Motion
             if ((argc - i) > 2)
             {
                 if (!strcmp(argv[i], "+set"))
-                    Cvar::Add(argv[i + 1], argv[i + 2]);
+                    Cvar::Set(argv[i + 1], argv[i + 2]);
             }
 
         }

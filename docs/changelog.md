@@ -121,9 +121,15 @@ Similar to a .plan file
         * added SetScreenSize to allow the screen texture to be re-created (recreates the transfer buffer too) based on the fb size of the selected machine
     * split event system from render code so that, only the emulator can pump events.
         * Renderer::PumpEmulatorEventSystem is a temporary thing.
+* Cvar::GetName was missing for some reason ?!
+* flexion contributed video scaling (thanks)
 
-    
-TODO:
+v0.2.0 TODO:
 
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE
 * DUART counters
+* Disk emulation of some kind to boot UNIX
+* Fix UC4 double buffering
+* HiDPI support
+* Abstract away initial PC
+* proper stack handling

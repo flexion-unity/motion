@@ -1,10 +1,14 @@
-// Motion Emulator
-// Copyright (C) 2026 starfrost
-//
-// Memory.hpp: Defines the actual system RAM on the IRIS 3130.
-// 
-// On the IRIS 3000 (Juniper) machines, memory is implemented as up to 4 IM1 (Inhouse Memory 1) boards, with 2 or 4 MBytes each for a max of 16mb ram.
-// The MMU has 13-bit page numbers and 4kb pages for a theoretical maximum of 32 MB system RAM.
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    Memory.hpp: Defines the actual system RAM on the IRIS 3130.
+
+    On the IRIS 3000 (Juniper) machines, memory is implemented as up to 4 IM1 (Inhouse Memory 1) boards, with 2 or 4 MBytes each for a max of 16mb ram.
+    The MMU has 13-bit page numbers and 4kb pages for a theoretical maximum of 32 MB system RAM.
+*/
 
 #pragma once
 #include <Motion.hpp>

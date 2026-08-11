@@ -17,12 +17,12 @@ namespace Motion
 
     public: 
         // Statics (public API)
-        static Cvar* Add(const char* name, const char* value);
         static Cvar* Get(const char* name, const char* value);
         static Cvar* Set(const char* name, const char* value);
 
         // Getters for private fields
 
+        const char* GetName() { return name; };
         float GetValue() { return value; };
         const char* GetString() { return string; }
 
@@ -34,6 +34,7 @@ namespace Motion
         const char* string;  // the linked list prevents whatever string we put here from being delete.d
 
         static inline std::unordered_map<std::string, Cvar*, std::hash<std::string_view>, std::equal_to<>> cvars;
+        static Cvar* Add(const char* name, const char* value);
 
         /// @brief Internal method to set a convar
         /// @param name The name of the convar to set

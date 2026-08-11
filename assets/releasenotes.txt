@@ -4,6 +4,7 @@ The SGI Emulator
 Release Notes
 
 0.2.0
+    * Video scaling (thanks to flexion)
 
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.

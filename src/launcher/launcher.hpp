@@ -27,5 +27,17 @@ namespace Motion
 
         /// @brief updates the launcher
         static void Frame(); 
+
+    private:
+        /// @brief types of grid convars that we need
+        enum GridCvarType
+        {
+            Boolean = 0,
+            Integer = 1,
+            Float = 2,
+            String = 3,
+        }; 
+
+        static void RenderGridItem(ImVec2 size, Cvar* cvar, GridCvarType type);
     };
 }; 
