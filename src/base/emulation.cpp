@@ -19,7 +19,7 @@ namespace Motion
         // TODO: a real config system that can get us away from this ?
         renderer->Init();
         Coherent::Init();
-        Start();
+        
     }   
 
     /// @brief Determines the users machine type.

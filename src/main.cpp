@@ -1,6 +1,11 @@
-/*
-Motion - The SGI Emulator!
-Copyright (C) 2026 starfrost
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    main.cpp: The entry file of Motion. This basically has a very basic state machine that switches
+    between sub-programs.
 */
 
 #include <Motion.hpp>
@@ -10,33 +15,49 @@ Copyright (C) 2026 starfrost
 
 namespace Motion
 {
+    Cvar* logChannels;
+    Cvar* logDestinations;
+    Cvar* skipLauncher; 
+
     /// @brief Fatal error function
     /// @return Emulator shuts down after this runs
-    void fatal()
+    void Program::Fatal()
     {
         Emulation::SetRunning(false);
     }
 
-    void mainThread()
+    void Program::MainThread()
     {
-        while (Emulation::IsRunning())
-            Emulation::Frame();
+        switch (Program::state)
+        {
+            case ProgramState::Launcher:
+                fallthrough; // for now
+            case ProgramState::Emulation:
+                Emulation::Start();         // start emulation
 
-        Logger::Log("Shutting down...");
+                while (Emulation::IsRunning())
+                    Emulation::Frame();
 
-        // shut down the emulation
-        Emulation::Shutdown();
-        Logger::Shutdown();
+                Logger::Log("Shutting down...");
+
+                // shut down the emulation
+                Emulation::Shutdown();
+                Logger::Shutdown();
+                break; 
+        }
     }
-    
-    Cvar* logChannels;
-    Cvar* logDestinations;
 
-    int main(int argc, char** argv)
+    void Program::SetState(ProgramState state)
+    {
+        Program::state = state; 
+    };
+
+    /// @brief initialise shared program systems
+    void Program::Init(int argc, char** argv)
     {
         Logger::settings.SetAppName(APP_NAME);
         Logger::settings.SetDestinations((LogDestination)(LogDestination::Stdout | LogDestination::File));
-        Logger::settings.SetFatalFunction(fatal);
+        Logger::settings.SetFatalFunction(Program::Fatal);
         Logger::settings.SetChannelMask((LogChannels)(LogChannels::Debug | LogChannels::Message | LogChannels::Warning | LogChannels::Error | LogChannels::FatalError | LogChannels::UnsafeShutdown));
         Logger::settings.sendAnsiCodesToFile = false;
         Logger::settings.postLogMessageIgnoresAnsiCodes = true; //coherent
@@ -45,6 +66,7 @@ namespace Motion
 
         logChannels = Cvar::Get("logChannels", "-1");
         logDestinations = Cvar::Get("logDestinations", "-1");
+        skipLauncher = Cvar::Get("skipLauncher", "0");
 
         if (logChannels->GetValue() != -1)
             Logger::settings.SetChannelMask((LogChannels)logChannels->GetValue());
@@ -56,8 +78,24 @@ namespace Motion
         Logger::Log(APP_SIGNON, LogChannels::Message);
         Profile::Init();                                    // init config for user profile
         Emulation::Init();                                  // start emulation thread
+    }
 
-        mainThread();
+    /// @brief main function
+    /// @param argc argc passed from libc main
+    /// @param argv argv passed from libc main
+    /// @return an exit code. 0 = success, 1 = failure
+    int32_t Program::Main(int argc, char** argv)
+    {
+        Init(argc, argv);
+
+        bool shouldSkipLauncher = (skipLauncher->GetValue() != 0);
+
+        if (shouldSkipLauncher)
+            SetState(ProgramState::Emulation);
+        else   
+            SetState(ProgramState::Launcher);
+
+        MainThread();
 
         return EXIT_SUCCESS;
     }
@@ -65,5 +103,5 @@ namespace Motion
 
 int main(int argc, char** argv)
 {
-    return Motion::main(argc, argv);
+    return Motion::Program::Main(argc, argv);
 }
