@@ -43,7 +43,17 @@ namespace Motion
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS))
             Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to initialise SDL3: {}!", SDL_GetError()).c_str(), LogChannels::FatalError);
 
-        window.SetWindowSize(WINDOW_DEFAULT_SIZE_X, WINDOW_DEFAULT_SIZE_Y);
+
+        // Content scaling, for 4k displays. Set with e.g. '+set vidScale 2' on the command line
+        float scale = Cvar::Get("vidScale", "1")->GetValue();
+
+        if (scale < 0.5f || scale > 4.0f)
+        {
+            Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("vidScale {} is out of range (0.5-4.0), clamping.", scale).c_str(), LogChannels::Warning);
+            scale = std::clamp(scale, 0.5f, 4.0f);
+        }
+
+        window.SetWindowSize((int32_t)(WINDOW_DEFAULT_SIZE_X * scale), (int32_t)(WINDOW_DEFAULT_SIZE_Y * scale));
         window.Start();
     
         Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL GPU device...", LogChannels::Debug);
@@ -90,6 +100,11 @@ namespace Motion
         // setup input
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+        // Keep fonts rendering crisp when content scaling is active
+        ImFontConfig fontConfig = ImFontConfig();
+        fontConfig.SizePixels = 13.0f * scale;
+        io.Fonts->AddFontDefault(&fontConfig);
 
         // setup style
         ImGui::StyleColorsDark();

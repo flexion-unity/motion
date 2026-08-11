@@ -33,6 +33,9 @@ namespace Motion
         /// @param c The argument to get.
         static constexpr char* Argv(int32_t c);
 
+        /// @brief Prints usage information (command line syntax) to stdout
+        static void PrintHelp();
+        
     private: 
         inline static int32_t argc;
        

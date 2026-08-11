@@ -58,6 +58,14 @@ namespace Motion
     /// @brief initialise shared program systems
     void Program::Init(int argc, char** argv)
     {
+        CommandLine::Parse(argc, argv); // parse command line early to detect --help
+
+        if (CommandLine::Present("--help") || CommandLine::Present("-h"))
+        {
+            CommandLine::PrintHelp();
+            exit(EXIT_SUCCESS);
+        }
+
         Logger::settings.SetAppName(APP_NAME);
         Logger::settings.SetDestinations((LogDestination)(LogDestination::Stdout | LogDestination::File));
         Logger::settings.SetFatalFunction(Program::Fatal);
@@ -65,7 +73,6 @@ namespace Motion
         Logger::settings.sendAnsiCodesToFile = false;
         Logger::settings.postLogMessageIgnoresAnsiCodes = true; //coherent
         Logger::Init();
-        CommandLine::Parse(argc, argv);                     // parse command line
 
         logChannels = Cvar::Get("logChannels", "-1");
         logDestinations = Cvar::Get("logDestinations", "-1");
