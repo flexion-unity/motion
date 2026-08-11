@@ -72,11 +72,12 @@ namespace Motion
         switch (texture->drawType)
         {
             case RenderTextureDrawType::DrawAsWindowSize:
-                blitInfo.source.w = renderer->GetWindow().GetWindowSizeX();
-                blitInfo.source.h = renderer->GetWindow().GetWindowSizeY();
+                // Use iris 3130's screen resolution (currently hardcoded) and fill the window (might be vidScale'd)
+                blitInfo.source.w = WINDOW_DEFAULT_SIZE_X;
+                blitInfo.source.h = WINDOW_DEFAULT_SIZE_Y;
                 blitInfo.destination.w = renderer->GetWindow().GetWindowSizeX();
                 blitInfo.destination.h = renderer->GetWindow().GetWindowSizeY();
-                break; 
+                break;
             case RenderTextureDrawType::Default:
                 blitInfo.source.w = blitInfo.destination.w = texture->sizeX;
                 blitInfo.source.h = blitInfo.destination.h = texture->sizeY;

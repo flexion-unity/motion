@@ -8,3 +8,8 @@ build/output/*
 
 # this is for later
 assets/irisfont.png
+
+# run time files
+imgui.ini
+motion.log
+profile/ip2_sram.bin
