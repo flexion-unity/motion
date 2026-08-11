@@ -12,6 +12,9 @@
  
 namespace Motion
 {
+    // a good compromise
+    #define STRING_MAX_CVAR     64
+
     class Cvar
     {
 
@@ -29,7 +32,7 @@ namespace Motion
         // Settes for private fields 
 
     private: 
-        const char* name;
+        char name[STRING_MAX_CVAR];
         float value; 
         const char* string;  // the linked list prevents whatever string we put here from being delete.d
 

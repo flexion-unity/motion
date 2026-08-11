@@ -4,7 +4,7 @@
 namespace Motion
 {
     Cvar* testCvar;
-    
+
     void Launcher::Start()
     {  
 
@@ -14,7 +14,7 @@ namespace Motion
     {
         testCvar = Cvar::Get("testCvar", "0");
 
-        if (ImGui::BeginChild("", size))
+        if (ImGui::BeginChild("gridItem", size))
         {
             const char* name = cvar->GetName();
             ImGui::Text("%s: ", name); 
@@ -28,26 +28,26 @@ namespace Motion
             switch (type)
             {
                 case GridCvarType::Boolean:
-                    if (ImGui::Checkbox("", &checkboxHit))
+                    if (ImGui::Checkbox("Checkbox", &checkboxHit))
                     {
                         // because our crappy cvar api depends on strings we have to do this
                         (checkboxHit) ? Cvar::Set(name, "1") : Cvar::Set(name, "0");
                     }
                     break;
                 case GridCvarType::Integer:
-                    if (ImGui::InputInt("", &intValue))
+                    if (ImGui::InputInt("IntEntry", &intValue))
                     {
                         
                     }
                     break;
                 case GridCvarType::Float:
-                    if (ImGui::InputFloat("", &floatValue))
+                    if (ImGui::InputFloat("FloatEntry", &floatValue))
                     {
                         
                     }
                     break;
                 case GridCvarType::String:
-                    if (ImGui::InputTextWithHint("", "String value...", buf, STRING_MAX_LONG, ImGuiInputTextFlags_EnterReturnsTrue))
+                    if (ImGui::InputTextWithHint("StringEntry", "String value...", buf, STRING_MAX_LONG, ImGuiInputTextFlags_EnterReturnsTrue))
                     {
                         
                     }

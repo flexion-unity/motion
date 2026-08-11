@@ -14,7 +14,7 @@ namespace Motion
     Cvar* Cvar::Add(const char* name, const char* value)
     {
         Cvar* cvar = new Cvar;
-        cvar->name = name;
+        strncpy(cvar->name, name, STRING_MAX_CVAR);
         cvar->SetInternal(value);
 
         Cvar::cvars[name] = cvar;
