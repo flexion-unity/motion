@@ -9,8 +9,12 @@
 */
 
 #include <Motion.hpp>
+#include <launcher/launcher.hpp>
 #include <base/emulation.hpp>
 #include <base/profile/profile.hpp>
+#include <base/program.hpp>
+#include <render/render.hpp>
+#include <render/sdl3/render_sdl3.hpp>
 #include <iostream>
 
 namespace Motion
@@ -23,7 +27,8 @@ namespace Motion
     /// @return Emulator shuts down after this runs
     void Program::Fatal()
     {
-        Emulation::SetRunning(false);
+        if (state == ProgramState::Emulation)
+            Emulation::SetRunning(false);
     }
 
     void Program::MainThread()
@@ -31,18 +36,16 @@ namespace Motion
         switch (Program::state)
         {
             case ProgramState::Launcher:
-                fallthrough; // for now
+                Launcher::Frame();
+                break;
             case ProgramState::Emulation:
+                Emulation::Init();                                  // start emulation thread
                 Emulation::Start();         // start emulation
 
                 while (Emulation::IsRunning())
                     Emulation::Frame();
 
-                Logger::Log("Shutting down...");
-
-                // shut down the emulation
-                Emulation::Shutdown();
-                Logger::Shutdown();
+                running = false; 
                 break; 
         }
     }
@@ -77,7 +80,15 @@ namespace Motion
         Logger::Log(APP_NAME " v" APP_VERSION " " APP_BUILD_DATE);
         Logger::Log(APP_SIGNON, LogChannels::Message);
         Profile::Init();                                    // init config for user profile
-        Emulation::Init();                                  // start emulation thread
+
+        // TEMP
+        renderer = new RendererSDL3();
+
+        // the renderer is dependent on specific information like the real internal fb size of the machine's GPU
+        // TODO: a real config system that can get us away from this ?
+        renderer->Init();
+
+
     }
 
     /// @brief main function
@@ -95,10 +106,26 @@ namespace Motion
         else   
             SetState(ProgramState::Launcher);
 
-        MainThread();
+        running = true;
+        
+        while (running)
+            MainThread();
+
+        Shutdown();
 
         return EXIT_SUCCESS;
     }
+
+    void Program::Shutdown()
+    {
+        Logger::Log("Shutting down...");
+
+        // shut down the emulation
+        Emulation::Shutdown();
+        renderer->Shutdown();
+        Logger::Shutdown();
+    }
+
 }
 
 int main(int argc, char** argv)

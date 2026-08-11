@@ -7,6 +7,7 @@
     render_sdl3_core.cpp: Core SDL3 renderer stuff (init, shutdown, etc)
 */
 
+#include <base/program.hpp>
 #include <base/emulation.hpp>
 #include <coherent/coherent.hpp>
 #include <render/sdl3/render_sdl3.hpp>
@@ -106,23 +107,39 @@ namespace Motion
 
         ImGui_ImplSDLGPU3_Init(&initInfo);
 
-        // create our screen texture
-        screen = new RenderTextureSDL3(this, Emulation::GetMachine()->GetInternalScreenSizeX(), 
-        Emulation::GetMachine()->GetInternalScreenSizeY(), RenderTextureDrawType::DrawAsWindowSize);
+        // create our screen texture. 
+        // INitially it is the size of the window, but later on, we re-create it when the machine is selected.
+        SetScreenSize(Program::GetRenderer()->GetWindowSizeX(), Program::GetRenderer()->GetWindowSizeY());
 
         // never goes out of scope, never deleted. lol!
         MainRenderPass* renderPass = new MainRenderPass();
         AddRenderPass(renderPass);
 
-        // create our gpu transfer buffer
-        CreateTransferBuffer();
 
         // draw something so we know the renderer works
         DrawInitialDisplay();
     }
 
+    /// @brief set the screen size
+    /// @param x the x coordinate of the screen size to set
+    /// @param y the y coordinate of the screen size to set
+    void RendererSDL3::SetScreenSize(int32_t x, int32_t y) 
+    {
+        if (screen)
+            delete screen;
+
+        screen = new RenderTextureSDL3(this, x, y, RenderTextureDrawType::DrawAsWindowSize);
+
+        // create our gpu transfer buffer
+        CreateTransferBuffer();
+    }
+
     void RendererSDL3::CreateTransferBuffer()
     {
+        // recreate it if e.g. we changed screen size
+        if (transfer)
+            SDL_ReleaseGPUTransferBuffer(gpuDevice, transfer);
+
         SDL_GPUTransferBufferCreateInfo gpuXferInfo = SDL_GPUTransferBufferCreateInfo();
 
         gpuXferInfo.usage = SDL_GPUTransferBufferUsage::SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
@@ -135,8 +152,7 @@ namespace Motion
             
     }
 
-    /// @brief Render a new frame.
-    void RendererSDL3::FramePreRender()
+    void RendererSDL3::PumpEmulatorEventSystem()
     {
         SDL_Event event;
 
@@ -145,10 +161,7 @@ namespace Motion
         {
             ImGui_ImplSDL3_ProcessEvent(&event);
 
-            // quit if we need to
-            if (event.type == SDL_EVENT_QUIT)
-                Emulation::SetRunning(false);
-            else if (event.type == SDL_EVENT_KEY_DOWN)
+            if (event.type == SDL_EVENT_KEY_DOWN)
             {
                 // TEMP : some basic keyboard controls.
                 // need to figure out how our event system is going to work so we can have backend independent events
@@ -189,11 +202,32 @@ namespace Motion
             }
         }
 
-        // run the passes of the
+
+    }
+
+    /// @brief Render a new frame.
+    void RendererSDL3::FramePreRender()
+    {
+        SDL_Event event;
+
+        // tell the event system about various things
+        while (SDL_PollEvent(&event))
+        {
+            ImGui_ImplSDL3_ProcessEvent(&event);
+
+            // quit if we need to
+            if (event.type == SDL_EVENT_QUIT)
+            {
+                Program::running = false; 
+            }
+        }
+
+        // run the passes of the Imgui
         ImGui_ImplSDLGPU3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
     }
+
 
     void RendererSDL3::FramePostRender()
     {
@@ -210,13 +244,17 @@ namespace Motion
 
         if (swapchainTexture && !isMinimised)
         {
-            // any component which needs to render now renders
-            Emulation::Render(screen);
+            // THIS IS A TERRIBLE WAY OF DOING THIS
+            if (Program::GetState() == ProgramState::Emulation)
+            {
+                // any component which needs to render now renders
+                Emulation::Render(screen);
+            }
 
             // run our render passes
             for (RenderPass* pass : passes)
                 pass->Render(this, screen);
-    
+
             // then render imgui
 
             ImGui_ImplSDLGPU3_PrepareDrawData(data, commandBuffer);
