@@ -1,11 +1,10 @@
 #include <base/program.hpp>
 #include <launcher/launcher.hpp>
 
-// tets
-#include <component/ip2/ip2_duart.hpp>
-
 namespace Motion
 {
+    Cvar* testCvar;
+    
     void Launcher::Start()
     {  
 
@@ -13,6 +12,8 @@ namespace Motion
 
     void Launcher::RenderGridItem(ImVec2 size, Cvar* cvar, GridCvarType type)
     {
+        testCvar = Cvar::Get("testCvar", "0");
+
         if (ImGui::BeginChild("", size))
         {
             const char* name = cvar->GetName();
@@ -70,7 +71,7 @@ namespace Motion
 
             ImVec2 gridEntrySize = ImVec2(250, 125);
 
-            RenderGridItem(gridEntrySize, logIP2DUART, GridCvarType::Boolean);
+            RenderGridItem(gridEntrySize, testCvar, GridCvarType::Boolean);
 
             if (ImGui::Button("Go"))
                 Program::SetState(ProgramState::Emulation);

@@ -19,6 +19,8 @@
 
 namespace Motion
 {
+    extern Cvar* testCvar;
+
     class Launcher
     {
     public: 
