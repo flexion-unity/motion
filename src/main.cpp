@@ -28,7 +28,7 @@ namespace Motion
     void Program::Fatal()
     {
         if (state == ProgramState::Emulation)
-            Emulation::SetRunning(false);
+            Program::running = false; 
     }
 
     void Program::MainThread()
@@ -39,16 +39,7 @@ namespace Motion
                 Launcher::Frame();
                 break;
             case ProgramState::Emulation:
-                Emulation::Init();                                  // start emulation thread
-                Emulation::Start();         // start emulation
-
-                while (Emulation::IsRunning())
-                    Emulation::Frame();
-
-                // shut down the emulation
-                Emulation::Shutdown();
-                
-                running = false; 
+                Emulation::Frame();
                 break; 
         }
     }
@@ -56,6 +47,15 @@ namespace Motion
     void Program::SetState(ProgramState state)
     {
         Program::state = state; 
+
+        // initialise the current state
+        switch (Program::state)
+        {
+            case ProgramState::Emulation:
+                Emulation::Init();          // start emulation thread
+                Emulation::Start();         // start emulation
+                break; 
+        }
     };
 
     /// @brief initialise shared program systems
@@ -130,6 +130,9 @@ namespace Motion
     {
         Logger::Log("Shutting down...");
 
+        if (state == ProgramState::Emulation)
+            Emulation::Shutdown();
+            
         renderer->Shutdown();
         Logger::Shutdown();
     }

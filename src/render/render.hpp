@@ -166,7 +166,7 @@ namespace Motion
 
         /// @brief Pumps the event queue for this renderer. Main Emulator and UI can be rendered before this.
         virtual void FramePreRender() { };
-
+        
         /// @brief Performs the actual rendering.
         virtual void FramePostRender() { };
         virtual void Shutdown() { };
