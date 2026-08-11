@@ -67,7 +67,6 @@ namespace Motion
     void Emulation::Frame()
     {
         //update our emulator event system
-        Program::GetRenderer()->PumpEmulatorEventSystem();
         Program::GetRenderer()->FramePreRender();
 
         if (Coherent::active)

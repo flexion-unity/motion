@@ -7,6 +7,7 @@
     event.cpp: The implementation of a little backend independent arbitrary event system
 */
 
+#include <base/program.hpp>
 #include <base/event/event.hpp>
 #include <base/emulation.hpp>
 
@@ -14,6 +15,9 @@ namespace Motion
 {
     void EventSystem::FireEvent(Event& evt)
     {
+        if (Program::GetState() != ProgramState::Emulation)
+            return;
+            
         Emulation::OnEvent(evt);
     }
 

@@ -45,6 +45,9 @@ namespace Motion
                 while (Emulation::IsRunning())
                     Emulation::Frame();
 
+                // shut down the emulation
+                Emulation::Shutdown();
+                
                 running = false; 
                 break; 
         }
@@ -114,7 +117,7 @@ namespace Motion
             SetState(ProgramState::Launcher);
 
         running = true;
-        
+
         while (running)
             MainThread();
 
@@ -127,8 +130,6 @@ namespace Motion
     {
         Logger::Log("Shutting down...");
 
-        // shut down the emulation
-        Emulation::Shutdown();
         renderer->Shutdown();
         Logger::Shutdown();
     }

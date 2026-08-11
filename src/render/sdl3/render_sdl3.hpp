@@ -66,7 +66,6 @@ namespace Motion
         /// @param x the x coordinate of the screen size to set
         /// @param y the y coordinate of the screen size to set
         void SetScreenSize(int32_t x, int32_t y) override;
-        void PumpEmulatorEventSystem() override;
 
         // Getters for private fields
         SDL_GPUDevice* GetGPUDevice() { return gpuDevice; };

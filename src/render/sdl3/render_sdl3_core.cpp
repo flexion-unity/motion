@@ -167,7 +167,8 @@ namespace Motion
             
     }
 
-    void RendererSDL3::PumpEmulatorEventSystem()
+    /// @brief Render a new frame.
+    void RendererSDL3::FramePreRender()
     {
         SDL_Event event;
 
@@ -176,7 +177,12 @@ namespace Motion
         {
             ImGui_ImplSDL3_ProcessEvent(&event);
 
-            if (event.type == SDL_EVENT_KEY_DOWN)
+            // quit if we need to
+            if (event.type == SDL_EVENT_QUIT)
+            {
+                Program::running = false; 
+            }
+            else if (event.type == SDL_EVENT_KEY_DOWN)
             {
                 // TEMP : some basic keyboard controls.
                 // need to figure out how our event system is going to work so we can have backend independent events
@@ -214,26 +220,6 @@ namespace Motion
                 evt.mouse = event.button.button;
                 evt.numClicks = event.button.clicks;
                 EventSystem::FireEvent(evt);
-            }
-        }
-
-
-    }
-
-    /// @brief Render a new frame.
-    void RendererSDL3::FramePreRender()
-    {
-        SDL_Event event;
-
-        // tell the event system about various things
-        while (SDL_PollEvent(&event))
-        {
-            ImGui_ImplSDL3_ProcessEvent(&event);
-
-            // quit if we need to
-            if (event.type == SDL_EVENT_QUIT)
-            {
-                Program::running = false; 
             }
         }
 
