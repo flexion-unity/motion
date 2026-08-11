@@ -1,3 +1,13 @@
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    emulation.hpp: The implementation of the emulation thread
+*/
+
+#include <base/program.hpp>
 #include <base/emulation.hpp>
 #include <component/component.hpp>
 #include <component/memory.hpp>
@@ -10,20 +20,12 @@ namespace Motion
 
     void Emulation::Init()
     {
-        // TEMP
-        renderer = new RendererSDL3();
-
-        DetermineMachineType();
-
-        // the renderer is dependent on specific information like the real internal fb size of the machine's GPU
-        // TODO: a real config system that can get us away from this ?
-        renderer->Init();
+        InitMachine();
         Coherent::Init();
-        
     }   
 
     /// @brief Determines the users machine type.
-    void Emulation::DetermineMachineType()
+    void Emulation::InitMachine()
     {
         machineName = Cvar::Get("machineName", "iris3130");
 
@@ -40,6 +42,9 @@ namespace Motion
             Logger::Log(std::format("Invalid machine {} selected. Defaulting to IRIS 3130...", machineName->GetString()).c_str(), LogChannels::Warning);
             machine = new IRIS3130();
         }
+
+        // set the screen size to the size of the machine's framebuffer
+        Program::GetRenderer()->SetScreenSize(Emulation::GetMachine()->GetInternalScreenSizeX(), Emulation::GetMachine()->GetInternalScreenSizeY());;
 
         Logger::Log(std::format("Adding components for machine {}...", machine->GetName()).c_str());
     }
@@ -61,12 +66,14 @@ namespace Motion
     
     void Emulation::Frame()
     {
-        renderer->FramePreRender();
+        //update our emulator event system
+        Program::GetRenderer()->PumpEmulatorEventSystem();
+        Program::GetRenderer()->FramePreRender();
 
         if (Coherent::active)
             Coherent::Frame();
             
-        renderer->FramePostRender();
+        Program::GetRenderer()->FramePostRender();
     }
 
     void Emulation::OnEvent(Event& evt)
@@ -127,7 +134,6 @@ namespace Motion
     {
         Coherent::Shutdown();
         Stop();
-        renderer->Shutdown();
 
         delete machine; 
     }

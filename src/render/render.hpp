@@ -176,10 +176,13 @@ namespace Motion
         int32_t GetWindowSizeY() { return windowSizeY; }; 
         RenderTexture* GetScreen() { return screen; };
 
-        // Setters for private fields
-        virtual void SetWindowSize(int32_t x, int32_t y) { };
-        
-        
+        /// Set the size of the virtual screen
+        /// probably the lifetime of the screen object should be managed i here...
+        virtual void SetScreenSize(int32_t x, int32_t y) { };
+
+        /// @brief this pumps the emilator event system. probably this will go away eventually
+        virtual void PumpEmulatorEventSystem() { };
+
         void AddRenderPass(RenderPass* pass)
         {
             Logger::Log(RENDER_LOG_PREFIX, std::format("Added render pass: {}", pass->GetName()).c_str(), LogChannels::Debug);

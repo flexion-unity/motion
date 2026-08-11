@@ -1,5 +1,10 @@
-/*
-    emulation.hpp : The core of the emulation thread ()
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    emulation.hpp: The core of the emulation thread
 */
 
 #pragma once
@@ -39,8 +44,6 @@ namespace Motion
         static bool IsRunning() { return running; }    
         static void SetRunning(bool value) { running = value; };
 
-        // getters for private    
-        static Renderer* GetRenderer() { return renderer; }; 
         static bool GetPaused() { return paused; };
 
         // setters for private fields
@@ -58,13 +61,10 @@ namespace Motion
         /// @brief the machine that is being emulated
         inline static Machine* machine;
 
-        /// @brief TEMP
-        inline static Renderer* renderer;
-
         /// @brief the thread that the emulation runs on
         inline static std::thread* emuThread;
 
         /// @brief initialises the machine based on the convar values.
-        inline static void DetermineMachineType();
+        inline static void InitMachine();
     };
 }

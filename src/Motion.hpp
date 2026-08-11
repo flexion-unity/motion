@@ -81,27 +81,3 @@
 #define MOTION_ASSERT(cond, msg)
 #endif
 
-
-namespace Motion
-{
-    // State of emulator
-    // NOTE: This class is only defined in one file as a way o
-    enum ProgramState
-    {
-        Launcher = 0,
-        Emulation = 1,
-    }; 
-
-    class Program
-    {
-    public:
-        static int32_t Main(int argc, char** argv);
-        static void SetState(ProgramState state);
-        static void Fatal();
-    private:
-        static void Init(int argc, char** argv);
-        static void MainThread();
-
-        inline static ProgramState state; 
-    };
-}

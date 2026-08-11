@@ -105,6 +105,23 @@ Similar to a .plan file
     - Add Coherent::Exception and break on exception
     - Fix DC4 window scroll
     - Fix reset
+
+## 2026-08-10
+* v0.1.1 & v0.1.2
+    * fix memory corruption bugs especially on shutdown (many new/delete vs new[]/delete[] mismatches)
+    * fix emulator log window
+    * create sram folder if it does not exist
+    * add memory / vram viewer
+
+## 2026-08-11
+* add program state system for launcher
+    * program state is now controlled by top level Program class
+    * decoupled emulator state from program, renderer is now controlled by the program
+    * removed renderer dependency on machine code. 
+        * added SetScreenSize to allow the screen texture to be re-created (recreates the transfer buffer too) based on the fb size of the selected machine
+    * split event system from render code so that, only the emulator can pump events.
+        * Renderer::PumpEmulatorEventSystem is a temporary thing.
+
     
 TODO:
 

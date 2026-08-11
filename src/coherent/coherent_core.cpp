@@ -81,6 +81,7 @@ namespace Motion
 
     void Coherent::Shutdown()
     {
+        Leave();
         currentSystem->Shutdown();
         Logger::settings.SetPostLogFunction(nullptr);
     }

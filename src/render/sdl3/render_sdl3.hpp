@@ -45,6 +45,7 @@ namespace Motion
         void Shutdown() override; 
 
         void SetWindowSize(int32_t x, int32_t y) override;
+        
         SDL_Window* GetInternalWindow() { return window; };
     private:
         SDL_Window* window; 
@@ -60,6 +61,12 @@ namespace Motion
         void FramePreRender() override;
         void FramePostRender() override;
         void Shutdown() override;
+
+        /// @brief set the screen size
+        /// @param x the x coordinate of the screen size to set
+        /// @param y the y coordinate of the screen size to set
+        void SetScreenSize(int32_t x, int32_t y) override;
+        void PumpEmulatorEventSystem() override;
 
         // Getters for private fields
         SDL_GPUDevice* GetGPUDevice() { return gpuDevice; };

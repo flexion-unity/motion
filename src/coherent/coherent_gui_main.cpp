@@ -9,6 +9,7 @@
 
 // not sure where else to put this. I didn't want it to be accessible from outside of UI parts, but i don't feel like a UI backend is a good use of time rn
 
+#include <base/program.hpp>
 #include <coherent/coherent.hpp>
 #include <coherent/coherent_gui_imgui.hpp>
 #include <component/cpu/cpu.hpp>
@@ -34,8 +35,8 @@ namespace Motion
     void CoherentUI::DrawMainWindow()
     {
         ImGui::SetNextWindowPos(ImVec2(
-        (Emulation::GetRenderer()->GetWindowSizeX() / 2) - 800,
-        (Emulation::GetRenderer()->GetWindowSizeY() / 2) - 600), ImGuiCond_FirstUseEver);
+        (Program::GetRenderer()->GetWindowSizeX() / 2) - 800,
+        (Program::GetRenderer()->GetWindowSizeY() / 2) - 600), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(800, 600));
 
         int i = 0, pcOffset = 0;
