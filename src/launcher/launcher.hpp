@@ -39,5 +39,7 @@ namespace Motion
         }; 
 
         static void RenderGridItem(ImVec2 size, Cvar* cvar, GridCvarType type, const char* friendlyName);
+
+        inline static  int32_t lastImguiNum = 0; 
     };
 }; 
