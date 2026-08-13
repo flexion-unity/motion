@@ -8,10 +8,6 @@
 int
 Moira::disassemble(char *str, u32 addr) const
 {
-    if constexpr (MOIRA_ENABLE_DASM == false) {
-        throw std::runtime_error("This feature requires MOIRA_ENABLE_DASM = true\n");
-    }
-
     u32 pc = addr;
     u16 opcode = read16Dasm(pc);
 

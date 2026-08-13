@@ -34,8 +34,8 @@ Moira::Moira()
 {
     exec = new ExecPtr[65536];
     loop = new ExecPtr[65536];
-    if (MOIRA_BUILD_INSTR_INFO_TABLE) info = new InstrInfo[65536];
-    if (MOIRA_ENABLE_DASM) dasm = new DasmPtr[65536];
+    info = new InstrInfo[65536];
+    dasm = new DasmPtr[65536];
 
     createJumpTable(cpuModel, dasmModel);
 
@@ -837,14 +837,7 @@ Moira::getIrqVector(u8 level) const {
 InstrInfo
 Moira::getInstrInfo(u16 op) const
 {
-    if constexpr (MOIRA_BUILD_INSTR_INFO_TABLE) {
-
-        return info[op];
-
-    } else {
-
-        throw std::runtime_error("This feature requires MOIRA_BUILD_INSTR_INFO_TABLE = true\n");
-    }
+    return info[op];
 }
 
 template u32 Moira::readD <Long> (int n) const;

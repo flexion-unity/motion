@@ -10,17 +10,8 @@
 #define DASM_HANDLER(func,I,M,S) &Moira::dasm##func<I,M,S>
 
 // Registers an instruction handler
-#if MOIRA_ENABLE_DASM == true
 #define REGISTER_DASM(id,name,I,M,S) if (regDasm) dasm[id] = DASM_HANDLER(name,I,M,S);
-#else
-#define REGISTER_DASM(id,name,I,M,S) { }
-#endif
-
-#if MOIRA_BUILD_INSTR_INFO_TABLE == true
 #define REGISTER_INFO(id,name,I,M,S) info[id] = InstrInfo {I,M,S};
-#else
-#define REGISTER_INFO(id,name,I,M,S) { }
-#endif
 
 #define CIMS(id,name,I,M,S) { \
 exec[id] = EXEC_HANDLER(name,C,I,M,S); \

@@ -1,6 +1,7 @@
 /*
-    "Lisburn" 68020 core (just down the road from Moira)
-    Moira with amiga stuff cleaned up and no debugger (replaced with Coherent)
+    Lisburn68000: just down the road from Moira)
+    Moira with less optional paths
+    
     Copyright (c) 2019-2025 Dirk W. Hoffmann. www.dirkwhoffmann.de
     Copyright (c) 2026 Connor Hyde (starfrost). www.starfrost.net
 
@@ -41,26 +42,6 @@
  * Enable to improve accuracy, disable to gain speed.
  */
 #define MOIRA_EMULATE_FC true
-
-/* Set to true to enable the disassembler.
- *
- * The disassembler requires a jump table which consumes about 1MB of memory.
- *
- * Disable to save space.
- */
-#define MOIRA_ENABLE_DASM true
-
-/* Set to true to build the InstrInfo lookup table.
- *
- * The instruction info table stores information about the instruction
- * (Instr I), the addressing mode (Mode M), and the size attribute (Size S) for
- * all 65536 opcode words. The table is meant to provide data for, e.g.,
- * external debuggers. It is not needed by Moira itself and therefore disabled
- * by default.
- *
- * Disable to save space.
- */
-#define MOIRA_BUILD_INSTR_INFO_TABLE true
 
 /* The following macro appears at the beginning of each instruction handler.
  * Moira will call 'willExecute(...)' for all listed instructions.
