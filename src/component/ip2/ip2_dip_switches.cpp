@@ -143,44 +143,36 @@ namespace Motion
 
         if (ImGui::BeginMenu("Boot Type"))
         {
-            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_STORAGER_HDD;
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEFAULT_HDD;
 
-            if (ImGui::MenuItem("[Storager 3030] HDD", nullptr, &cond))
+            if (ImGui::MenuItem("HDD [try ipX, stX, then mdX]", nullptr, &cond))
             {
                 switches->switchState &= (~SWITCH_BOOT_TYPE);
-                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_STORAGER_HDD << SWITCH_BOOT_TYPE_END));
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEFAULT_HDD << SWITCH_BOOT_TYPE_END));
             }
 
-            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_STORAGER_TAPE;
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEFAULT_TAPE;
 
-            if (ImGui::MenuItem("[Storager 3030] Tape", nullptr, &cond))
+            if (ImGui::MenuItem("Cartridge Tape", nullptr, &cond))
             {
                 switches->switchState &= (~SWITCH_BOOT_TYPE);
-                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_STORAGER_TAPE << SWITCH_BOOT_TYPE_END));
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEFAULT_TAPE << SWITCH_BOOT_TYPE_END));
             }
 
-            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_STORAGER_FLOPPY;
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEFAULT_FLOPPY;
 
-            if (ImGui::MenuItem("[Storager 3030] Floppy Disk", nullptr, &cond))
+            if (ImGui::MenuItem("Floppy [tries sfX, then mdX]", nullptr, &cond))
             {
                 switches->switchState &= (~SWITCH_BOOT_TYPE);
-                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_STORAGER_FLOPPY << SWITCH_BOOT_TYPE_END));
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEFAULT_FLOPPY << SWITCH_BOOT_TYPE_END));
             }
 
-            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_STORAGER_XNS;
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEFAULT_XNS;
 
             if (ImGui::MenuItem("XNS Ethernet Netboot", nullptr, &cond))
             {
                 switches->switchState &= (~SWITCH_BOOT_TYPE);
-                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_STORAGER_XNS << SWITCH_BOOT_TYPE_END));
-            }
-
-            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_STORAGER_HDD_SMD;
-
-            if (ImGui::MenuItem("Eagle SMD HDD", nullptr, &cond))
-            {
-                switches->switchState &= (~SWITCH_BOOT_TYPE);
-                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_STORAGER_HDD_SMD << SWITCH_BOOT_TYPE_END));
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEFAULT_XNS << SWITCH_BOOT_TYPE_END));
             }
      
             cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_PROM_MONITOR;
@@ -190,7 +182,72 @@ namespace Motion
                 switches->switchState &= (~SWITCH_BOOT_TYPE);
                 FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_PROM_MONITOR << SWITCH_BOOT_TYPE_END));
             }
-         
+    
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_EPROM_BOARD;
+
+            if (ImGui::MenuItem("Boot from EPROM Board", nullptr, &cond))
+            {
+                switches->switchState &= (~SWITCH_BOOT_EPROM_BOARD);
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_PROM_MONITOR << SWITCH_BOOT_TYPE_END));
+            }
+
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_IP;
+
+            if (ImGui::MenuItem("[Interphase SMD 2190] HDD [ipX]", nullptr, &cond))
+            {
+                switches->switchState &= (~SWITCH_BOOT_DEVICE_IP);
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_IP << SWITCH_BOOT_TYPE_END));
+            }
+
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_ST;
+
+            if (ImGui::MenuItem("[Storager 3030] Tape [stX]", nullptr, &cond))
+            {
+                switches->switchState &= (~SWITCH_BOOT_DEVICE_ST);
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_ST << SWITCH_BOOT_TYPE_END));
+            }
+
+
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_SF;
+
+            if (ImGui::MenuItem("[Storager 3030] Floppy [sfX]", nullptr, &cond))
+            {
+                switches->switchState &= (~SWITCH_BOOT_DEVICE_SF);
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_SF << SWITCH_BOOT_TYPE_END));
+            }
+
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_SD;
+
+            if (ImGui::MenuItem("[Storager 3030] HDD [sdX]", nullptr, &cond))
+            {
+                switches->switchState &= (~SWITCH_BOOT_DEVICE_SD);
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_SD << SWITCH_BOOT_TYPE_END));
+            }
+
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_MT;
+
+            if (ImGui::MenuItem("[DSD 2917] Tape [mtX]", nullptr, &cond))
+            {
+                switches->switchState &= (~SWITCH_BOOT_DEVICE_MT);
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_MT << SWITCH_BOOT_TYPE_END));
+            }
+
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_MF;
+
+            if (ImGui::MenuItem("[DSD 2917] Tape [mfX]", nullptr, &cond))
+            {
+                switches->switchState &= (~SWITCH_BOOT_DEVICE_MF);
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_MF << SWITCH_BOOT_TYPE_END));
+            }
+
+            cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_MD;
+
+            if (ImGui::MenuItem("[DSD 2917] HDD [mdX]", nullptr, &cond))
+            {
+                switches->switchState &= (~SWITCH_BOOT_DEVICE_MD);
+                FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_MD << SWITCH_BOOT_TYPE_END));
+            }
+
             ImGui::EndMenu();
         }
         

@@ -10,6 +10,8 @@ Release Notes
     * lisburn: hardcode DASM and regsiter info to ON since we really don't need them to be an option
     * Allow multibus memory mapping
     * Fix emulator input being sent to main emulator as well as IMGUI
+    * Fix shift and ctrl keys 
+    
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.
         * I forgot that strncpy with overlapping memory is undefined behaviour.

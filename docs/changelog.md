@@ -130,6 +130,8 @@ Similar to a .plan file
 * lisburn: hardcode DASM and regsiter info to ON since we really don't need them to be an option
 * DSD8217 headers
 * Segment 4 (Multibus Memory) can be mapped
+* Fix emulator input being sent to main emulator as well as IMGUI
+* Fix shift and ctrl keys
 
 v0.2.0 TODO:
 

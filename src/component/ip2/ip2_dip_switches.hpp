@@ -33,8 +33,8 @@ namespace Motion
         // _END is used to make some things easier in the debug ui
 
         #define SWITCH_IS_SLAVE                 (1 << 15)
-        #define SWITCH_PRIMARY_DISPLAY_TYPE     (1 << 14 | 1 << 13)         // primary display types
-        #define SWITCH_PRIMARY_DISPLAY_TYPE_END 13                          // primary display types
+        #define SWITCH_PRIMARY_DISPLAY_TYPE     (1 << 10 | 1 << 9 | 1 << 8) // primary display types
+        #define SWITCH_PRIMARY_DISPLAY_TYPE_END 8                          // primary display types
 
         #define SWITCH_DISP_PROGRESSIVE         0x0                         // Progressive-scan 60hz monitor
         #define SWITCH_DISP_INTERLACED          0x1                         // Interlaced 30hz monitor
@@ -50,18 +50,25 @@ namespace Motion
         #define SWITCH_RS232_SPEED_19200        0x3                         // run port2 at 19200 baud
         #define SWITCH_RS232_SPEED_600          0x4                         // you acnnot set this because it is only 2 bits lol
 
-        #define SWITCH_USE_SECONDARY_DISP       (1 << 5)                    // use secondary display
-        #define SWITCH_SHUTUP_PROM              (1 << 4)                    // shut up infinite prom loging
-        #define SWITCH_AUTOBOOT                 (1 << 3)                    // autoboot or boot to prom
-        #define SWITCH_BOOT_TYPE                (1 << 2 | 1 << 1 | 1 << 0)  // boot device
+        #define SWITCH_USE_SECONDARY_DISP       (1 << 6)                    // use secondary display
+        #define SWITCH_SHUTUP_PROM              (1 << 5)                    // shut up infinite prom loging
+        #define SWITCH_AUTOBOOT                 (1 << 4)                    // autoboot or boot to prom
+        #define SWITCH_BOOT_TYPE                (1 << 3 | 1 << 2 | 1 << 1 | 1 << 0)  // boot device
         #define SWITCH_BOOT_TYPE_END            0  
 
-        #define SWITCH_BOOT_STORAGER_HDD        0x0                         // boot from storager ESDI hdd
-        #define SWITCH_BOOT_STORAGER_TAPE       0x1                         // boot from storager ESDI tape
-        #define SWITCH_BOOT_STORAGER_FLOPPY     0x2                         // boot from storager ESDI 5.25" floppy
-        #define SWITCH_BOOT_STORAGER_XNS        0x3                         // Ethernet XNS Netboot
-        #define SWITCH_BOOT_STORAGER_HDD_SMD    0x4                         // boot from storager ESDI hdd
-        #define SWITCH_BOOT_PROM_MONITOR        0x5                         // boot to prom monitor
+        #define SWITCH_BOOT_DEFAULT_HDD        0x0                          // boot from default hdd
+        #define SWITCH_BOOT_DEFAULT_TAPE       0x1                          // boot from default tape
+        #define SWITCH_BOOT_DEFAULT_FLOPPY     0x2                          // boot from defualt 5.25" floppy
+        #define SWITCH_BOOT_DEFAULT_XNS        0x3                          // Ethernet XNS Netboot
+        #define SWITCH_BOOT_PROM_MONITOR       0x5                          // boot to prom monitor
+        #define SWITCH_BOOT_EPROM_BOARD        0x6                          // boot from an eprom board
+        #define SWITCH_BOOT_DEVICE_IP          0x9                          // boot from Interphase SMD disk 
+        #define SWITCH_BOOT_DEVICE_ST          0xA                          // boot from storager tape [stX]
+        #define SWITCH_BOOT_DEVICE_SF          0xB                          // boot from storager floppy [sfX]
+        #define SWITCH_BOOT_DEVICE_SD          0xC                          // boot from storager ESDI HDD [sdX]
+        #define SWITCH_BOOT_DEVICE_MT          0xD                          // boot from DSD tape [mtX]
+        #define SWITCH_BOOT_DEVICE_MF          0xE                          // boot from DSD floppy [mfX]
+        #define SWITCH_BOOT_DEVICE_MD          0xF                          // boot from DSD HDD [mdX]
 
         // 0x0D ... 0x0F force DSD boot but idk why the user should cfg them
 
