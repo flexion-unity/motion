@@ -11,6 +11,7 @@ Release Notes
     * Allow multibus memory mapping
     * Fix emulator input being sent to main emulator as well as IMGUI
     * Fix shift and ctrl keys 
+    * Fix busted back switches impl (was using pm2's???)
     
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.

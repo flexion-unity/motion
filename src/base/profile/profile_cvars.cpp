@@ -13,11 +13,17 @@ namespace Motion
 {
     void Profile::InitCvars()
     {
-
+    // too lazy to snprintf
+    #ifdef __MINGW32__
+        profileFolder = Cvar::Get("profileFolder", ".\\profile");
+    #else
+        profileFolder = Cvar::Get("profileFolder", "./profile");
+    #endif
         skipLauncher = Cvar::Get("skipLauncher", "0");
         vidScale = Cvar::Get("vidScale", "1");
         startPaused = Cvar::Get("startPaused", "1");
         ramInstalled = Cvar::Get("ramInstalled", "16777216");
         numBitplanes = Cvar::Get("numBitplanes", "32");
+        profileDisk0Path = Cvar::Get("profileDisk0Path", "3130.img");
     }
 }; 

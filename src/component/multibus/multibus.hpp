@@ -69,6 +69,11 @@ namespace Motion
 
         public: 
             uint32_t irq; 
+
+            // Yes we are hardcoding the addresses.
+            // HOW do these devices find out whta part of the address space they decode ???? WHAT ??? NO BARs ????
+            size_t memStart;
+            size_t memEnd;
             size_t ioStart;
             size_t ioEnd; 
             Component* component;
@@ -97,6 +102,10 @@ namespace Motion
         // this simulates the action of the user inserting a slot into the Multibus backplane.
         // NOTE: no attempt is made to prevent the addresses overlapping. the first slot in the range will be used.
         bool AddSlot(Slot slot, int32_t id);
+
+        // for OS initiated remaping
+        void UpdateSlotIOMapping(int32_t id, size_t addrStart, size_t addrEnd);
+        void UpdateSlotMemMapping(int32_t id, size_t addrStart, size_t addrEnd);
 
         uint8_t Read8(size_t addr) override;
         uint16_t Read16(size_t addr) override;

@@ -39,7 +39,7 @@ add_subdirectory(src)
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_compile_definitions(motion PRIVATE DEBUG)
     # Turn on ASan, O1 level optimisation (recommended by GOogle). -fno-omit-frame-pointer -fno-inline gives us much better debugging 
-    target_compile_options(motion PRIVATE -fsanitize=address -O1 -fno-omit-frame-pointer -fno-inline -U_FORTIFY_SOURCE)
+    target_compile_options(motion PRIVATE -fsanitize=address -O0 -fno-omit-frame-pointer -fno-inline -U_FORTIFY_SOURCE)
 elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     target_compile_definitions(motion PRIVATE RELEASE)
 elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")

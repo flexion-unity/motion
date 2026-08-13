@@ -8,9 +8,11 @@ Currently this emulator targets the 68020-based IRIS 3000 series machines only.
 
 Here's a basic guide for using the emulator:
 
+1. ROMS: 
+
 ROMs go in the ROMs folder
 
-THE MAIN WINDOW:
+2. THE MAIN WINDOW:
 
 Emulator Log window - shows you the log of what is happening
 Coherent window - debugger
@@ -82,6 +84,7 @@ Command line:
 
         profileFolder - the location of the profile
             RESET the profile - delete every folder in this folder.
+                This will also delete your user data.
 
             Profile files:
                 ip2_sram.bin: Private PROM SRAM.
@@ -121,10 +124,30 @@ Notes:
     If you did not intend to crash the machine and weren't trying to edit memory, take a screenshot of the screen and send it to me. 
 
     UNIX panic advice: 
-        You can't run unix on here yet.
+        Probably it was a bug.
         
 Not done:
     - Reconfigurable machines
     - Debugger commands
     - Configuration
     - Most things emulation wise
+
+3. BOOTING & USING UNIX
+
+You can boot unix on the default boot options but it will take a very long time as the IRIS will try all possible(!) HDD boot options.
+    - I recommend going to Backpanel Switches > Boot Mode and selecting the "[DSD 8217] HDD (MDx)" option.
+    - Alternatively you can go to the PROM prompt and type "b md0:vmunix". Then the IRIS will try to boot it. 
+Then the IRIS will boot using our supported DSD 8217 disk controller. A 60 MB image of GL2 W3.6 can be provided if you ask me.
+    You can set it in the launcher, or, use +set profileDisk0Path <blah>
+    It has to be in the profile folder
+
+Once unix is booted probably you should create an account. It's fairly easy to bypass the security though.
+You can't run "mex" yet, because the graphics system is insufficiently emulated to do so.
+If you get a bus error the emulator will close.
+
+4. Other things you can do
+
+If you have an "mkboot" tape you can run "b md0.mdfex" (other fex's won't work), which will throw you into a low-level hard drive configuration.
+    Messing around with this may end poorly
+
+5. Resources

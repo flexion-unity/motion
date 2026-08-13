@@ -14,16 +14,10 @@
 namespace Motion
 {
     Cvar* profileFolder; 
+    Cvar* profileDisk0Path; 
 
     void Profile::Init()
     {
-    // too lazy to snprintf
-    #ifdef __MINGW32__
-        profileFolder = Cvar::Get("profileFolder", ".\\profile");
-    #else
-        profileFolder = Cvar::Get("profileFolder", "./profile");
-    #endif
-
         InitCvars();
     }
 

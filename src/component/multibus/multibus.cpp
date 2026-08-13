@@ -134,6 +134,30 @@ namespace Motion
         id + 1, slot.component->GetName(), slot.ioStart, slot.ioEnd).c_str(), LogChannels::Debug);
 
         return true; 
+    }   
+
+    void Multibus::UpdateSlotIOMapping(int32_t id, size_t addrStart, size_t addrEnd)
+    {
+        if (id < 0 || id >= MULTIBUS_MAX_SLOTS)
+        {
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus slot {} does not exist, expected 0-{}", id, MULTIBUS_MAX_SLOTS).c_str(), LogChannels::Warning);
+            return; 
+        }
+
+        slots[id].ioStart = addrStart;
+        slots[id].ioEnd = addrEnd;
+    }
+
+    void Multibus::UpdateSlotMemMapping(int32_t id, size_t addrStart, size_t addrEnd)
+    {
+        if (id < 0 || id >= MULTIBUS_MAX_SLOTS)
+        {
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus slot {} does not exist, expected 0-{}", id, MULTIBUS_MAX_SLOTS).c_str(), LogChannels::Warning);
+            return; 
+        }
+
+        slots[id].memStart = addrStart;
+        slots[id].memEnd = addrEnd;
     }
 
     uint8_t Multibus::Read8(size_t addr) 

@@ -71,8 +71,8 @@ add_executable(motion
     component/gpu/juniper/uc4/uc4_commands.cpp
     coherent/coherent_editor.cpp
     launcher/launcher.cpp
-    component/storage/dsd8217.cpp
+    component/storage/dsd5217.cpp
     base/profile/profile_cvars.cpp
-    component/storage/dsd8217_debug.cpp
+    component/storage/dsd5217_debug.cpp
 )
 

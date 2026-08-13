@@ -128,10 +128,11 @@ Similar to a .plan file
 ## 2026-08-13
 * add actual menu items to the launcher
 * lisburn: hardcode DASM and regsiter info to ON since we really don't need them to be an option
-* DSD8217 headers
+* DSD5217 headers
 * Segment 4 (Multibus Memory) can be mapped
 * Fix emulator input being sent to main emulator as well as IMGUI
 * Fix shift and ctrl keys
+* Fix busted back switches impl (was using pm2/???)
 
 v0.2.0 TODO:
 

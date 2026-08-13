@@ -20,6 +20,7 @@ namespace Motion
     // Common Configuration Convars
     // These are actually defined in the files specifically for them.
     extern Cvar* profileFolder; 
+    extern Cvar* profileDisk0Path;
 
     extern Cvar* ramInstalled;
     extern Cvar* numBitplanes;

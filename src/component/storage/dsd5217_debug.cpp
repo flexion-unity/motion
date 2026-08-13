@@ -4,5 +4,5 @@
 
     Copyright (c)2026 starfrost
 
-    dsd8217_debug.cpp: Coherent Extension for DSD 8217
+    dsd5217_debug.cpp: Coherent Extension for DSD 5217
 */
