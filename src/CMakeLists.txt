@@ -72,5 +72,6 @@ add_executable(motion
     coherent/coherent_editor.cpp
     launcher/launcher.cpp
     component/storage/dsd8217.cpp
+    base/profile/profile_cvars.cpp
 )
 

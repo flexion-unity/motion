@@ -1,23 +1,20 @@
 #include <base/program.hpp>
 #include <launcher/launcher.hpp>
+#include <base/profile/profile.hpp>
 
 namespace Motion
 {
-    Cvar* testCvar;
-
     void Launcher::Start()
     {  
 
     }
 
-    void Launcher::RenderGridItem(ImVec2 size, Cvar* cvar, GridCvarType type)
+    void Launcher::RenderGridItem(ImVec2 size, Cvar* cvar, GridCvarType type, const char* friendlyName)
     {
-        testCvar = Cvar::Get("testCvar", "0");
-
         if (ImGui::BeginChild("gridItem", size))
         {
             const char* name = cvar->GetName();
-            ImGui::Text("%s: ", name); 
+            ImGui::Text("%s: ", friendlyName); 
             ImGui::SameLine();
 
             bool checkboxHit = false; 
@@ -49,7 +46,7 @@ namespace Motion
                 case GridCvarType::String:
                     if (ImGui::InputTextWithHint("StringEntry", "String value...", buf, STRING_MAX_LONG, ImGuiInputTextFlags_EnterReturnsTrue))
                     {
-                        
+                        Cvar::Set(name, buf);
                     }
                     break;
             }
@@ -71,7 +68,22 @@ namespace Motion
 
             ImVec2 gridEntrySize = ImVec2(250, 125);
 
-            RenderGridItem(gridEntrySize, testCvar, GridCvarType::Boolean);
+            RenderGridItem(gridEntrySize, machineName, GridCvarType::String, "Machine Name");
+            RenderGridItem(gridEntrySize, profileFolder, GridCvarType::String, "Profile Folder");
+            ImGui::SameLine();
+            RenderGridItem(gridEntrySize, ramInstalled, GridCvarType::Integer, "RAM (bytes)");
+            ImGui::SameLine();
+            RenderGridItem(gridEntrySize, numBitplanes, GridCvarType::Integer, "Bitplanes (4 = 1 BP3 board)");
+            ImGui::SameLine();
+            RenderGridItem(gridEntrySize, startPaused, GridCvarType::Boolean, "Start Paused");
+            RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Boolean, "Skip Launcher (only effective on next boot)");
+            ImGui::SameLine();
+            RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Float, "Video Scale (1-4)");
+            ImGui::SameLine();
+            RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Integer, "Log Channel Mask");
+             ImGui::SameLine();
+            RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Integer, "Log Destination Mask");
+
 
             if (ImGui::Button("Go"))
                 Program::SetState(ProgramState::Emulation);

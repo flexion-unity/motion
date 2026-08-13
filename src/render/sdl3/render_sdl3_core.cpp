@@ -15,6 +15,8 @@
 
 namespace Motion
 {
+    Cvar* vidScale;
+    
     void RendererSDL3::DrawInitialDisplay()
     {
         float red = 1.000;

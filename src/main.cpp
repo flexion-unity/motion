@@ -77,10 +77,6 @@ namespace Motion
         Logger::settings.postLogMessageIgnoresAnsiCodes = true; //coherent
         Logger::Init();
 
-        logChannels = Cvar::Get("logChannels", "-1");
-        logDestinations = Cvar::Get("logDestinations", "-1");
-        skipLauncher = Cvar::Get("skipLauncher", "0");
-
         if (logChannels->GetValue() != -1)
             Logger::settings.SetChannelMask((LogChannels)logChannels->GetValue());
 

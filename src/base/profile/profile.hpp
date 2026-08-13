@@ -17,13 +17,29 @@
 
 namespace Motion
 {
+    // Common Configuration Convars
+    // These are actually defined in the files specifically for them.
     extern Cvar* profileFolder; 
+
+    extern Cvar* ramInstalled;
+    extern Cvar* numBitplanes;
+    extern Cvar* vidScale;
+    extern Cvar* machineName;
+    extern Cvar* logChannels;
+    extern Cvar* logDestinations;
+    extern Cvar* startPaused;
+    extern Cvar* skipLauncher;
+
+    // Base Configuration cvars
 
     class Profile
     {
     public: 
         /// @brief Initialises the profile system, currently just gets the profileFolder convar.
         static void Init();
+
+        /// @brief Initialises system configuration convars for launcher
+        static void InitCvars();
 
         /// @brief Builds a string with a profile folder path.
         /// @param fileName The file name to build. It will be automatically appended to the profileFolder convar.

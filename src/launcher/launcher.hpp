@@ -19,8 +19,6 @@
 
 namespace Motion
 {
-    extern Cvar* testCvar;
-
     class Launcher
     {
     public: 
@@ -40,6 +38,6 @@ namespace Motion
             String = 3,
         }; 
 
-        static void RenderGridItem(ImVec2 size, Cvar* cvar, GridCvarType type);
+        static void RenderGridItem(ImVec2 size, Cvar* cvar, GridCvarType type, const char* friendlyName);
     };
 }; 

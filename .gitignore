@@ -13,3 +13,5 @@ assets/irisfont.png
 imgui.ini
 motion.log
 profile/ip2_sram.bin
+
+*.img

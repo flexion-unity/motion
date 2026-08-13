@@ -1,7 +1,7 @@
 M  O  T  I  O  N
 The SGI Emulator 
 
-Version 0.1.0
+Version 0.2.0
 Copyright (C) 2026 starfrost
 
 Currently this emulator targets the 68020-based IRIS 3000 series machines only.
@@ -48,6 +48,7 @@ Coherent window - debugger
     Serial Console - Access the PROM console if enabled and view information about the state of the UARTs, ? is help.
 
 Command line:
+--help - display help
 +set - set a convar. Follow with a value, "1" to enable "0" to disable.
     Logging: (warnings and errors are always printed)
         logIP2MMU 
