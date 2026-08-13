@@ -13,8 +13,7 @@ namespace Motion
 {
     void Profile::InitCvars()
     {
-        logChannels = Cvar::Get("logChannels", "-1");
-        logDestinations = Cvar::Get("logDestinations", "-1");
+
         skipLauncher = Cvar::Get("skipLauncher", "0");
         vidScale = Cvar::Get("vidScale", "1");
         startPaused = Cvar::Get("startPaused", "1");

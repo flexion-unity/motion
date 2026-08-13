@@ -23,6 +23,8 @@ namespace Motion
     #else
         profileFolder = Cvar::Get("profileFolder", "./profile");
     #endif
+
+        InitCvars();
     }
 
     void Profile::GetProfileFolderPath(const char* fileName, char* buf)
