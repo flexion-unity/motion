@@ -16,7 +16,7 @@
 namespace Motion
 {
     Cvar* vidScale;
-    
+
     void RendererSDL3::DrawInitialDisplay()
     {
         float red = 1.000;
@@ -100,13 +100,13 @@ namespace Motion
         ImGui::CreateContext();
 
         // setup input
-        ImGuiIO& io = ImGui::GetIO();
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io = &ImGui::GetIO();
+        io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
         // Keep fonts rendering crisp when content scaling is active
         ImFontConfig fontConfig = ImFontConfig();
         fontConfig.SizePixels = 13.0f * scale;
-        io.Fonts->AddFontDefault(&fontConfig);
+        io->Fonts->AddFontDefault(&fontConfig);
 
         // setup style
         ImGui::StyleColorsDark();
@@ -181,48 +181,58 @@ namespace Motion
 
             // quit if we need to
             if (event.type == SDL_EVENT_QUIT)
-            {
                 Program::running = false; 
-            }
-            else if (event.type == SDL_EVENT_KEY_DOWN)
+                
+            // IMGUI wants the keyboard so don't send anything
+            if (!io->WantCaptureKeyboard)
             {
-                // TEMP : some basic keyboard controls.
-                // need to figure out how our event system is going to work so we can have backend independent events
-                // maybe components can subscribe to events
-                switch (event.key.key)
+                if (event.type == SDL_EVENT_KEY_DOWN)
                 {
-                    case SDLK_F9:
-                        Coherent::active = !Coherent::active;
-                        break;
-                }
+                    // TEMP : some basic keyboard controls.
+                    // need to figure out how our event system is going to work so we can have backend independent events
+                    // maybe components can subscribe to events
+                    switch (event.key.key)
+                    {
+                        case SDLK_F9:
+                            Coherent::active = !Coherent::active;
+                            break;
+                    }
 
-                // tell the event system
-                KeyDownEvent evt = KeyDownEvent();
-                evt.key = event.key.key;
-                evt.repeat = event.key.repeat;
-                EventSystem::FireEvent(evt);
+                    // tell the event system
+                    KeyDownEvent evt = KeyDownEvent();
+                    evt.key = event.key.key;
+                    evt.mod = event.key.mod;
+                    evt.repeat = event.key.repeat;
+                    EventSystem::FireEvent(evt);
+                }
+                else if (event.type == SDL_EVENT_KEY_UP)
+                {
+                    KeyUpEvent evt = KeyUpEvent();
+                    evt.key = event.key.key;
+                    evt.mod = event.key.mod;
+                    evt.repeat = event.key.repeat;
+                    EventSystem::FireEvent(evt);
+                }
             }
-            else if (event.type == SDL_EVENT_KEY_UP)
+
+            if (!io->WantCaptureMouse)
             {
-                KeyUpEvent evt = KeyUpEvent();
-                evt.key = event.key.key;
-                evt.repeat = event.key.repeat;
-                EventSystem::FireEvent(evt);
+                if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+                {
+                    MouseDownEvent evt = MouseDownEvent();
+                    evt.mouse = event.button.button;
+                    evt.numClicks = event.button.clicks;
+                    EventSystem::FireEvent(evt);
+                }
+                else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP)
+                {
+                    MouseUpEvent evt = MouseUpEvent();
+                    evt.mouse = event.button.button;
+                    evt.numClicks = event.button.clicks;
+                    EventSystem::FireEvent(evt);
+                }
             }
-            else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
-            {
-                MouseDownEvent evt = MouseDownEvent();
-                evt.mouse = event.button.button;
-                evt.numClicks = event.button.clicks;
-                EventSystem::FireEvent(evt);
-            }
-            else if (event.type == SDL_EVENT_MOUSE_BUTTON_UP)
-            {
-                MouseUpEvent evt = MouseUpEvent();
-                evt.mouse = event.button.button;
-                evt.numClicks = event.button.clicks;
-                EventSystem::FireEvent(evt);
-            }
+
         }
 
         // run the passes of the Imgui

@@ -69,6 +69,10 @@ namespace Motion
         bool shutUpBeep = false; 
         bool shutUpLed = false; 
 
+        // bit 7 is set for shift
+        bool shiftStateL = false, shiftStateR = false;
+        bool ctrlStateL = false, ctrlStateR = false; 
+
         // maps SDL key events to SGI keycodes
         // TODO: PF1-PF4, SETUP etc
         inline static std::unordered_map<SDL_Keycode, uint8_t> sdlToSgi =

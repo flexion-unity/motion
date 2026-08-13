@@ -196,6 +196,7 @@ namespace Motion
 
     private: // don't exposed to derived classes as it will be a different type of window.
         Window window;
+        
     };
 
 

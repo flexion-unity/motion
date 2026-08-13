@@ -72,8 +72,48 @@ namespace Motion
             if (initialised)
             {
                 KeyDownEvent& keyDownEvent = static_cast<KeyDownEvent&>(evt);
+                uint8_t key = sdlToSgi[(SDL_Keycode)keyDownEvent.key];
+                
+                // bit7 is used for modifiers but only shift and control since this keyboard doesn't even have an al tkey.
+                // handle bit
+                if (keyDownEvent.key == SDLK_LSHIFT
+                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                {
+                    shiftStateL = !shiftStateL;
+
+                    if (shiftStateL)
+                        key |= 0x80;
+                }
+
+                if (keyDownEvent.key == SDLK_RSHIFT
+                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                {
+                    shiftStateR = !shiftStateR;
+
+                    if (shiftStateR)
+                        key |= 0x80;
+                }
+
+                if (keyDownEvent.key == SDLK_RSHIFT
+                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                {
+                    ctrlStateL = !ctrlStateL;
+
+                    if (ctrlStateL)
+                        key |= 0x80;
+                }
+
+                if (keyDownEvent.key == SDLK_RSHIFT
+                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                {
+                    ctrlStateR = !ctrlStateR;
+
+                    if (ctrlStateR)
+                        key |= 0x80;
+                }
+
                 // send in the key. We need to convert to SGI format
-                duart->GetLine(KEYBOARD_DUART_LINE).AddRxByte(sdlToSgi[(SDL_Keycode)keyDownEvent.key]);
+                duart->GetLine(KEYBOARD_DUART_LINE).AddRxByte(key);
             }
         }
     }

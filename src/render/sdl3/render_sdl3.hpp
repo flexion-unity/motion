@@ -93,6 +93,9 @@ namespace Motion
         SDL_GPUCommandBuffer* commandBuffer;
         SDL_GPUTexture* swapchainTexture;
 
+        /// @brief imgui io
+        ImGuiIO* io;
+        
         void CreateTransferBuffer();
 
         /// @brief draw a simple initial display
