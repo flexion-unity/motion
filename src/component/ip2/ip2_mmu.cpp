@@ -167,24 +167,28 @@ namespace Motion
         // MAME uses templates for this, which is a bit simpler, but seems a bit silly
         // since it generates several verisons of each method and is not really how the h/w does it
         // this is most likely how the real SGI TTL stuff is doing it
-        uint16_t limitValue = 0, baseValue = 0; 
-
-        uint16_t finalPageNumber = 0;
+        uint16_t limitValue = 0, baseValue = 0, finalPageNumber = 0; 
 
         if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_TEXTDATA))
         {
-            limitValue = textdataLimit;
             baseValue = textdataBase;
+            limitValue = textdataLimit;
         }
         else if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_STACK))
         {
-            limitValue = stackLimit;
             baseValue = stackBase;
+            limitValue = stackLimit;
         }
         else if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_KERNEL))
         {
             baseValue = osBase;
-            limitValue = 0xFFFF; // ??? hwere is register ???
+            limitValue = 0;             // 0 means no limit
+        }
+        // map Multibus Memory
+        // TODO: slave
+        else if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_MULTIBUS_MEMORY))
+        {
+            baseValue = limitValue = 0; // maybe it should be 40000000 ? seems to work not sure what this does here
         }
         else
         {

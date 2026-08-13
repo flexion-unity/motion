@@ -123,6 +123,12 @@ Similar to a .plan file
         * Renderer::PumpEmulatorEventSystem is a temporary thing.
 * Cvar::GetName was missing for some reason ?!
 * flexion contributed video scaling (thanks)
+    * and --help!
+
+## 2026-08-13
+* add actual menu items to the launcher
+* lisburn: hardcode DASM and regsiter info to ON since we really don't need them to be an option
+* DSD8217 headers
 
 v0.2.0 TODO:
 

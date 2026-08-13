@@ -7,7 +7,8 @@ Release Notes
     * Video scaling (thanks to flexion)
     * --help for common convars (thanks to flexion)
     * a launcher that lets you configure the most common settings
-
+    * lisburn: hardcode DASM and regsiter info to ON since we really don't need them to be an option
+    
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.
         * I forgot that strncpy with overlapping memory is undefined behaviour.
