@@ -110,7 +110,7 @@ namespace Motion
         const char* GetName() { return "Data Storage Devices / Qualogy 8217 Multibus Disk & Tape Controller"; };
 
 // make sure these are not packed so that the OS can use them
-#pragma pack(1)
+#pragma pack(push, 1)
         // @brief I/O Parameter Block
         struct IOPB
         {
