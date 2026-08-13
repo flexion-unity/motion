@@ -95,10 +95,10 @@ namespace Motion
             RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Float, "Video Scale (1-4)");
             ImGui::SameLine();
             RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Integer, "Log Channel Mask");
-             ImGui::SameLine();
+            ImGui::SameLine();
             RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Integer, "Log Destination Mask");
-
-
+            
+            ImGui::NewLine();
             if (ImGui::Button("Go"))
                 Program::SetState(ProgramState::Emulation);
         }

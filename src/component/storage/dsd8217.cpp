@@ -16,5 +16,13 @@
 
 namespace Motion
 {
+    void DSD8217::Start()
+    {
+        multibus = Emulation::GetMachine()->FindComponentByType<Multibus>();
+    }
 
+    void DSD8217::Shutdown()
+    {
+
+    }
 }; 

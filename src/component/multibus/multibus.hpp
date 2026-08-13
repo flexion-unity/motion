@@ -10,7 +10,10 @@
     Most likely it was inheited from the SUN design that SGI bought back in '82. PM1/PM2/IP1 boards are fully multibus, IP2 boards,
     except for the CPU, GPU and FPU (?) (thees use their own private bus.)
 
-    TODO: Cards that use memory space, not just I/O space.
+    TODO:
+        Cards that use memory space, not just I/O space.
+        Parity Control
+        MB Protection
 */
 
 #pragma once

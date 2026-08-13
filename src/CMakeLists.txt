@@ -73,5 +73,6 @@ add_executable(motion
     launcher/launcher.cpp
     component/storage/dsd8217.cpp
     base/profile/profile_cvars.cpp
+    component/storage/dsd8217_debug.cpp
 )
 

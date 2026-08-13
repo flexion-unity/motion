@@ -22,6 +22,7 @@
 #include <component/gpu/juniper/dc4/dc4.hpp>
 #include <component/gpu/juniper/uc4/uc4.hpp>
 #include <component/gpu/juniper/bp3/bp3.hpp>
+#include <component/storage/dsd8217.hpp>
 
 namespace Motion
 {
@@ -42,6 +43,7 @@ namespace Motion
         AddComponent<IP2Clock>();
         AddComponent<DC4>();
         AddComponent<UC4>();
+        AddComponent<DSD8217>();
 
         forceEnterSerialMonitor = Cvar::Get("forceEnterSerialMonitor", "0");
 

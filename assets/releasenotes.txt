@@ -5,6 +5,8 @@ Release Notes
 
 0.2.0
     * Video scaling (thanks to flexion)
+    * --help for common convars (thanks to flexion)
+    * a launcher that lets you configure the most common settings
 
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.
