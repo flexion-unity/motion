@@ -23,7 +23,7 @@ namespace Motion
     #define DSD5217_MBIO_START                  0x50007F00
     #define DSD5217_MBIO_END                    0x50007FFF
 
-    #define DSD5217_LOG_PREFIX                  "DSD 8217"
+    #define DSD5217_LOG_PREFIX                  "DSD 5217"
 
     // Fresh from my ass
     #define DSD5217_MULTIBUS_SLOTNUM            7

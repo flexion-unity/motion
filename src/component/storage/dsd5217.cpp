@@ -24,6 +24,9 @@ namespace Motion
         slot.ioStart = DSD5217_MBIO_START;
         slot.ioEnd = DSD5217_MBIO_END;
 
+        slot.memStart = 0x0;
+        slot.memEnd = 0xffffff;
+
         multibus->AddSlot(slot, DSD5217_MULTIBUS_SLOTNUM);
     }
 
@@ -39,7 +42,7 @@ namespace Motion
                 break;
         }
 
-        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 8217 Read8 {} from {}", ret, addr).c_str(), LogChannels::Debug);
+        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
         return ret;
     }
 
@@ -52,7 +55,7 @@ namespace Motion
                 break;
         }
 
-        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 8217 Write8 {} to {}", value, addr).c_str(), LogChannels::Debug);
+        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Write8 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
     }
 
     void DSD5217::Shutdown()

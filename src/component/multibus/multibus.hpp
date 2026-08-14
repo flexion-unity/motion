@@ -24,6 +24,7 @@
 
 // also depends on the CPU
 #include <component/cpu/cpu.hpp>
+#include <component/memory.hpp>
 
 namespace Motion
 {
@@ -131,8 +132,12 @@ namespace Motion
 
         // THE CPU, so we can fire an irq
         ComponentCPU* cpu; 
+        Memory* memory;
         // our coherent extension
         CoherentExtensionMultibus* multibusExtension;
     
+        // so we can lob of 1mb
+        size_t multibusMemoryStart;
+        size_t multibusMemoryEnd;
     };
 };
