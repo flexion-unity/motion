@@ -57,7 +57,7 @@ namespace Motion
         mappingMultibusMemory.endAddr = multibusMemoryEnd;
         mappingMultibusMemory.component = this; 
 
-        memMapping->endAddr = (memMapping->endAddr); // nuke 1 megabyte of system RAM
+        memMapping->endAddr = (memMapping->endAddr); // nuke 1 megabyte of system RAM so we can redirect last-megabyte i/o here
 
         AddrSpace::AddMapping(mappingMultibusMemory);
 
@@ -97,8 +97,8 @@ namespace Motion
         if (!lastSlotWritten)
             return false;
 
-        return (addr >= lastSlotWritten->ioStart
-        && addr <= lastSlotWritten->ioEnd);
+        return ((addr >= lastSlotWritten->memStart && addr <= lastSlotWritten->memEnd) 
+            || (addr >= lastSlotWritten->ioStart && addr <= lastSlotWritten->ioEnd));
     }
 
     bool Multibus::SetCachedReadSlot(size_t addr)
@@ -130,8 +130,10 @@ namespace Motion
             if (!slot.active)
                 continue;
 
-            if (addr >= slot.ioStart
-            && addr <= slot.ioEnd)
+            if ((addr >= slot.memStart
+            && addr <= slot.memEnd) 
+            || (addr >= slot.ioStart
+            && addr <= slot.ioEnd))
             {
                 lastSlotRead = &slot;
                 return true;
@@ -165,8 +167,8 @@ namespace Motion
         if (slots[id].memStart
         && slots[id].memEnd)
         {
-            slots[id].memStart = (multibusMemoryEnd - 0x100000) + (slots[id].memStart & 0xFFFFFF);
-            slots[id].memEnd = (multibusMemoryEnd - 0x100000) + (slots[id].memEnd & 0xFFFFFF);
+            slots[id].memStart = (multibusMemoryEnd - 0x100000) + (slots[id].memStart & 0xFFFFF);
+            slots[id].memEnd = (multibusMemoryEnd - 0x100000) + (slots[id].memEnd & 0xFFFFF);
         }
 
 
@@ -197,8 +199,8 @@ namespace Motion
         }
 
         // multibus is 24 bit
-        slots[id].memStart = (multibusMemoryEnd - 0x100000) + (addrStart & 0xFFFFFF);
-        slots[id].memEnd = (multibusMemoryEnd - 0x100000) + (addrEnd & 0xFFFFFF);
+        slots[id].memStart = (multibusMemoryEnd - 0x100000) + (addrStart & 0xFFFFF);
+        slots[id].memEnd = (multibusMemoryEnd - 0x100000) + (addrEnd & 0xFFFFF);
     }
 
     uint8_t Multibus::Read8(size_t addr) 
@@ -224,8 +226,7 @@ namespace Motion
                 }
             }
 
-    returnMemory:
-        return lastSlotRead->component->Read8(addr);
+            return lastSlotRead->component->Read8(addr);
     }
 
     uint16_t Multibus::Read16(size_t addr)

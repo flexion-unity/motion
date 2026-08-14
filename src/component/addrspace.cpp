@@ -23,75 +23,75 @@ namespace Motion
 
     uint8_t AddrSpace::ReadU8(size_t addr)
     {
-        size_t realAddr = addr;
+        size_t physAddr = addr;
 
         if (mmu)
         {
-            if (!mmu->Translate(addr, &realAddr, false))
+            if (!mmu->Translate(addr, &physAddr, false))
                 return 0xFF; // ****temp - add bus error ****
         }
 
-        AddrSpaceMapping* mapping = GetMapping(realAddr);
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
 
         if (mapping)
         {
-            return mapping->component->Read8(realAddr);
+            return mapping->component->Read8(physAddr);
         }
         else
         {
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU8 - Unmapped read from 0x{:x}!", realAddr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU8 - Unmapped read from 0x{:x}!", physAddr).c_str(), LogChannels::Warning);
             return 0;
         }
     }
     
     uint16_t AddrSpace::ReadU16(size_t addr)
     {
-        size_t realAddr = addr;
+        size_t physAddr = addr;
 
         if (mmu)
         {
-            if (!mmu->Translate(addr, &realAddr, false))
+            if (!mmu->Translate(addr, &physAddr, false))
                 return 0xFF; // ****temp - add bus error ****
         }
 
-        AddrSpaceMapping* mapping = GetMapping(realAddr);
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
 
         if (mapping)
         {
-            auto value = mapping->component->Read16(realAddr);
+            auto value = mapping->component->Read16(physAddr);
             // IRIS is a big-endian system
 
             return value;
         }
         else
         {
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU16 - Unmapped read from 0x{:x}!", realAddr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU16 - Unmapped read from 0x{:x}!", physAddr).c_str(), LogChannels::Warning);
             return 0;
         }
     }
     
     uint32_t AddrSpace::ReadU32(size_t addr)
     {
-        size_t realAddr = addr;
+        size_t physAddr = addr;
 
         if (mmu)
         {
-            if (!mmu->Translate(addr, &realAddr, false))
+            if (!mmu->Translate(addr, &physAddr, false))
                 return 0xFF; // ****temp - add bus error ****
         }
 
-        AddrSpaceMapping* mapping = GetMapping(realAddr);
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
 
         if (mapping)
         {
             // IRIS is a big-endian system
-            auto value = mapping->component->Read32(realAddr);
+            auto value = mapping->component->Read32(physAddr);
 
             return value;
         }
         else
         {
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU32 - Unmapped read from 0x{:x}!", realAddr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::ReadU32 - Unmapped read from 0x{:x}!", physAddr).c_str(), LogChannels::Warning);
             return 0;
         }
     }
@@ -145,60 +145,60 @@ namespace Motion
 
     void AddrSpace::WriteU8(size_t addr, uint8_t value)
     {
-        size_t realAddr = addr;
+        size_t physAddr = addr;
 
         if (mmu)
         {
-            if (!mmu->Translate(addr, &realAddr, true))
+            if (!mmu->Translate(addr, &physAddr, true))
                 return; // ****temp - add bus error ****
         }
 
-        AddrSpaceMapping* mapping = GetMapping(realAddr);
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
 
         if (mapping)
         {
-            return mapping->component->Write8(realAddr, value);
+            return mapping->component->Write8(physAddr, value);
         }
         else
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU8 - Unmapped write of 0x{:x} to 0x{:x}!", value, realAddr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU8 - Unmapped write of 0x{:x} to 0x{:x}!", value, physAddr).c_str(), LogChannels::Warning);
     }
 
     void AddrSpace::WriteU16(size_t addr, uint16_t value)
     {
-        size_t realAddr = addr;
+        size_t physAddr = addr;
 
         if (mmu)
         {
-            if (!mmu->Translate(addr, &realAddr, true))
+            if (!mmu->Translate(addr, &physAddr, true))
                 return; // ****temp - add bus error ****
         }
 
-        AddrSpaceMapping* mapping = GetMapping(realAddr);
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
 
         if (mapping)
         {
             // IRIS is a big-endian system
-            return mapping->component->Write16(realAddr, value);
+            return mapping->component->Write16(physAddr, value);
         }
         else
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU16 - Unmapped write of 0x{:x} to 0x{:x}!", value, realAddr).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU16 - Unmapped write of 0x{:x} to 0x{:x}!", value, physAddr).c_str(), LogChannels::Warning);
     }
 
     void AddrSpace::WriteU32(size_t addr, uint32_t value)
     {
-        size_t realAddr = addr;
+        size_t physAddr = addr;
 
         if (mmu)
         {
-            if (!mmu->Translate(addr, &realAddr, true))
+            if (!mmu->Translate(addr, &physAddr, true))
                 return; // ****temp - add bus error ****
         }
 
-        AddrSpaceMapping* mapping = GetMapping(realAddr);
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
 
         if (mapping)
         {
-            return mapping->component->Write32(realAddr, value);
+            return mapping->component->Write32(physAddr, value);
         }
         else
             Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::WriteU32 - Unmapped write of 0x{:x} to 0x{:x}!", value, addr).c_str(), LogChannels::Warning);

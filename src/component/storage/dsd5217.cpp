@@ -24,8 +24,9 @@ namespace Motion
         slot.ioStart = DSD5217_MBIO_START;
         slot.ioEnd = DSD5217_MBIO_END;
 
-        slot.memStart = 0x0;
-        slot.memEnd = 0xffffff;
+        // according to SGI this controller is "brain damaged" and requires hardcoded memory addresses
+        slot.memStart = 0x7F000; // the first 16 bytes are used to determine memory size and we don'timplement the switch register yet
+        slot.memEnd = 0x7FFFF;
 
         multibus->AddSlot(slot, DSD5217_MULTIBUS_SLOTNUM);
     }

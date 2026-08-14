@@ -79,7 +79,7 @@ namespace Motion
             size_t ioEnd; 
             Component* component;
 
-            Slot(Component* component)
+            Slot(Component* component) : Slot()
             {
                 this->component = component;
             }
@@ -90,7 +90,7 @@ namespace Motion
             // parameterless constructor should be private
             Slot()
             {
-
+                memStart = memEnd = ioStart = ioEnd = 0;
             }
         }; 
 
@@ -98,7 +98,7 @@ namespace Motion
         bool IsEarlyStart() override { return true; };
 
         // our slots
-        Slot slots[MULTIBUS_MAX_SLOTS];
+        Slot slots[MULTIBUS_MAX_SLOTS] = {0};
         
         // this simulates the action of the user inserting a slot into the Multibus backplane.
         // NOTE: no attempt is made to prevent the addresses overlapping. the first slot in the range will be used.
