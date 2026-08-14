@@ -20,15 +20,15 @@
 
 namespace Motion
 {
-    #define DSD5217_MBIO_START                  0x7F00
-    #define DSD5217_MBIO_END                    0x7FFF
+    #define DSD5217_MBIO_START                  0x50007F00
+    #define DSD5217_MBIO_END                    0x50007FFF
 
     #define DSD5217_LOG_PREFIX                  "DSD 8217"
 
     // Fresh from my ass
     #define DSD5217_MULTIBUS_SLOTNUM            7
 
-    #define DSD5217_PTR1                        0x7F01
+    #define DSD5217_IO_PTR1                     0x50007F01
 
     // Device codes. These determine which device we are actually communicating with
     #define DSD5217_DEVICE_CODE_HDD             0   // 'Winchester' (Hard disk drive)
@@ -215,12 +215,14 @@ namespace Motion
             uint8_t sb[DSD5217_SB_SIZE];        // status bytes?
         }; 
 
+#pragma pack(pop)
+
+        uint8_t state;                          // holds reset state
 
         // Methods
         uint8_t Read8(size_t addr) override;
         void Write8(size_t addr, uint8_t value) override;
 
-#pragma pack(pop)
 
     private: 
         // Multibus IRQ1 is used.

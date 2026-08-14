@@ -30,12 +30,29 @@ namespace Motion
 
     uint8_t DSD5217::Read8(size_t addr) 
     {
+        uint8_t ret = 0x00;
 
+        switch (addr)
+        {
+            case DSD5217_IO_PTR1:
+                ret = state;
+                break;
+        }
+
+        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 8217 Read8 {} from {}", ret, addr).c_str(), LogChannels::Debug);
+        return ret;
     }
 
     void DSD5217::Write8(size_t addr, uint8_t value)
     {
-        
+        switch (addr)
+        {
+            case DSD5217_IO_PTR1:
+                state = value;
+                break;
+        }
+
+        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 8217 Write8 {} to {}", value, addr).c_str(), LogChannels::Debug);
     }
 
     void DSD5217::Shutdown()
