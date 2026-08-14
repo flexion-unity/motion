@@ -12,7 +12,10 @@ Release Notes
     * Fix emulator input being sent to main emulator as well as IMGUI
     * Fix shift and ctrl keys 
     * Fix busted back switches impl (was using pm2's???)
-    
+    * Last megabyte multibus memory is now emulated
+        * It tries to map the last megabyte to a multibus device and treats it as RAM if it fails. Not sure if this is right
+    * Memory / VRAM editors (CoherentEditor) now have an ASCII view.
+
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.
         * I forgot that strncpy with overlapping memory is undefined behaviour.

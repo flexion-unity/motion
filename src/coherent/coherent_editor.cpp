@@ -13,7 +13,7 @@ namespace Motion
 {
     void CoherentEditor::AddUI()
     {
-        ImGui::SetNextWindowSize(ImVec2(500, 350));
+        ImGui::SetNextWindowSize(ImVec2(650, 350));
 
         if (!settings.buf)
         {
@@ -78,29 +78,68 @@ namespace Motion
                 ImGui::Text("Nothing to see here...");
             else
             {
-                for (currentAddress = startDrawingAt; currentAddress < (startDrawingAt + settings.loadAtOnce); currentAddress += settings.lineSize)
+                if (ImGui::BeginChild("##HexView", ImVec2(450, 350)))
                 {
-                    ImGui::Text("%.8lx:\t", currentAddress);
-                    ImGui::SameLine();
-
-                    for (int32_t j = 0; j < settings.lineSize; j++)
+                    for (currentAddress = startDrawingAt; currentAddress < (startDrawingAt + settings.loadAtOnce); currentAddress += settings.lineSize)
                     {
-                        ImGui::Text("%.2x", settings.buf[currentAddress + j]);
+                        ImGui::Text("%.8lx:\t", currentAddress);
                         ImGui::SameLine();
 
+                        for (int32_t j = 0; j < settings.lineSize; j++)
+                        {
+                            ImGui::Text("%.2x", settings.buf[currentAddress + j]);
+                            ImGui::SameLine();
+
+                            // in the case where the user's chosen address partially overlaps the end of the buffer.
+                            if ((currentAddress + j) >= settings.bufSize)
+                                goto done; 
+                        }
+
+                        ImGui::NewLine();
+
                         // in the case where the user's chosen address partially overlaps the end of the buffer.
-                        if ((currentAddress + j) >= settings.bufSize)
+                        if (currentAddress >= settings.bufSize)
                             goto done; 
                     }
-
-                    ImGui::NewLine();
-
-                    // in the case where the user's chosen address partially overlaps the end of the buffer.
-                    if (currentAddress >= settings.bufSize)
-                        goto done; 
                 }
-                
+
             done:
+
+                ImGui::EndChild();
+                ImGui::SameLine();
+                // draw an ascii view
+                if (ImGui::BeginChild("##AsciiView", ImVec2(200, 350)))
+                {
+                    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(1.0f, ImGui::GetStyle().ItemSpacing.y));
+
+                    for (currentAddress = startDrawingAt; currentAddress < (startDrawingAt + settings.loadAtOnce); currentAddress += settings.lineSize)
+                    {
+                        for (int32_t j = 0; j < settings.lineSize; j++)
+                        {
+                            char ch = settings.buf[currentAddress + j];
+                            if (isprint(ch))
+                                ImGui::Text("%c", settings.buf[currentAddress + j]);
+                            else
+                                ImGui::Text(".");
+
+                            ImGui::SameLine();
+
+                            // in the case where the user's chosen address partially overlaps the end of the buffer.
+                            if ((currentAddress + j) >= settings.bufSize)
+                                goto done2; 
+                        }
+
+                        ImGui::NewLine();
+
+                        // in the case where the user's chosen address partially overlaps the end of the buffer.
+                        if (currentAddress >= settings.bufSize)
+                            goto done2; 
+                    }
+
+                }
+            done2:
+                ImGui::PopStyleVar();
+                ImGui::EndChild();
             }
         }
 

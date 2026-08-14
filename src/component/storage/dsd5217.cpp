@@ -34,6 +34,8 @@ namespace Motion
 
     uint8_t DSD5217::Read8(size_t addr) 
     {
+        addr &= 0xFFFFF;
+        
         uint8_t ret = 0x00;
 
         switch (addr)
@@ -49,6 +51,8 @@ namespace Motion
 
     void DSD5217::Write8(size_t addr, uint8_t value)
     {
+        addr &= 0xFFFFF;
+        
         switch (addr)
         {
             case DSD5217_IO_PTR1:
