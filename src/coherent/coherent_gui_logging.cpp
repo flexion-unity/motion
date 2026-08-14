@@ -34,7 +34,7 @@ namespace Motion
     // this code is a test
             char logWindowBuf[LOGBUF_PURGE_SIZE];
 
-            // copy only the last 1024 characters if > 1024
+            // copy only the last 2048 characters if > 2048
             if (length > LOGBUF_PURGE_SIZE)
                 offset = length - LOGBUF_PURGE_SIZE;
 

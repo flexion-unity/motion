@@ -15,7 +15,7 @@
 namespace Motion 
 {    
     #define LOGBUF_MAX_SIZE         16384
-    #define LOGBUF_PURGE_SIZE       2048
+    #define LOGBUF_PURGE_SIZE       4096
 
     class CoherentUI
     {
