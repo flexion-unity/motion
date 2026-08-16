@@ -86,7 +86,7 @@ namespace Motion
                 }
 
                 if (keyDownEvent.key == SDLK_RSHIFT
-                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                && keyDownEvent.mod & SDL_KMOD_RSHIFT)
                 {
                     shiftStateR = !shiftStateR;
 
@@ -94,8 +94,8 @@ namespace Motion
                         key |= 0x80;
                 }
 
-                if (keyDownEvent.key == SDLK_RSHIFT
-                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                if (keyDownEvent.key == SDLK_LCTRL
+                && keyDownEvent.mod & SDL_KMOD_LCTRL)
                 {
                     ctrlStateL = !ctrlStateL;
 
@@ -103,8 +103,8 @@ namespace Motion
                         key |= 0x80;
                 }
 
-                if (keyDownEvent.key == SDLK_RSHIFT
-                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                if (keyDownEvent.key == SDLK_RCTRL
+                && keyDownEvent.mod & SDL_KMOD_RCTRL)
                 {
                     ctrlStateR = !ctrlStateR;
 
