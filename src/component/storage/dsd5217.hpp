@@ -226,7 +226,6 @@ namespace Motion
 
 #pragma pack(pop)
 
-
         uint8_t state;                          // holds reset state
 
         // Methods

@@ -22,6 +22,7 @@ namespace Motion
     // These are actually defined in the files specifically for them.
     extern Cvar* profileFolder; 
     extern Cvar* profileDisk0Path;
+    extern Cvar* profileDisk1Path; // for future expansion
 
     extern Cvar* ramInstalled;
     extern Cvar* numBitplanes;
@@ -31,6 +32,8 @@ namespace Motion
     extern Cvar* logDestinations;
     extern Cvar* startPaused;
     extern Cvar* skipLauncher;
+    
+    #define PROFILE_LOG_PREFIX      "Profile"
 
     // Base Configuration cvars
 
@@ -54,6 +57,9 @@ namespace Motion
         /// @param skipProfileAddition if this is true, a temporary bufer of the right size will be created and passed into filesystem::open
         static FileStream* Open(const char* path, FileFlags mode = FileFlags::Text, bool skipProfileAddition = false);
 
+        /// utility method to allow opening the user specified hard drive.
+        static FileStream* OpenDisk(int32_t id, FileFlags mode = FileFlags::Binary); // use binary as default
+        
         /// @brief this method does the same thing as Filesystem::Close. YOU MUST SET TO NULLPTR, your stream is DEAD
         static void Close(FileStream* fs);
     }; 

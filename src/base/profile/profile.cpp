@@ -15,6 +15,7 @@ namespace Motion
 {
     Cvar* profileFolder; 
     Cvar* profileDisk0Path; 
+    Cvar* profileDisk1Path; 
 
     void Profile::Init()
     {
@@ -47,6 +48,39 @@ namespace Motion
         else
             return Filesystem::Open(path, mode);
 
+    }
+
+    FileStream* Profile::OpenDisk(int32_t id, FileFlags flags)
+    {
+        FileStream* hdd;
+        const char* hddPath; // for debug
+
+        // I also don't like this code
+        switch (id)
+        {
+            case 0:
+                hddPath = profileDisk0Path->GetString();
+                break; 
+            case 1: 
+                hddPath = profileDisk1Path->GetString();
+                hdd = Profile::Open(hddPath, flags);
+                break;
+            default:
+                Logger::Log(PROFILE_LOG_PREFIX, "Profile::OpenDisk - Only 2 HDDs are supported!");
+                return nullptr;
+        }
+        
+        Logger::Log(PROFILE_LOG_PREFIX, std::format("Opening HDD {} at {}...", id, hddPath).c_str());
+
+        hdd = Profile::Open(hddPath, flags);
+
+        if (!hdd)
+        {
+            Logger::Log(PROFILE_LOG_PREFIX, std::format("Failed to open HDD {} at {}!", id, hddPath).c_str(), LogChannels::Error);
+            return nullptr; 
+        }
+
+        return hdd;
     }
 
     void Profile::Close(FileStream* fs)

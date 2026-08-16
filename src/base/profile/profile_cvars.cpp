@@ -25,5 +25,6 @@ namespace Motion
         ramInstalled = Cvar::Get("ramInstalled", "16777216");
         numBitplanes = Cvar::Get("numBitplanes", "32");
         profileDisk0Path = Cvar::Get("profileDisk0Path", "3130.img");
+        profileDisk1Path = Cvar::Get("profileDisk1Path", "3130_2.img");
     }
 }; 

@@ -31,11 +31,15 @@ namespace Motion
 
         multibus->AddSlotMapping(slot);
 
+        hdd = Profile::OpenDisk(0);
     }
 
 
     uint8_t DSD5217::Read8(size_t addr) 
     {
+        if (!hdd)
+            return 0xFF; // there is no point
+
         addr &= 0xFFFFF;
         
         uint8_t ret = 0x00;
@@ -54,6 +58,10 @@ namespace Motion
 
     void DSD5217::Write8(size_t addr, uint8_t value)
     {
+        // don't bother if no hdd
+        if (!hdd)
+            return;
+
         addr &= 0xFFFFF;
         
         switch (addr)
@@ -68,6 +76,6 @@ namespace Motion
 
     void DSD5217::Shutdown()
     {
-
+        Profile::Close(hdd);
     }
 }; 
