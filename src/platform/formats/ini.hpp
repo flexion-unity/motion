@@ -7,6 +7,7 @@
     1.0.1:      Added additional INISection constructor     July 27, 2026
 */
 
+#pragma once
 #include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>
 

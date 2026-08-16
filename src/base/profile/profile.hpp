@@ -11,6 +11,7 @@
     the name of which is based on a cvar.
 */
 
+#pragma once
 #include <Motion.hpp>
 #include <base/filesystem/filesystem.hpp>
 #include <platform/formats/ini.hpp>
