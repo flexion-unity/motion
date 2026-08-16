@@ -72,8 +72,15 @@ namespace Motion
             if (initialised)
             {
                 KeyDownEvent& keyDownEvent = static_cast<KeyDownEvent&>(evt);
-                uint8_t key = sdlToSgi[(SDL_Keycode)keyDownEvent.key];
-                
+
+                auto it = sdlToSgi.find((SDL_Scancode)keyDownEvent.scancode);
+
+                // Don't send nmapped key
+                if (it == sdlToSgi.end())
+                    return;
+
+                uint8_t key = it->second;
+
                 // bit7 is used for modifiers but only shift and control since this keyboard doesn't even have an al tkey.
                 // handle bit
                 if (keyDownEvent.key == SDLK_LSHIFT
@@ -86,7 +93,7 @@ namespace Motion
                 }
 
                 if (keyDownEvent.key == SDLK_RSHIFT
-                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                && keyDownEvent.mod & SDL_KMOD_RSHIFT)
                 {
                     shiftStateR = !shiftStateR;
 
@@ -94,8 +101,8 @@ namespace Motion
                         key |= 0x80;
                 }
 
-                if (keyDownEvent.key == SDLK_RSHIFT
-                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                if (keyDownEvent.key == SDLK_LCTRL
+                && keyDownEvent.mod & SDL_KMOD_LCTRL)
                 {
                     ctrlStateL = !ctrlStateL;
 
@@ -103,8 +110,8 @@ namespace Motion
                         key |= 0x80;
                 }
 
-                if (keyDownEvent.key == SDLK_RSHIFT
-                && keyDownEvent.mod & SDL_KMOD_LSHIFT)
+                if (keyDownEvent.key == SDLK_RCTRL
+                && keyDownEvent.mod & SDL_KMOD_RCTRL)
                 {
                     ctrlStateR = !ctrlStateR;
 
