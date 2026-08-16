@@ -138,6 +138,9 @@ Similar to a .plan file
 * Added last megabyte multibus mapping (memory by default unless MMIO mapped)
 * Added ascii view to memory viewer
 
+## 2026-08-15
+* Refactor multibus to support multiple mappings per slot and update debug window to do so.
+
 v0.2.0 TODO:
 
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE

@@ -13,7 +13,11 @@ namespace Motion
             case CoherentSystem::RunState::Reset:
                 Emulation::Reset();
                 break;
-            case CoherentSystem::RunState::SingleStep:
+            case CoherentSystem::RunState::SingleStepNormal:
+                Emulation::SingleStep();
+                SetRunState(Paused);
+                break;
+            case CoherentSystem::RunState::SingleStepOver:
                 Emulation::SingleStep();
                 SetRunState(Paused);
                 break;

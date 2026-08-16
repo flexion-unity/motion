@@ -26,19 +26,11 @@ namespace Motion
         slot.id = DSD5217_MULTIBUS_SLOTNUM;
 
         // according to SGI this controller is "brain damaged" and requires hardcoded memory addresses
-        slot.memStart = DSD5217_MEMORY_MAP0_START; // the first 16 bytes are used to determine memory size and we don'timplement the switch register yet
-        slot.memEnd = DSD5217_MEMORY_MAP0_END;
-
-        multibus->AddSlotMapping(slot);
-
-        // add a second mapping at 7f000...7ffff
-        Multibus::SlotMapping slot2 = Multibus::SlotMapping(this);
-
-        slot.memStart = DSD5217_MEMORY_MAP1_START;
+        slot.memStart = DSD5217_MEMORY_MAP1_START; // the first 16 bytes are used to determine memory size and we don'timplement the switch register yet
         slot.memEnd = DSD5217_MEMORY_MAP1_END;
-        slot.id = DSD5217_MULTIBUS_SLOTNUM;
 
         multibus->AddSlotMapping(slot);
+
     }
 
 
@@ -50,13 +42,13 @@ namespace Motion
 
         switch (addr)
         {
-            case DSD5217_IO_PTR1:
+            case DSD5217_MBIO_PTR1:
                 ret = state;
                 break;
         }
-
-        if (addr != 0x10b2)
-            Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
+        
+        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
+        
         return ret;
     }
 
@@ -66,7 +58,7 @@ namespace Motion
         
         switch (addr)
         {
-            case DSD5217_IO_PTR1:
+            case DSD5217_MBIO_PTR1:
                 state = value;
                 break;
         }

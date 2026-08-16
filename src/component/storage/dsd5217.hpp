@@ -17,24 +17,27 @@
 #include <Motion.hpp>
 #include <component/component.hpp>
 #include <component/multibus/multibus.hpp>
+#include <base/profile/profile.hpp>
+#include <base/filesystem/filesystem.hpp>
 
 namespace Motion
 {
     #define DSD5217_MBIO_START                  0x50007F00
     #define DSD5217_MBIO_END                    0x50007FFF
+    #define DSD5217_MBIO_PTR1                   0x50007F01
 
-    // memory ranges. THis one decodes two regions
-    #define DSD5217_MEMORY_MAP0_START           0x1000
-    #define DSD5217_MEMORY_MAP0_END             0x10FF
+    // memory ranges. THis one decodes one region which stores pointers to many others.
     #define DSD5217_MEMORY_MAP1_START           0x7F000
     #define DSD5217_MEMORY_MAP1_END             0x7F001
+
+    // Holds the pointers to all other utilised structures
+
 
     #define DSD5217_LOG_PREFIX                  "DSD 5217"
 
     // Fresh from my ass
     #define DSD5217_MULTIBUS_SLOTNUM            7
 
-    #define DSD5217_IO_PTR1                     0x50007F01
 
     // Device codes. These determine which device we are actually communicating with
     #define DSD5217_DEVICE_CODE_HDD             0   // 'Winchester' (Hard disk drive)
@@ -123,7 +126,7 @@ namespace Motion
         void Start() override;
         void Shutdown() override; 
 
-        const char* GetName() { return "Data Storage Devices / Qualogy 8217 Multibus Disk & Tape Controller"; };
+        const char* GetName() { return "Data Storage Devices / Qualogy 5217 Multibus Disk & Tape Controller"; };
 
 // make sure these are not packed so that the OS can use them
 #pragma pack(push, 1)
@@ -223,15 +226,20 @@ namespace Motion
 
 #pragma pack(pop)
 
+
         uint8_t state;                          // holds reset state
 
         // Methods
         uint8_t Read8(size_t addr) override;
         void Write8(size_t addr, uint8_t value) override;
 
-
     private: 
         // Multibus IRQ1 is used.
         Multibus* multibus;
+        FilesystemFile* hdd;
+        WUB* wub;
+
+        // can't do any disk ops if there is no disk inserted lmao
+        bool diskIsOpen;
     }; 
 }; 

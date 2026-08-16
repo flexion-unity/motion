@@ -23,7 +23,9 @@ namespace Motion
         {
             ImGui::TextColored(ImVec4(0.2f, 1.0f, 0.2f, 1.0f), COHERENT_VERSION);
             ImGui::Text("An architecture-agnostic, retargetable, embedded debugger for emulators");
-            ImGui::Text("© 2026 starfrost (https://starfrost.net/)");
+            ImGui::Text("© 2026 starfrost:");
+            ImGui::SameLine();
+            ImGui::TextLinkOpenURL("https://starfrost.net/");
 
             if (ImGui::Button("Close"))
                 CoherentUI::aboutActive = false; 
@@ -178,7 +180,12 @@ namespace Motion
                         ImGui::SameLine();
                         
                         if (ImGui::Button("Step"))
-                            Coherent::currentSystem->SetRunState(CoherentSystem::RunState::SingleStep);
+                            Coherent::currentSystem->SetRunState(CoherentSystem::RunState::SingleStepNormal);
+                        
+                        ImGui::SameLine();
+
+                        if (ImGui::Button("Step Over"))
+                            Coherent::currentSystem->SetRunState(CoherentSystem::RunState::SingleStepOver);
                     }
 
                     ImGui::SameLine();

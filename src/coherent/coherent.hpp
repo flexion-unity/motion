@@ -16,7 +16,7 @@
 namespace Motion
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
-    #define COHERENT_VERSION        "Coherent v0.7 (August 2026)"
+    #define COHERENT_VERSION        "Coherent v0.8 (August 16, 2026)"
 
     extern Cvar* startPaused;
 
@@ -162,16 +162,27 @@ namespace Motion
         /// @return The program counter of the current system.
         virtual size_t GetPC() { return 0; };
 
+        /// @brief enumerates the possible step types that we can use
+        enum StepType
+        {
+            /// @brief a normal step type
+            Normal = 0,
+
+            /// @brief step over
+            Over = 1,
+        };
+
         /// @brief enumerates the run states of the system
         enum RunState
         {
             Running = 0,
             Paused = 1,
             Reset = 2,
-            SingleStep = 3,
-
+            SingleStepNormal = 3,
+            SingleStepOver = 4,
+            
             // not yet started i.e. don't display the stack etc. from the emulator's pov, this is the same as paused.
-            NotYetStarted = 4,
+            NotYetStarted = 5,
         };
 
         /// @brief Add a register to this system

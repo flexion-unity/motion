@@ -14,6 +14,7 @@ Release Notes
     * Fix busted back switches impl (was using pm2's???)
     * Last megabyte multibus memory is now emulated
         * It tries to map the last megabyte to a multibus device and treats it as RAM if it fails. Not sure if this is right
+    * Multibus devices now use the SlotMapping class instead of the SLot class, they can map any number of regions now instead of being limited to 20 Multibus slots with one mapping each.
     * Memory / VRAM editors (CoherentEditor) now have an ASCII view.
 
 0.1.1 (August 10, 2026)
