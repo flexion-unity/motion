@@ -142,12 +142,18 @@ Then the IRIS will boot using our supported DSD 8217 disk controller. A 60 MB im
     It has to be in the profile folder
 
 Once unix is booted probably you should create an account. It's fairly easy to bypass the security though.
-You can't run "mex" yet, because the graphics system is insufficiently emulated to do so.
-If you get a bus error the emulator will close.
+
+    - The unix these machines run is called SGI UNIX, GL1 or GL2 depending on the version. Basically it's SysV0 with parts of SysV3.2, 4.2BSD (e.g. demand paging) and early SunOS, with custom SGI stuff like the
+    graphics library (GL1 / GL2) and "extent file system" (XFS predecessor). There is a basic windowing system provided, called "mex". Most likely it will not work yet, because the graphics system is insufficiently emulated to do so.
+    - The only editor built-in is vi. Apparently emacs was an option. It is version 3.7.
+    - Probably you could get ethernet and TCP/IP going if the EXOS201 is ever emulated. It supports 10 Mbit ethernet as well as the proto-Ethernet (1.0/2.0)
+    - If you get a bus error the emulator will close.
 
 4. Other things you can do
 
 If you have an "mkboot" tape you can run "b md0.mdfex" (other fex's won't work), which will throw you into a low-level hard drive configuration.
     Messing around with this may end poorly
+
+Run the "set debug 1" command in the PROM and then boot. It will spew out a deranged amount of logging.
 
 5. Resources

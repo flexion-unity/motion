@@ -19,11 +19,13 @@ namespace Motion
         multibus = Emulation::GetMachine()->FindComponentByType<Multibus>();
         vram = Emulation::GetMachine()->FindComponentByType<ComponentVRAM>();
 
-        Multibus::Slot slot = Multibus::Slot(this);
+        Multibus::SlotMapping slot = Multibus::SlotMapping(this);
 
         slot.ioStart = UC4_REG_START;
         slot.ioEnd = UC4_REG_END;
-        multibus->AddSlot(slot, UC4_MULTIBUS_SLOT);
+        slot.id = UC4_MULTIBUS_SLOT;
+
+        multibus->AddSlotMapping(slot);
 
         extensionUC4 = new CoherentExtensionUC4(this);
         Coherent::RegisterExtension(extensionUC4);

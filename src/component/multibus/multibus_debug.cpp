@@ -14,20 +14,46 @@ namespace Motion
     void CoherentExtensionMultibus::AddUI()
     {
         Multibus* multibus = (Multibus*)component;
-        int32_t slotId = 0;
         ImGui::SetNextWindowSize(ImVec2(550, 400));
+
+        // so we can print a message if something is missing
+        bool ioFound = false, memFound = false;
+        // utility: keep track of mapping #
+        int32_t mappingNrForSlot = 0, lastSlotMapped = -1; // no slot -1
 
         if (ImGui::Begin("Multibus State", &enabled))
         {
-            for (Multibus::Slot& slot : multibus->slots)
+            for (Multibus::SlotMapping& slot : multibus->slotMappings)
             {
-                if (!slot.active)
-                    ImGui::TextColored(ImVec4(0.6, 0.6, 0.6, 1.0), "Slot %d: nothing inserted", slotId + 1); // add 1 as this is the actual multibus slot #.
-                else
-                    ImGui::TextColored(ImVec4(1.0, 1.0, 1.0, 1.0),
-                    "Slot %d: I/O 0x%lX-0x%lX: %s", slotId + 1, slot.ioStart, slot.ioEnd, slot.component->GetName());
+                if (slot.id != lastSlotMapped)
+                {
+                    lastSlotMapped = slot.id;
+                    mappingNrForSlot = 0;
+                }
 
-                slotId++;
+                ImGui::Text("Slot %d mapping %d:", slot.id, mappingNrForSlot);
+
+                if (slot.memStart && slot.memEnd)
+                {
+                    ImGui::Text("Memory (within 1mb region): %05lx-%05lx", slot.memStart, slot.memEnd);
+                    memFound = true; 
+                }    
+
+                if (slot.ioStart && slot.ioEnd)
+                {
+                    ImGui::Text("I/O: %08lx-%08lx", slot.ioStart, slot.ioEnd);
+                    ioFound = true;
+                }
+
+                if (!memFound && !ioFound)
+                {
+                    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "***** No allocated mapping *****");
+                }
+
+                ImGui::Text("Component: %s", slot.component->GetName());
+                ImGui::NewLine();
+
+                mappingNrForSlot++;
             }
         }
         

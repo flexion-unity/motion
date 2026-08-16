@@ -101,9 +101,9 @@ namespace Motion
             || (addr >= lastSlotWritten->ioStart && addr <= lastSlotWritten->ioEnd));
     }
 
-    bool Multibus::SetCachedReadSlot(size_t addr)
+    bool Multibus::SetCachedReadMapping(size_t addr)
     {
-        for (Multibus::Slot& slot : slots)
+        for (Multibus::SlotMapping& slot : slotMappings)
         {
             if (!slot.active)
                 continue;
@@ -123,9 +123,9 @@ namespace Motion
         return false; 
     }
 
-    bool Multibus::SetCachedWriteSlot(size_t addr)
+    bool Multibus::SetCachedWriteMapping(size_t addr)
     {
-        for (Multibus::Slot& slot : slots)
+        for (Multibus::SlotMapping& slot : slotMappings)
         {
             if (!slot.active)
                 continue;
@@ -146,67 +146,44 @@ namespace Motion
     }
 
     // this simulates the action of the user inserting a slot into the Multibus backplane.
-    bool Multibus::AddSlot(Slot slot, int32_t id)
+    bool Multibus::AddSlotMapping(SlotMapping& slot)
     {
-        if (id < 0 || id >= MULTIBUS_MAX_SLOTS)
-        {
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus slot {} does not exist, expected 0-{}", id, MULTIBUS_MAX_SLOTS).c_str(), LogChannels::Warning);
-            return false; 
-        }
-
-        if (slots[id].active)
-        {
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("You already added that multibus slot {}", id).c_str(), LogChannels::Warning);
-            return false; 
-        }
-
-        slots[id] = slot;
-        slots[id].active = true;
+        slot.active = true; 
 
         // multibus is 24 bit
-        if (slots[id].memStart
-        && slots[id].memEnd)
+        if (slot.memStart
+        && slot.memEnd)
         {
-            slots[id].memStart = (multibusMemoryEnd - 0x100000) + (slots[id].memStart & 0xFFFFF);
-            slots[id].memEnd = (multibusMemoryEnd - 0x100000) + (slots[id].memEnd & 0xFFFFF);
+            slot.memStart = (multibusMemoryEnd - 0x100000) + (slot.memStart & 0xFFFFF);
+            slot.memEnd = (multibusMemoryEnd - 0x100000) + (slot.memEnd & 0xFFFFF);
         }
 
+        if (!slot.memStart && !slot.memEnd && !slot.ioStart && !slot.ioEnd)
+        {
+            Logger::Log(MULTIBUS_LOG_PREFIX, "Multibus::AddSlotMapping: At least one of I/O and Memory address range must be set for a multibus mapping!",
+            LogChannels::Error);
+            return false;
+        }
 
-        Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus slot {} now maps component {}, I/O range 0x{:x} to 0x{:x} (todo: impl memory)",
-        id + 1, slot.component->GetName(), slot.ioStart, slot.ioEnd).c_str(), LogChannels::Debug);
+        Logger::Log(MULTIBUS_LOG_PREFIX, "Added new multibus slot:", LogChannels::Debug);
+
+        if (slot.memStart || slot.memEnd)
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Memory range is {:x}-{:x}", slot.memStart, slot.memEnd).c_str(), LogChannels::Debug);
+        
+        if (slot.ioStart || slot.ioEnd)
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("I/O range is {:x}-{:x}", slot.ioStart, slot.ioEnd).c_str(), LogChannels::Debug);
+
+        Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Slot is {}, component is {}", slot.id + 1, slot.component->GetName()).c_str(), LogChannels::Debug);
+
+        slotMappings.push_back(slot);
 
         return true; 
     }   
 
-    void Multibus::UpdateSlotIOMapping(int32_t id, size_t addrStart, size_t addrEnd)
-    {
-        if (id < 0 || id >= MULTIBUS_MAX_SLOTS)
-        {
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus slot {} does not exist, expected 0-{}", id, MULTIBUS_MAX_SLOTS).c_str(), LogChannels::Warning);
-            return; 
-        }
-
-        slots[id].ioStart = addrStart;
-        slots[id].ioEnd = addrEnd;
-    }
-
-    void Multibus::UpdateSlotMemMapping(int32_t id, size_t addrStart, size_t addrEnd)
-    {
-        if (id < 0 || id >= MULTIBUS_MAX_SLOTS)
-        {
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus slot {} does not exist, expected 0-{}", id, MULTIBUS_MAX_SLOTS).c_str(), LogChannels::Warning);
-            return; 
-        }
-
-        // multibus is 24 bit
-        slots[id].memStart = (multibusMemoryEnd - 0x100000) + (addrStart & 0xFFFFF);
-        slots[id].memEnd = (multibusMemoryEnd - 0x100000) + (addrEnd & 0xFFFFF);
-    }
-
     uint8_t Multibus::Read8(size_t addr) 
     {
         if (!UseCachedReadSlot(addr))
-            if (!SetCachedReadSlot(addr))
+            if (!SetCachedReadMapping(addr))
             {
                 // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
                 // the switch register can disable multibus
@@ -220,7 +197,7 @@ namespace Motion
                 else
                 {
                     Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Read8: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
+                    std::format("Multibus::Read8: SetCachedReadMapping FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
                     LogChannels::Warning);
                     return 0x00;
                 }
@@ -232,7 +209,7 @@ namespace Motion
     uint16_t Multibus::Read16(size_t addr)
     {
         if (!UseCachedReadSlot(addr))
-            if (!SetCachedReadSlot(addr))
+            if (!SetCachedReadMapping(addr))
             {
                 // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
                 // the switch register can disable multibus
@@ -246,7 +223,7 @@ namespace Motion
                 else
                 {
                     Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Read16: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
+                    std::format("Multibus::Read16: SetCachedReadMapping FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
                     LogChannels::Warning);
                     return 0x00;
                 }
@@ -258,7 +235,7 @@ namespace Motion
     uint32_t Multibus::Read32(size_t addr) 
     {
         if (!UseCachedReadSlot(addr))
-            if (!SetCachedReadSlot(addr))
+            if (!SetCachedReadMapping(addr))
             {
                 // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
                 // the switch register can disable multibus
@@ -272,7 +249,7 @@ namespace Motion
                 else
                 {
                     Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Read32: SetCachedReadSlot FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
+                    std::format("Multibus::Read32: SetCachedReadMapping FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
                     LogChannels::Warning);
                     return 0x00;
                 }
@@ -284,7 +261,7 @@ namespace Motion
     void Multibus::Write8(size_t addr, uint8_t value) 
     {
         if (!UseCachedWriteSlot(addr))
-            if (!SetCachedWriteSlot(addr))
+            if (!SetCachedWriteMapping(addr))
             {
                 // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
                 // the switch register can disable multibus
@@ -298,7 +275,7 @@ namespace Motion
                 else
                 {
                     Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Write8: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
+                    std::format("Multibus::Write8: SetCachedWriteMapping FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                     LogChannels::Warning);
                 }
                 return;
@@ -310,7 +287,7 @@ namespace Motion
     void Multibus::Write16(size_t addr, uint16_t value)
     {
         if (!UseCachedWriteSlot(addr))
-            if (!SetCachedWriteSlot(addr))
+            if (!SetCachedWriteMapping(addr))
             {
                 // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
                 // the switch register can disable multibus
@@ -324,7 +301,7 @@ namespace Motion
                 else
                 {
                     Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Write16: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
+                    std::format("Multibus::Write16: SetCachedWriteMapping FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                     LogChannels::Warning);
                 }
                 return;
@@ -336,7 +313,7 @@ namespace Motion
     void Multibus::Write32(size_t addr, uint32_t value)
     {
         if (!UseCachedWriteSlot(addr))
-            if (!SetCachedWriteSlot(addr))
+            if (!SetCachedWriteMapping(addr))
             {
                 // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
                 // the switch register can disable multibus
@@ -350,7 +327,7 @@ namespace Motion
                 else
                 {
                     Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Write32: SetCachedWriteSlot FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
+                    std::format("Multibus::Write32: SetCachedWriteMapping FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
                     LogChannels::Warning);
                 }
                 return;
@@ -363,6 +340,6 @@ namespace Motion
     {
         cpu = nullptr;
         lastSlotRead = lastSlotWritten = nullptr; 
-        memset(slots, 0x00, sizeof(slots));
+        slotMappings.clear();
     }
 }; 

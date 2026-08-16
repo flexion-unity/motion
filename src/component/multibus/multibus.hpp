@@ -60,26 +60,30 @@ namespace Motion
         const char* GetName() override { return "Intel Multibus"; };
 
         /* 
-            Defines a multibus backplane slot 
+            Defines a multibus backplane slot mapping
             Aparently multibus kind of sucks and basically it seems like it just provides a mechanism of firing the IRQs and protection.
         */
-        class Slot
+        class SlotMapping
         {  
             friend class Multibus; 
             friend class CoherentExtensionMultibus; 
 
         public: 
             uint32_t irq; 
+            size_t memStart = 0;
+            size_t memEnd = 0;
+            size_t ioStart = 0;
+            size_t ioEnd = 0; 
 
+            // debug slot number
+            int32_t id;
+            
             // Yes we are hardcoding the addresses.
             // HOW do these devices find out whta part of the address space they decode ???? WHAT ??? NO BARs ????
-            size_t memStart;
-            size_t memEnd;
-            size_t ioStart;
-            size_t ioEnd; 
+            
             Component* component;
 
-            Slot(Component* component) : Slot()
+            SlotMapping(Component* component) : SlotMapping()
             {
                 this->component = component;
             }
@@ -88,9 +92,8 @@ namespace Motion
             bool active = false;
 
             // parameterless constructor should be private
-            Slot()
+            SlotMapping()
             {
-                memStart = memEnd = ioStart = ioEnd = 0;
             }
         }; 
 
@@ -98,15 +101,12 @@ namespace Motion
         bool IsEarlyStart() override { return true; };
 
         // our slots
-        Slot slots[MULTIBUS_MAX_SLOTS] = {0};
+        // each slot mapping has its won vector
+        std::vector<SlotMapping> slotMappings;
         
         // this simulates the action of the user inserting a slot into the Multibus backplane.
         // NOTE: no attempt is made to prevent the addresses overlapping. the first slot in the range will be used.
-        bool AddSlot(Slot slot, int32_t id);
-
-        // for OS initiated remaping
-        void UpdateSlotIOMapping(int32_t id, size_t addrStart, size_t addrEnd);
-        void UpdateSlotMemMapping(int32_t id, size_t addrStart, size_t addrEnd);
+        bool AddSlotMapping(SlotMapping& slot);
 
         uint8_t Read8(size_t addr) override;
         uint16_t Read16(size_t addr) override;
@@ -120,15 +120,15 @@ namespace Motion
         // This is an optimisation, because of the way our bus modelling works we can't actually reliably determine what slot is being written to or read from
         // Since multibus stuff needs to share irq we filter everything through the multibus class. 
         // Let's store the last read and written slot and cache it so we don't need to iterate it. POinter because it needs to be a nullptr.
-        Slot* lastSlotRead = nullptr;
-        Slot* lastSlotWritten = nullptr;
+        SlotMapping* lastSlotRead = nullptr;
+        SlotMapping* lastSlotWritten = nullptr;
         
         bool UseCachedReadSlot(size_t addr);
         bool UseCachedWriteSlot(size_t addr);
 
         // these are never meant to fail. MB writes should not occur unmapped.
-        bool SetCachedReadSlot(size_t addr);
-        bool SetCachedWriteSlot(size_t addr);
+        bool SetCachedReadMapping(size_t addr);
+        bool SetCachedWriteMapping(size_t addr);
 
         // THE CPU, so we can fire an irq
         ComponentCPU* cpu; 

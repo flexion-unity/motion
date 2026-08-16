@@ -47,7 +47,6 @@ namespace Motion
         /// the renderer
         inline static Renderer* renderer; 
 
-
         static void Shutdown();
     };
 }

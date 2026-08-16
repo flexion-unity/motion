@@ -20,15 +20,25 @@ namespace Motion
     {
         multibus = Emulation::GetMachine()->FindComponentByType<Multibus>();
 
-        Multibus::Slot slot = Multibus::Slot(this);
+        Multibus::SlotMapping slot = Multibus::SlotMapping(this);
         slot.ioStart = DSD5217_MBIO_START;
         slot.ioEnd = DSD5217_MBIO_END;
+        slot.id = DSD5217_MULTIBUS_SLOTNUM;
 
         // according to SGI this controller is "brain damaged" and requires hardcoded memory addresses
-        slot.memStart = 0x7F000; // the first 16 bytes are used to determine memory size and we don'timplement the switch register yet
-        slot.memEnd = 0x7FFFF;
+        slot.memStart = DSD5217_MEMORY_MAP0_START; // the first 16 bytes are used to determine memory size and we don'timplement the switch register yet
+        slot.memEnd = DSD5217_MEMORY_MAP0_END;
 
-        multibus->AddSlot(slot, DSD5217_MULTIBUS_SLOTNUM);
+        multibus->AddSlotMapping(slot);
+
+        // add a second mapping at 7f000...7ffff
+        Multibus::SlotMapping slot2 = Multibus::SlotMapping(this);
+
+        slot.memStart = DSD5217_MEMORY_MAP1_START;
+        slot.memEnd = DSD5217_MEMORY_MAP1_END;
+        slot.id = DSD5217_MULTIBUS_SLOTNUM;
+
+        multibus->AddSlotMapping(slot);
     }
 
 
@@ -45,7 +55,8 @@ namespace Motion
                 break;
         }
 
-        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
+        if (addr != 0x10b2)
+            Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
         return ret;
     }
 

@@ -23,6 +23,12 @@ namespace Motion
     #define DSD5217_MBIO_START                  0x50007F00
     #define DSD5217_MBIO_END                    0x50007FFF
 
+    // memory ranges. THis one decodes two regions
+    #define DSD5217_MEMORY_MAP0_START           0x1000
+    #define DSD5217_MEMORY_MAP0_END             0x10FF
+    #define DSD5217_MEMORY_MAP1_START           0x7F000
+    #define DSD5217_MEMORY_MAP1_END             0x7F001
+
     #define DSD5217_LOG_PREFIX                  "DSD 5217"
 
     // Fresh from my ass
