@@ -236,7 +236,7 @@ namespace Motion
     private: 
         // Multibus IRQ1 is used.
         Multibus* multibus;
-        FilesystemFile* hdd;
+        FileStream* hdd;
         WUB* wub;
 
         // can't do any disk ops if there is no disk inserted lmao
