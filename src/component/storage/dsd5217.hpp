@@ -135,6 +135,8 @@ namespace Motion
 
     class DSD5217 : public Component
     {
+        friend class CoherentExtensionDSD5217;
+        
     public:
         DSD5217() : Component(), ccbMapping(this)
         {
@@ -164,7 +166,7 @@ namespace Motion
             uint32_t generalPtr;            // use as a pointer
         }; 
 
-        // @brief not sure what this is yet
+        /// @brief Wake Up Block
         struct WUB
         {
             uint8_t dummy;

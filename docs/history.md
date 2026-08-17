@@ -78,7 +78,7 @@
 
 * May 1986: 2.4 / 3.4 released
 
-* Late 1986 / Early 1987: 2.5 /3.5 releasd
+* December 13, 1986: 2.5 /3.5 released no later than this
 
 * 1987: 3.6 released, IRIS 4D/60 released (MIPS-based)
 

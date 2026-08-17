@@ -36,7 +36,7 @@
 
 * Boeing
 
-* Naval Postgraduate School, Department of Computer Science
+* Naval Postgraduate School, Department of Computer Science (until early 1988, it was ported to 4D/70G)
 
 * Carnegie-Mellon University
 
@@ -94,3 +94,7 @@
 * University of Pennsylvania
 
 * Aarhus Univeristy, Denmark
+
+* Ford Aerospace
+
+* University of Chicago
