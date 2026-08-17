@@ -92,8 +92,8 @@ namespace Motion
     void DSD5217::Write16(size_t addr, uint16_t value)
     {
         // Strangely enough, this is a little endian peripheral. Huh!
-        Write8(addr, value & 0x0000FFFF);
-        Write8(addr + 1, value & 0xFFFF0000);
+        Write8(addr, value & 0xFF00);
+        Write8(addr + 1, value & 0x00FF);
     }
 
     void DSD5217::Shutdown()
