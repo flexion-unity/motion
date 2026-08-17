@@ -18,13 +18,13 @@ namespace Motion
             DSD5217* dsd5217 = (DSD5217*)component;
 
             ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Wake Up Block (WUB)");
-            ImGui::Text("Extended Addressing: 0x%s", (dsd5217->wub.extension == 7) ? "True" : "False");
+            ImGui::Text("Extended Addressing: %s", (dsd5217->wub.extension == 7) ? "True" : "False");
             ImGui::Text("CCB Pointer: 0x%05x", dsd5217->wub.ccbPtr);
             
             ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Channel Control Block (CCB)");
-            ImGui::Text("Channel 1 Busy: 0x%s", (dsd5217->ccb.busy) ? "True" : "False");
+            ImGui::Text("Channel 1 Busy: %s", (dsd5217->ccb.busy) ? "True" : "False");
             ImGui::SameLine();
-            ImGui::Text("Channel 2 Busy: 0x%s", (dsd5217->ccb.busy2) ? "True" : "False");
+            ImGui::Text("Channel 2 Busy: %s", (dsd5217->ccb.busy2) ? "True" : "False");
             ImGui::Text("Channel 1 Control Word: 0x%04x", dsd5217->ccb.ccw1);
             ImGui::SameLine();
             ImGui::Text("Channel 2 Control Word: 0x%04x", dsd5217->ccb.ccw2);
