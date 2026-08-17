@@ -105,7 +105,7 @@ Same time-ish: IRIS 1400 / 1500: Workstation. PM2M1 (10MHz 68010) Sun licensed, 
 
 IRIS 30x0's manufactured after August 1, 1985 have 8MHz Geometry Engines instead of 6MHz.
 
-* Late 1986 or 1987(?):
+* February 1987? Late 1986?:
 
 * IRIS 31x0 - same as IRIS 3030, but the Geometry Engines now run at 10MHz and there are more of them (usually 12 instead of 8) on the GF2 boards.
 

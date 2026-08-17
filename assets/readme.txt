@@ -88,6 +88,9 @@ Command line:
 
             Profile files:
                 ip2_sram.bin: Private PROM SRAM.
+        profileDisk0Path - the path of hard drive 0.
+            Must be in the "profile" folder.
+
         promPath
             the path of the PROM (basically the BIOS) to load.
             If you are messing around with different versions of the BIOS oyu can set this
@@ -136,8 +139,9 @@ Not done:
 
 You can boot unix on the default boot options but it will take a very long time as the IRIS will try all possible(!) HDD boot options.
     - I recommend going to Backpanel Switches > Boot Mode and selecting the "[DSD 8217] HDD (MDx)" option.
-    - Alternatively you can go to the PROM prompt and type "b md0:vmunix". Then the IRIS will try to boot it. 
-Then the IRIS will boot using our supported DSD 8217 disk controller. A 60 MB image of GL2 W3.6 can be provided if you ask me.
+    - Alternatively you can go to the PROM prompt and type "b md0:". Then the IRIS will try to boot it. If you want you can provide a file name but the IRIS
+    will look for "defaultboot" on its own which will initialise vmunix.
+Then the IRIS will boot using our supported DSD 5217 disk controller. A 60 MB image of GL2 W3.6 can be provided if you ask me.
     You can set it in the launcher, or, use +set profileDisk0Path <blah>
     It has to be in the profile folder
 
@@ -151,7 +155,7 @@ Once unix is booted probably you should create an account. It's fairly easy to b
 
 4. Other things you can do
 
-If you have an "mkboot" tape you can run "b md0.mdfex" (other fex's won't work), which will throw you into a low-level hard drive configuration.
+If you have an "mkboot" tape you can run "b md0:mdfex" (other fex's won't work), which will throw you into a low-level hard drive configuration.
     Messing around with this may end poorly
 
 Run the "set debug 1" command in the PROM and then boot. It will spew out a deranged amount of logging.

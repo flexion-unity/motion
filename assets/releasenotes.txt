@@ -16,6 +16,7 @@ Release Notes
         * It tries to map the last megabyte to a multibus device and treats it as RAM if it fails. Not sure if this is right
     * Multibus devices now use the SlotMapping class instead of the SLot class, they can map any number of regions now instead of being limited to 20 Multibus slots with one mapping each.
     * Memory / VRAM editors (CoherentEditor) now have an ASCII view.
+    * change description of bp3 from "BP3 Bitplaned VRAM" to "Video RAM (BP3 bitplane board)" to make it easier to understand 
 
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.

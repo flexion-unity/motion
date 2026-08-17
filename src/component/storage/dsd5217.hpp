@@ -124,6 +124,15 @@ namespace Motion
     #define DSD5217_HARDERR1_UNIT_NOT_READY     (1 << 6)    // unit not ready
     #define DSD5217_HARDERR1_WRITE_PROTECTED    (1 << 7)    // write protected
 
+    // the coherent extension
+    class CoherentExtensionDSD5217 : public CoherentExtension
+    {
+    public:
+        CoherentExtensionDSD5217(Component* component) : CoherentExtension(component) { };
+
+        void AddUI() override;
+    };
+
     class DSD5217 : public Component
     {
     public:
@@ -134,7 +143,7 @@ namespace Motion
         void Start() override;
         void Shutdown() override; 
 
-        const char* GetName() { return "Data Storage Devices / Qualogy 5217 Multibus Disk & Tape Controller"; };
+        const char* GetName() { return "DSD/Qualogy 5217 Multibus Disk & Tape Controller"; };
 
 // make sure these are not packed so that the OS can use them
 #pragma pack(push, 1)
@@ -247,6 +256,7 @@ namespace Motion
         Multibus* multibus;
         FileStream* hdd;
         Multibus::SlotMapping ccbMapping;
+        CoherentExtensionDSD5217* dsdExtension;
 
         // this is the wrong thing to do really. the actual system runs on a set of pointers but i just ignore them and do some horrible things in read8/write8
         // we should either (a) allow access to raw MB memory bytes or (b) map each thing separately which is a mess

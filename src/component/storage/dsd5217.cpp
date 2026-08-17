@@ -43,7 +43,11 @@ namespace Motion
 
         multibus->AddSlotMapping(ccbMapping);
 
+        // open the hard drive
         hdd = Profile::OpenDisk(0);
+
+        dsdExtension = new CoherentExtensionDSD5217(this);
+        Coherent::RegisterExtension(dsdExtension);
     }
 
     uint8_t DSD5217::Read8(size_t addr)
@@ -102,9 +106,8 @@ namespace Motion
         case DSD5217_MBIO_STATUS:
             state = value;
 
-            if (state == DSD5217_MBIO_STATUS_IS_READY)
-                ccb.busy = false;
-
+            // if we are ready we are no longer busy
+            ccb.busy = (state != DSD5217_MBIO_STATUS_IS_READY);
             break;
         case DSD5217_WUB_CCB_PTR:
             // start of our chain of ptrs.
@@ -162,6 +165,7 @@ namespace Motion
 
     void DSD5217::Shutdown()
     {
+        delete dsdExtension;
         Profile::Close(hdd);
     }
 };
