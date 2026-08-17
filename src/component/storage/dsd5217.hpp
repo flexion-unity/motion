@@ -24,7 +24,8 @@ namespace Motion
 {
     #define DSD5217_MBIO_START                  0x50007F00
     #define DSD5217_MBIO_END                    0x50007FFF
-    #define DSD5217_MBIO_PTR1                   0x50007F01
+    #define DSD5217_MBIO_STATUS                 0x7F01 // all addresses are 1mb region
+    #define DSD5217_MBIO_STATUS_IS_READY        1
 
     // memory ranges. THis one decodes one region which stores pointers to many others.
     // The other memory regions need to be dynamically mapped based on the results of this, as
@@ -126,6 +127,10 @@ namespace Motion
     class DSD5217 : public Component
     {
     public:
+        DSD5217() : Component(), ccbMapping(this)
+        {
+        }
+
         void Start() override;
         void Shutdown() override; 
 
@@ -241,7 +246,17 @@ namespace Motion
         // Multibus IRQ1 is used.
         Multibus* multibus;
         FileStream* hdd;
-        WUB wub;
+        Multibus::SlotMapping ccbMapping;
+
+        // this is the wrong thing to do really. the actual system runs on a set of pointers but i just ignore them and do some horrible things in read8/write8
+        // we should either (a) allow access to raw MB memory bytes or (b) map each thing separately which is a mess
+        // but our design does not work with this.
+        WUB wub = {0};
+        CCB ccb = {0};
+        CIB cib = {0};
+        IOPB iopb = {0};
+        INIB inib = {0};
+        FMTB fmtb = {0};
 
         // can't do any disk ops if there is no disk inserted lmao
         bool diskIsOpen;
