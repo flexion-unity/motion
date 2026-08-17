@@ -78,6 +78,11 @@ namespace Motion
             ret = *(((uint8_t *)&iopb) + (addr - cib.iopbPtr));
         }
 
+        if (iopb.dba && addr >= iopb.dba && (addr < iopb.dba + sizeof(INIB)))
+        {
+            ret = *(((uint8_t *)&inib) + (addr - iopb.dba));
+        }
+
         Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
 
         return ret;
@@ -121,17 +126,23 @@ namespace Motion
         // structure write
         if (wub.ccbPtr && addr >= wub.ccbPtr && (addr < (wub.ccbPtr + sizeof(CCB))))
         {
-            *((uint8_t *)&ccb + (addr - wub.ccbPtr)) = value;
+            *((uint8_t*)&ccb + (addr - wub.ccbPtr)) = value;
         }
 
         if (ccb.cibPtr && addr >= ccb.cibPtr && (addr < ccb.cibPtr + sizeof(CIB)))
         {
-            *(((uint8_t *)&cib) + (addr - ccb.cibPtr)) = value;
+            *(((uint8_t*)&cib) + (addr - ccb.cibPtr)) = value;
         }
 
         if (cib.iopbPtr && addr >= cib.iopbPtr && (addr < cib.iopbPtr + sizeof(IOPB)))
         {
-            *(((uint8_t *)&iopb) + (addr - cib.iopbPtr)) = value;
+            *(((uint8_t*)&iopb) + (addr - cib.iopbPtr)) = value;
+        }
+
+        // INIB pointer
+        if (iopb.dba && addr >= iopb.dba && (addr < iopb.dba + sizeof(INIB)))
+        {
+            *(((uint8_t*)&inib) + (addr - iopb.dba)) = value;
         }
 
         Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Write8 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);

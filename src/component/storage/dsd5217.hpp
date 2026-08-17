@@ -150,7 +150,7 @@ namespace Motion
             uint16_t cylinder;              // cylinder
             uint8_t sector;                 // cylinder
             uint8_t head;                   // cylinder
-            uint32_t dba;                   // use as a pointer
+            uint32_t dba;                   // use as a pointer to the INIB
             uint8_t rbc;                    // requested byte count
             uint32_t generalPtr;            // use as a pointer
         }; 
