@@ -10,6 +10,8 @@
     Later on we can run mkboot and boot this
 
     Currently this is a high-level emulation, but this uses the Intel 8085. Later on we'll write an 8085 emulation.
+    
+    NOTE: Due ot using an INTEL 8085, this is a LITTLE ENDIAN Peripheral. ALL I/O FROM THE IRIS IS BYTESWAPPED    
 */
 
 #include <component/storage/dsd5217.hpp>
@@ -69,9 +71,29 @@ namespace Motion
             case DSD5217_MBIO_PTR1:
                 state = value;
                 break;
+            case DSD5217_WUB_CCB_PTR:
+                // start of our chain of ptrs.
+                wub.ccbPtr = (wub.ccbPtr & 0x0000FFFF) | (value << 8);
+                break; 
+            case DSD5217_WUB_CCB_PTR + 1:
+                wub.ccbPtr = (wub.ccbPtr & 0xFFFF0000) | value;
+                break; 
         }
 
         Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Write8 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
+    }
+
+    uint16_t DSD5217::Read16(size_t addr) 
+    {
+        return (Read8(addr)
+        | Read8(addr + 1) << 8);
+    }
+
+    void DSD5217::Write16(size_t addr, uint16_t value)
+    {
+        // Strangely enough, this is a little endian peripheral. Huh!
+        Write8(addr, value & 0x0000FFFF);
+        Write8(addr + 1, value & 0xFFFF0000);
     }
 
     void DSD5217::Shutdown()

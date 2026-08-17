@@ -27,8 +27,11 @@ namespace Motion
     #define DSD5217_MBIO_PTR1                   0x50007F01
 
     // memory ranges. THis one decodes one region which stores pointers to many others.
+    // The other memory regions need to be dynamically mapped based on the results of this, as
+    // Multibus Memory is mapped by the PROM using MBMALLOC. Map 0x10 bytes for safety
     #define DSD5217_MEMORY_MAP1_START           0x7F000
-    #define DSD5217_MEMORY_MAP1_END             0x7F001
+    #define DSD5217_WUB_CCB_PTR                 0x7F002
+    #define DSD5217_MEMORY_MAP1_END             0x7F00F
 
     // Holds the pointers to all other utilised structures
 
@@ -142,9 +145,9 @@ namespace Motion
             uint16_t cylinder;              // cylinder
             uint8_t sector;                 // cylinder
             uint8_t head;                   // cylinder
-            uint8_t* dba;                   // use as a pointer
+            uint32_t dba;                   // use as a pointer
             uint8_t rbc;                    // requested byte count
-            uint8_t* generalPtr;            // use as a pointer
+            uint32_t generalPtr;            // use as a pointer
         }; 
 
         // @brief not sure what this is yet
@@ -152,7 +155,7 @@ namespace Motion
         {
             uint8_t dummy;
             uint8_t extension;              // 7 = 24 bit addressing?
-            uint8_t* ccbPtr;                 
+            uint32_t ccbPtr;                 
         }; 
 
         /// @brief Channel Control Block
@@ -160,11 +163,11 @@ namespace Motion
         {
             uint8_t busy;                   // ff = busy, 00 = idle
             uint8_t ccw1;                   // channel control word 1
-            uint8_t* cibPtr;                // CIB ptr
+            uint32_t cibPtr;                // CIB ptr
             uint16_t dummy;
             uint8_t busy2;                  // not used? 
             uint8_t ccw2;                   // not used? channel control word 2
-            uint8_t* cpPtr;                 // cp ptr
+            uint32_t cpPtr;                 // cp ptr
             uint16_t controlPtr;            // control pointer (not a pointer?)
         };
 
@@ -175,8 +178,8 @@ namespace Motion
             uint8_t reserved;
             uint8_t statusSemaphore;        // status semaphore
             uint8_t commandSemaphore;       // command semaphore
-            uint8_t* zero;                  // must be zero
-            uint8_t* iopbPtr;               // IOPB pointer
+            uint32_t zero;                  // must be zero
+            uint32_t iopbPtr;               // IOPB pointer
             uint32_t zero2;                 // must be zero
         };
 
@@ -231,12 +234,14 @@ namespace Motion
         // Methods
         uint8_t Read8(size_t addr) override;
         void Write8(size_t addr, uint8_t value) override;
+        uint16_t Read16(size_t addr) override; 
+        void Write16(size_t addr, uint16_t value) override;
 
     private: 
         // Multibus IRQ1 is used.
         Multibus* multibus;
         FileStream* hdd;
-        WUB* wub;
+        WUB wub;
 
         // can't do any disk ops if there is no disk inserted lmao
         bool diskIsOpen;
