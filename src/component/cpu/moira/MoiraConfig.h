@@ -58,5 +58,4 @@
  * Comment out to enable assertions (recommended for debugging).
  * Uncomment to disable assertions (recommended for release builds).
  */
-// #define NDEBUG
 #include <cassert>

@@ -356,7 +356,7 @@ namespace LOGGER_NAMESPACE
             const char* unsafeNameStr  =  "**** UNSAFE CONDITION - EXITING ****"; // this one doesn't matter
 
             // needs to be universal for all project
-            #ifdef NDEBUG
+            #ifdef RELEASE
             if (channelMask == LogChannels::Debug)
                 return;
             #endif
@@ -372,7 +372,7 @@ namespace LOGGER_NAMESPACE
                     LogOut(messageNameStr);
 
                 // this code could be simplified but we want to allow multiple channels to be logged to at once. so we do this
-            #ifndef NDEBUG 
+            #ifdef DEBUG
                 if (channelMask & LogChannels::Debug
                 && settings.channelMask & LogChannels::Debug)
                 {

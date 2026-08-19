@@ -82,7 +82,7 @@ namespace Motion
             | SDL_GPU_SHADERFORMAT_DXIL
             | SDL_GPU_SHADERFORMAT_MSL
             | SDL_GPU_SHADERFORMAT_METALLIB,
-        #ifndef NDEBUG
+        #ifdef DEBUG
             true,
         #else
             false,
