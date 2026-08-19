@@ -39,7 +39,8 @@ namespace Motion
         ImGui::SameLine();
         bool buttonSubmitted = ImGui::Button("Send");
 
-        if (textSubmitted || buttonSubmitted)
+        if (textSubmitted 
+        || buttonSubmitted)
         {
             line.AddRxString(rxInputBuf[lineNum]);
             line.AddRxByte('\r');
