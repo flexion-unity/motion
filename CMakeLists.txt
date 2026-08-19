@@ -4,7 +4,7 @@
 #
 #   Copyright (c)2026 starfrost
 #
-#   CMakeLists.txt: Raw buildscript.
+#   CMakeLists.txt: Main buildscript.
 #
 
 cmake_minimum_required(VERSION 3.20)
@@ -28,9 +28,16 @@ project(motion)
 set(SDL_SHARED OFF CACHE BOOL "Build SDL shared library" FORCE)
 set(SDL_STATIC ON CACHE BOOL "Build SDL static library" FORCE)
 
-# Add our submodule directories
+# Add our SDL submodule directories
 
 add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
+
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Link dependencies statically" FORCE)
+set(SDLIMAGE_DEPS_SHARED OFF CACHE BOOL "Link dependencies statically" FORCE)
+set(SDLIMAGE_VENDORED ON CACHE BOOL "Use vendored third-party libraries" FORCE)
+set(SDLIMAGE_SAMPLES OFF CACHE BOOL "Build SDL3_image samples" FORCE)   
+
+add_subdirectory(external/sdl3_image EXCLUDE_FROM_ALL)
 
 # Also allow us to use our own headers. At some point, we need to have a public/private header distinction...
 add_subdirectory(src)
@@ -71,16 +78,17 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 target_link_libraries(motion PRIVATE 
-SDL3::SDL3-static                   # static sdl3
+SDL3::SDL3                          # static sdl3
+SDL3_image::SDL3_image-static       # static sdl3
 moira)                              # 68k
 
-# install
+# install below is only used for 'official' builds. we want the files there regardless of what hte user does.
 add_custom_target(InstallAssets 
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${ROM_SRC_DIR}" "${ROM_DST_DIR}"
     COMMENT "Updating ROMs..."
 
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${ASSET_SRC_DIR}" "${ASSET_DST_DIR}"
-    COMMENT "Updating ROMs..."
+    COMMENT "Updating assets..."
 )
 
 add_dependencies(motion InstallAssets)
@@ -97,3 +105,6 @@ if(MOTION_INSTALL_ROMS)
         PATTERN "Thumbs.db" EXCLUDE
     )
 endif()
+
+# install assets
+install(DIRECTORY "${ASSET_SRC_DIR}/" DESTINATION .)
