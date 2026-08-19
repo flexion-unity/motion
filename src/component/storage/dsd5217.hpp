@@ -34,14 +34,15 @@ namespace Motion
     #define DSD5217_WUB_CCB_PTR                 0x7F002
     #define DSD5217_MEMORY_MAP1_END             0x7F00F
 
-    // Holds the pointers to all other utilised structures
+    // this is configurable on the real thing with jumpers but for now just do this
+    #define DSD5217_MULTIBUS_IRQ_LEVEL          1
+
 
 
     #define DSD5217_LOG_PREFIX                  "DSD 5217"
 
     // Fresh from my ass
     #define DSD5217_MULTIBUS_SLOTNUM            7
-
 
     // Device codes. These determine which device we are actually communicating with
     #define DSD5217_DEVICE_CODE_HDD             0   // 'Winchester' (Hard disk drive)
@@ -273,6 +274,11 @@ namespace Motion
         // can't do any disk ops if there is no disk inserted lmao
         bool diskIsOpen;
 
+        // we don't execute a command on initial start
         bool initialStart = true; 
+
+        // execute command
+        void ExecuteCommand();
+        void AssertIRQLine();
     }; 
 }; 

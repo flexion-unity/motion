@@ -113,18 +113,21 @@ namespace Motion
             // if we are ready we are no longer busy
             ccb.busy = (state != DSD5217_MBIO_STATUS_IS_READY);
 
-            // controller will not execute commands on initial start
-            if (initialStart && state == DSD5217_MBIO_STATUS_IS_READY)
-                initialStart = false; 
+            if (state == DSD5217_MBIO_STATUS_IS_READY)
+            {
+                if (!initialStart)
+                    ExecuteCommand();
 
+                initialStart = false;
+            }
             break;
         case DSD5217_WUB_CCB_PTR:
             // start of our chain of ptrs.
             // technically a 32-bit pointer though
-            wub.ccbPtr = (wub.ccbPtr & 0x00FF) | (value << 8);
+            wub.ccbPtr = (wub.ccbPtr & 0xFF00) | value;
             break;
         case DSD5217_WUB_CCB_PTR + 1:
-            wub.ccbPtr = (wub.ccbPtr & 0xFF00) | value;
+            wub.ccbPtr = (wub.ccbPtr & 0x00FF) | (value << 8);
 
             // Now the CCB Pointer is specified. It's time to update our mapping.
             // Everything else is stored right after each other hopefulyl
@@ -168,8 +171,37 @@ namespace Motion
     void DSD5217::Write16(size_t addr, uint16_t value)
     {
         // Strangely enough, this is a little endian peripheral. Huh!
-        Write8(addr, (value & 0xFF00) >> 8);
-        Write8(addr + 1, value & 0x00FF);
+        Write8(addr, (value & 0x00FF));
+        Write8(addr + 1, ((value & 0xFF00) >> 8));
+    }
+
+    //
+    // command execution
+    //
+    void DSD5217::ExecuteCommand()
+    {
+        // we only emualte the hard drive right now
+        if (!hdd)
+            return; 
+
+        ccb.busy = true;
+
+        if (iopb.deviceCode != DSD5217_DEVICE_CODE_HDD)
+        {
+            Logger::Log(DSD5217_LOG_PREFIX, "Only HDD commands are currently supported! (QIC, Floppy not implemented!)", LogChannels::Warning);
+            goto done; 
+        }
+        
+        
+    done:
+        cib.statusSemaphore = 0xFF;
+        ccb.busy = false;
+
+    }
+
+    void DSD5217::AssertIRQLine()
+    {
+        multibus->FireMultibusIRQ(DSD5217_MULTIBUS_IRQ_LEVEL);
     }
 
     void DSD5217::Shutdown()
