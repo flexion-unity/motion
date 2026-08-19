@@ -187,7 +187,7 @@ namespace Motion
             uint16_t controlPtr;            // control pointer (not a pointer?)
         };
 
-        /// @brief Channel Information Block
+        /// @brief Controller Invocation Block
         struct CIB
         {
             uint8_t opStatus;               // operation status
@@ -272,5 +272,7 @@ namespace Motion
 
         // can't do any disk ops if there is no disk inserted lmao
         bool diskIsOpen;
+
+        bool initialStart = true; 
     }; 
 }; 

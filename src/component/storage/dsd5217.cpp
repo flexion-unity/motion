@@ -12,6 +12,10 @@
     Currently this is a high-level emulation, but this uses the Intel 8085. Later on we'll write an 8085 emulation.
 
     NOTE: Due ot using an INTEL 8085, this is a LITTLE ENDIAN Peripheral. ALL I/O FROM THE IRIS IS BYTESWAPPED
+    
+    Sources:
+    https://bitsavers.trailing-edge.com/pdf/dsd/5215_5217/040040-01_5215_Users_Guide_198404.pdf
+    https://bitsavers.trailing-edge.com/pdf/dsd/5215_5217/040069-01_5217_Users_Guide_Addendu_198404.pdf
 */
 
 #include <component/storage/dsd5217.hpp>
@@ -108,6 +112,11 @@ namespace Motion
 
             // if we are ready we are no longer busy
             ccb.busy = (state != DSD5217_MBIO_STATUS_IS_READY);
+
+            // controller will not execute commands on initial start
+            if (initialStart && state == DSD5217_MBIO_STATUS_IS_READY)
+                initialStart = false; 
+
             break;
         case DSD5217_WUB_CCB_PTR:
             // start of our chain of ptrs.

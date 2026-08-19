@@ -19,11 +19,12 @@ namespace Motion
 
     void RendererSDL3::DrawInitialDisplay()
     {
-        SDL_Surface* defaultbg = SDL_LoadPNG("defaultbg.png");
-        uint32_t* pixels = (uint32_t*)defaultbg->pixels;
+        SDL_Surface* defaultbg = SDL_LoadPNG("assets/defaultbg.png");
 
         if (defaultbg)
         {
+            uint32_t* pixels = (uint32_t*)defaultbg->pixels;
+
             // should MEMCPY
             for (int32_t y = 0; y < 768; y++)
             {
@@ -35,7 +36,7 @@ namespace Motion
         }
         else
         {
-            Logger::Log("Cool logo failed to load, no defaultbg.png", LogChannels::Error);
+            Logger::Log("Cool logo failed to load, no assets/defaultbg.png", LogChannels::Error);
 
             float red = 1.000;
             float blue = 0.000;

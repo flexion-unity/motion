@@ -19,7 +19,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/$<CONFIG>)
 set(ROM_SRC_DIR "${CMAKE_SOURCE_DIR}/roms")
 set(ROM_DST_DIR "${CMAKE_BINARY_DIR}/output/$<CONFIG>/roms")
 set(ASSET_SRC_DIR "${CMAKE_SOURCE_DIR}/assets")
-set(ASSET_DST_DIR "${CMAKE_BINARY_DIR}/output/$<CONFIG>/")
+set(ASSET_DST_DIR "${CMAKE_BINARY_DIR}/output/$<CONFIG>/assets")
 
 project(motion)
 
@@ -107,4 +107,4 @@ if(MOTION_INSTALL_ROMS)
 endif()
 
 # install assets
-install(DIRECTORY "${ASSET_SRC_DIR}/" DESTINATION .)
+install(DIRECTORY "${ASSET_SRC_DIR}/" DESTINATION assets)
