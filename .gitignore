@@ -15,3 +15,4 @@ motion.log
 profile/ip2_sram.bin
 
 *.img
+zconf.h
