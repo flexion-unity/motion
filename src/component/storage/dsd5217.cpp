@@ -69,39 +69,39 @@ namespace Motion
         case DSD5217_MBIO_STATUS:
             ret = state;
             break;
-        }
+        default:
+            if (wub.extension != DSD5217_24BIT_ADDRESSING)
+            {
+                Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Read8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
+                return 0xFF;
+            }
 
+            // structure read
+            // seems lke addresses in 24 bit segment mode are silently ANDed with FFFFF0
+            if (wub.ccbPtr && 
+                addr >= (wub.ccbPtr & 0xFFFFF0) && (addr <= ((wub.ccbPtr & 0xFFFFF0) + sizeof(CCB))))
+            {
+                ret = *(((uint8_t *)&ccb) + (addr - (wub.ccbPtr & 0xFFFFF0)));
+            }
 
-        if (wub.extension != DSD5217_24BIT_ADDRESSING)
-        {
-            Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Read8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
-            return 0xFF;
-        }
+            if (ccb.cibPtr 
+                && addr >= (ccb.cibPtr & 0xFFFFF0) && (addr <= (ccb.cibPtr & 0xFFFFF0) + sizeof(CIB)))
+            {
+                ret = *(((uint8_t *)&cib) + (addr - (ccb.cibPtr & 0xFFFFF0)));
+            }
 
-        // structure read
-        // seems lke addresses in 24 bit segment mode are silently ANDed with FFFFF0
-        if (wub.ccbPtr && 
-            addr >= (wub.ccbPtr & 0xFFFFF0) && (addr <= ((wub.ccbPtr & 0xFFFFF0) + sizeof(CCB))))
-        {
-            ret = *(((uint8_t *)&ccb) + (addr - (wub.ccbPtr & 0xFFFFF0)));
-        }
+            if (cib.iopbPtr 
+                && addr >= (cib.iopbPtr & 0xFFFFF0) && (addr <= (cib.iopbPtr & 0xFFFFF0) + sizeof(IOPB)))
+            {
+                ret = *(((uint8_t *)&iopb) + (addr - (cib.iopbPtr & 0xFFFFF0)));
+            }
 
-        if (ccb.cibPtr 
-            && addr >= (ccb.cibPtr & 0xFFFFF0) && (addr <= (ccb.cibPtr & 0xFFFFF0) + sizeof(CIB)))
-        {
-            ret = *(((uint8_t *)&cib) + (addr - (ccb.cibPtr & 0xFFFFF0)));
-        }
-
-        if (cib.iopbPtr 
-            && addr >= (cib.iopbPtr & 0xFFFFF0) && (addr <= (cib.iopbPtr & 0xFFFFF0) + sizeof(IOPB)))
-        {
-            ret = *(((uint8_t *)&iopb) + (addr - (cib.iopbPtr & 0xFFFFF0)));
-        }
-
-        if (iopb.dba 
-            && addr >= (iopb.dba & 0xFFFFF0) && (addr < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
-        {
-            ret = *(((uint8_t *)&inib) + (addr - (iopb.dba & 0xFFFFF0)));
+            if (iopb.dba 
+                && addr >= (iopb.dba & 0xFFFFF0) && (addr < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
+            {
+                ret = *(((uint8_t *)&inib) + (addr - (iopb.dba & 0xFFFFF0)));
+            }
+            break; 
         }
 
         Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
@@ -152,35 +152,41 @@ namespace Motion
             ccbMapping.memEnd = wub.ccbPtr + 0xFF;
 
             break;
-        }
+        // Non WUB
+        default:
+            // we need the extension word to be written after here
+            if (wub.extension != DSD5217_24BIT_ADDRESSING)
+            {
+                Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Write8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
+                return;
+            }
 
-        // we need the extension word to be written after here
-        if (wub.extension != DSD5217_24BIT_ADDRESSING)
-        {
-            Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Write8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
-            return;
-        }
+            // structure write
+            if (wub.ccbPtr && 
+                addr >= (wub.ccbPtr & 0xFFFFF0) && (addr <= ((wub.ccbPtr & 0xFFFFF0) + sizeof(CCB))))
+            {
+                *((uint8_t*)&ccb + (addr - wub.ccbPtr)) = value;
+            }
 
-        // structure write
-        if (wub.ccbPtr && addr >= wub.ccbPtr && (addr < (wub.ccbPtr + sizeof(CCB))))
-        {
-            *((uint8_t*)&ccb + (addr - wub.ccbPtr)) = value;
-        }
+            if (ccb.cibPtr 
+                && addr >= (ccb.cibPtr & 0xFFFFF0) && (addr <= (ccb.cibPtr & 0xFFFFF0) + sizeof(CIB)))
+            {
+                *(((uint8_t*)&cib) + (addr - ccb.cibPtr)) = value;
+            }
 
-        if (ccb.cibPtr && addr >= ccb.cibPtr && (addr < ccb.cibPtr + sizeof(CIB)))
-        {
-            *(((uint8_t*)&cib) + (addr - ccb.cibPtr)) = value;
-        }
+            if (cib.iopbPtr 
+                && addr >= (cib.iopbPtr & 0xFFFFF0) && (addr <= (cib.iopbPtr & 0xFFFFF0) + sizeof(IOPB)))
+            {
+                *(((uint8_t*)&iopb) + (addr - cib.iopbPtr)) = value;
+            }
 
-        if (cib.iopbPtr && addr >= cib.iopbPtr && (addr < cib.iopbPtr + sizeof(IOPB)))
-        {
-            *(((uint8_t*)&iopb) + (addr - cib.iopbPtr)) = value;
-        }
-
-        // INIB pointer
-        if (iopb.dba && addr >= iopb.dba && (addr < iopb.dba + sizeof(INIB)))
-        {
-            *(((uint8_t*)&inib) + (addr - iopb.dba)) = value;
+            // INIB pointer
+            if (iopb.dba 
+                && addr >= (iopb.dba & 0xFFFFF0) && (addr < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
+            {
+                *(((uint8_t*)&inib) + (addr - iopb.dba)) = value;
+            }
+            break;
         }
 
         Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Write8 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
