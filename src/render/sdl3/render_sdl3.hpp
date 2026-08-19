@@ -12,6 +12,8 @@
 #include <render/render.hpp>
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_surface.h>
+#include <SDL3_image/SDL_image.h>
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_sdlgpu3.h>

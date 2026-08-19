@@ -40,29 +40,6 @@ set(SDL_DIALOG FALSE CACHE BOOL "Build SDL dialog subsystem" FORCE)
 
 add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
 
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Link dependencies statically" FORCE)
-set(SDLIMAGE_DEPS_SHARED OFF CACHE BOOL "Link dependencies statically" FORCE)
-set(SDLIMAGE_VENDORED ON CACHE BOOL "Use vendored third-party libraries" FORCE)
-set(SDLIMAGE_SAMPLES OFF CACHE BOOL "Build SDL3_image samples" FORCE)   
-
-# we don't actually need most of these
-set(SDLIMAGE_JXL FALSE CACHE BOOL "Use JXL format" FORCE)
-set(SDLIMAGE_AVIF FALSE CACHE BOOL "Use AVIF format" FORCE)
-set(SDLIMAGE_WEBP FALSE CACHE BOOL "Use WEBP format" FORCE)
-set(SDLIMAGE_XCF FALSE CACHE BOOL "Use XCF format" FORCE)
-set(SDLIMAGE_XPM FALSE CACHE BOOL "Use XPM format" FORCE)
-set(SDLIMAGE_PCX FALSE CACHE BOOL "Use PCX format" FORCE)
-set(SDLIMAGE_PNM FALSE CACHE BOOL "Use PNM format" FORCE)
-set(SDLIMAGE_LBM FALSE CACHE BOOL "Use LBM format" FORCE)
-set(SDLIMAGE_TIF FALSE CACHE BOOL "Use TIF format" FORCE)
-set(SDLIMAGE_TGA FALSE CACHE BOOL "Use TGA format" FORCE)
-set(SDLIMAGE_QOI FALSE CACHE BOOL "Use QOI format" FORCE)
-# perhaps we will need SVG in the future but disable it for now
-set(SDLIMAGE_SVG FALSE CACHE BOOL "Use SVG format" FORCE)
-set(SDLIMAGE_TGA FALSE CACHE BOOL "Use TGA format" FORCE)
-
-add_subdirectory(external/sdl3_image EXCLUDE_FROM_ALL)
-
 # Also allow us to use our own headers. At some point, we need to have a public/private header distinction...
 add_subdirectory(src)
 
@@ -103,8 +80,7 @@ endif()
 
 target_link_libraries(motion PRIVATE 
 SDL3::SDL3                          # static sdl3
-SDL3_image::SDL3_image-static       # static sdl3
-moira)                              # 68k
+moira)                              # 68k lib
 
 # install below is only used for 'official' builds. we want the files there regardless of what hte user does.
 add_custom_target(InstallAssets 

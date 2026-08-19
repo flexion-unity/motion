@@ -19,21 +19,38 @@ namespace Motion
 
     void RendererSDL3::DrawInitialDisplay()
     {
-        float red = 1.000;
-        float blue = 0.000;
-        float green = 0.000;
-        
-        for (int32_t y = 0; y < 768; y++)
-        {
-            for (int32_t x = 0; x < 1024; x++)
-            {
-                screen->SetPixel(x, y, Color((uint8_t)(red * 256), (uint8_t)(green * 256), (uint8_t)(blue * 256), 255.0));
-                green += (1.0f/1024.0f);
-            }
+        SDL_Surface* defaultbg = SDL_LoadPNG("defaultbg.png");
+        uint32_t* pixels = (uint32_t*)defaultbg->pixels;
 
-            blue += (1.0f/768.0f);
-            red -= (1.0f/768.0f);
-        }  
+        if (defaultbg)
+        {
+            // should MEMCPY
+            for (int32_t y = 0; y < 767; y++)
+            {
+                for (int32_t x = 0; x < 1023; x++)
+                {
+                    screen->SetPixel(x, y, pixels[(y * (defaultbg->pitch >> 2) + x)]);
+                }
+            }  
+        }
+        else
+        {
+            float red = 1.000;
+            float blue = 0.000;
+            float green = 0.000;
+            
+            for (int32_t y = 0; y < 768; y++)
+            {
+                for (int32_t x = 0; x < 1024; x++)
+                {
+                    screen->SetPixel(x, y, Color((uint8_t)(red * 256), (uint8_t)(green * 256), (uint8_t)(blue * 256), 255.0));
+                    green += (1.0f/1024.0f);
+                }
+
+                blue += (1.0f/768.0f);
+                red -= (1.0f/768.0f);
+            }  
+        }
     }
 
     /// @brief Initialises the SDL renderer. A failure is reported as a FATAL_ERROR Log.
