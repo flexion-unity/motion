@@ -34,6 +34,7 @@ namespace Motion
     // The other memory regions need to be dynamically mapped based on the results of this, as
     // Multibus Memory is mapped by the PROM using MBMALLOC. Map 0x10 bytes for safety
     #define DSD5217_MEMORY_MAP1_START           0x7F000
+    #define DSD5217_WUB_EXTENSION               0x7F001
     #define DSD5217_WUB_CCB_PTR                 0x7F002
     #define DSD5217_MEMORY_MAP1_END             0x7F00F
 

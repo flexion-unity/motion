@@ -63,17 +63,19 @@ namespace Motion
 
         uint8_t ret = 0x00;
 
-        if (wub.extension != DSD5217_24BIT_ADDRESSING)
-        {
-            Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Read8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
-            return 0xFF;
-        }
 
         switch (addr)
         {
         case DSD5217_MBIO_STATUS:
             ret = state;
             break;
+        }
+
+
+        if (wub.extension != DSD5217_24BIT_ADDRESSING)
+        {
+            Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Read8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
+            return 0xFF;
         }
 
         // structure read
@@ -116,12 +118,6 @@ namespace Motion
 
         addr &= 0xFFFFF;
 
-        if (wub.extension != DSD5217_24BIT_ADDRESSING)
-        {
-            Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Write8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
-            return;
-        }
-
         switch (addr)
         {
         case DSD5217_MBIO_STATUS:
@@ -138,6 +134,9 @@ namespace Motion
                 initialStart = false;
             }
             break;
+        case DSD5217_WUB_EXTENSION:
+            wub.extension = value;
+            break; 
         case DSD5217_WUB_CCB_PTR:
             // start of our chain of ptrs.
             // technically a 32-bit pointer though
@@ -155,6 +154,12 @@ namespace Motion
             break;
         }
 
+        // we need the extension word to be written after here
+        if (wub.extension != DSD5217_24BIT_ADDRESSING)
+        {
+            Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Write8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
+            return;
+        }
 
         // structure write
         if (wub.ccbPtr && addr >= wub.ccbPtr && (addr < (wub.ccbPtr + sizeof(CCB))))
