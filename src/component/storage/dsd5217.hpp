@@ -197,8 +197,9 @@ namespace Motion
             uint8_t reserved;
             uint8_t statusSemaphore;        // status semaphore
             uint8_t commandSemaphore;       // command semaphore
+            // DSD 5215 documentation is wrong lol it has these the other way around. BRILLIANT
+            uint32_t iopbPtr;               // IOPB Pointer
             uint32_t zero;                  // must be zero
-            uint32_t iopbPtr;               // IOPB pointer
             uint32_t zero2;                 // must be zero
         };
 
