@@ -16,3 +16,4 @@ profile/ip2_sram.bin
 
 *.img
 zconf.h
+external/sdl3_image/external
