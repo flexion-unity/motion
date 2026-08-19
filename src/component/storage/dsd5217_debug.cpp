@@ -18,8 +18,8 @@ namespace Motion
             DSD5217* dsd5217 = (DSD5217*)component;
 
             ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Wake Up Block (WUB)");
-            ImGui::Text("Extended Addressing: %s", (dsd5217->wub.extension == 7) ? "True" : "False");
-            ImGui::Text("CCB Pointer: 0x%05x", dsd5217->wub.ccbPtr);
+            ImGui::Text("Extended Addressing: %s", (dsd5217->wub.extension == DSD5217_24BIT_ADDRESSING) ? "True" : "False");
+            ImGui::Text("CCB Pointer: 0x%05x", dsd5217->wub.ccbPtr & 0xFFFFF0); // can't just and this when its set
             
             ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Channel Control Block (CCB)");
             ImGui::Text("Channel 1 Busy: %s", (dsd5217->ccb.busy) ? "True" : "False");
@@ -28,15 +28,15 @@ namespace Motion
             ImGui::Text("Channel 1 Control Word: 0x%04x", dsd5217->ccb.ccw1);
             ImGui::SameLine();
             ImGui::Text("Channel 2 Control Word: 0x%04x", dsd5217->ccb.ccw2);
-            ImGui::Text("CIB Pointer: 0x%05x", dsd5217->ccb.cibPtr);
-            ImGui::Text("CP Pointer: 0x%05x", dsd5217->ccb.cpPtr);
-            ImGui::Text("Control Pointer: 0x%05x", dsd5217->ccb.controlPtr);
+            ImGui::Text("CIB Pointer: 0x%05x", dsd5217->ccb.cibPtr & 0xFFFFF0);
+            ImGui::Text("CP Pointer: 0x%05x", dsd5217->ccb.cpPtr & 0xFFFFF0);
+            ImGui::Text("Control Pointer: 0x%05x", dsd5217->ccb.controlPtr & 0xFFFFF0);
             ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Channel Info Block? (CIB)");
             ImGui::Text("Command Semaphore: 0x%05x", dsd5217->cib.commandSemaphore);
             ImGui::Text("Status Semaphore: 0x%05x", dsd5217->cib.statusSemaphore);
             ImGui::SameLine();
             ImGui::Text("Operation Status: 0x%05x", dsd5217->cib.opStatus);
-            ImGui::Text("IOPB Pointer: 0x%05x", dsd5217->cib.iopbPtr);
+            ImGui::Text("IOPB Pointer: 0x%05x", dsd5217->cib.iopbPtr & 0xFFFFF0);
             ImGui::TextColored(CoherentUI::COLOUR_HEADER, "I/O Parameter Block (IOPB)");
 
             switch (dsd5217->iopb.deviceCode)
@@ -69,8 +69,8 @@ namespace Motion
             ImGui::Text("Modifier: 0x%02x", dsd5217->iopb.modifier); 
             ImGui::Text("RBC: 0x%04x", dsd5217->iopb.rbc);  
 
-            ImGui::Text("General Pointer: 0x%05x", dsd5217->iopb.generalPtr); 
-            ImGui::Text("INIB Pointer: 0x%05x", dsd5217->iopb.dba);
+            ImGui::Text("General Pointer: 0x%05x", dsd5217->iopb.generalPtr & 0xFFFFF0); 
+            ImGui::Text("INIB Pointer: 0x%05x", dsd5217->iopb.dba & 0xFFFFF0);
 
             ImGui::TextColored(CoherentUI::COLOUR_HEADER, "INIB / Data Buffer Information");
 

@@ -63,6 +63,12 @@ namespace Motion
 
         uint8_t ret = 0x00;
 
+        if (wub.extension != DSD5217_24BIT_ADDRESSING)
+        {
+            Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Read8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
+            return 0xFF;
+        }
+
         switch (addr)
         {
         case DSD5217_MBIO_STATUS:
@@ -71,24 +77,29 @@ namespace Motion
         }
 
         // structure read
-        if (wub.ccbPtr && addr >= wub.ccbPtr && (addr <= (wub.ccbPtr + sizeof(CCB))))
+        // seems lke addresses in 24 bit segment mode are silently ANDed with FFFFF0
+        if (wub.ccbPtr && 
+            addr >= (wub.ccbPtr & 0xFFFFF0) && (addr <= ((wub.ccbPtr & 0xFFFFF0) + sizeof(CCB))))
         {
-            ret = *(((uint8_t *)&ccb) + (addr - wub.ccbPtr));
+            ret = *(((uint8_t *)&ccb) + (addr - (wub.ccbPtr & 0xFFFFF0)));
         }
 
-        if (ccb.cibPtr && addr >= ccb.cibPtr && (addr <= ccb.cibPtr + sizeof(CIB)))
+        if (ccb.cibPtr 
+            && addr >= (ccb.cibPtr & 0xFFFFF0) && (addr <= (ccb.cibPtr & 0xFFFFF0) + sizeof(CIB)))
         {
-            ret = *(((uint8_t *)&cib) + (addr - ccb.cibPtr));
+            ret = *(((uint8_t *)&cib) + (addr - (ccb.cibPtr & 0xFFFFF0)));
         }
 
-        if (cib.iopbPtr && addr >= cib.iopbPtr && (addr <= cib.iopbPtr + sizeof(IOPB)))
+        if (cib.iopbPtr 
+            && addr >= (cib.iopbPtr & 0xFFFFF0) && (addr <= (cib.iopbPtr & 0xFFFFF0) + sizeof(IOPB)))
         {
-            ret = *(((uint8_t *)&iopb) + (addr - cib.iopbPtr));
+            ret = *(((uint8_t *)&iopb) + (addr - (cib.iopbPtr & 0xFFFFF0)));
         }
 
-        if (iopb.dba && addr >= iopb.dba && (addr < iopb.dba + sizeof(INIB)))
+        if (iopb.dba 
+            && addr >= (iopb.dba & 0xFFFFF0) && (addr < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
         {
-            ret = *(((uint8_t *)&inib) + (addr - iopb.dba));
+            ret = *(((uint8_t *)&inib) + (addr - (iopb.dba & 0xFFFFF0)));
         }
 
         Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
@@ -104,6 +115,12 @@ namespace Motion
             return;
 
         addr &= 0xFFFFF;
+
+        if (wub.extension != DSD5217_24BIT_ADDRESSING)
+        {
+            Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Write8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
+            return;
+        }
 
         switch (addr)
         {
@@ -137,6 +154,7 @@ namespace Motion
 
             break;
         }
+
 
         // structure write
         if (wub.ccbPtr && addr >= wub.ccbPtr && (addr < (wub.ccbPtr + sizeof(CCB))))

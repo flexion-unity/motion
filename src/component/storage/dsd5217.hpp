@@ -27,6 +27,9 @@ namespace Motion
     #define DSD5217_MBIO_STATUS                 0x7F01 // all addresses are 1mb region
     #define DSD5217_MBIO_STATUS_IS_READY        1
 
+    // 20 bit seg:off addressing or 24 bit linear. we only implemetn2 4bit linear
+    #define DSD5217_24BIT_ADDRESSING            7
+
     // memory ranges. THis one decodes one region which stores pointers to many others.
     // The other memory regions need to be dynamically mapped based on the results of this, as
     // Multibus Memory is mapped by the PROM using MBMALLOC. Map 0x10 bytes for safety
@@ -36,8 +39,6 @@ namespace Motion
 
     // this is configurable on the real thing with jumpers but for now just do this
     #define DSD5217_MULTIBUS_IRQ_LEVEL          1
-
-
 
     #define DSD5217_LOG_PREFIX                  "DSD 5217"
 
