@@ -86,7 +86,7 @@ namespace Motion
         if (logDestinations->GetValue() != -1)
             Logger::settings.SetDestinations((LogDestination)logChannels->GetValue());
 
-        Logger::Log(APP_NAME " v" APP_VERSION " " APP_BUILD_DATE);
+        Logger::Log(APP_NAME " v" APP_VERSION " (" APP_NATURE ") " APP_BUILD_DATE);
         Logger::Log(APP_SIGNON, LogChannels::Message);
         Profile::Init();                                    // init config for user profile
 

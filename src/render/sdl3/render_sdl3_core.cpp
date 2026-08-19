@@ -25,9 +25,9 @@ namespace Motion
         if (defaultbg)
         {
             // should MEMCPY
-            for (int32_t y = 0; y < 767; y++)
+            for (int32_t y = 0; y < 768; y++)
             {
-                for (int32_t x = 0; x < 1023; x++)
+                for (int32_t x = 0; x < 1024; x++)
                 {
                     screen->SetPixel(x, y, pixels[(y * (defaultbg->pitch >> 2) + x)]);
                 }
@@ -35,6 +35,8 @@ namespace Motion
         }
         else
         {
+            Logger::Log("Cool logo failed to load, no defaultbg.png", LogChannels::Error);
+
             float red = 1.000;
             float blue = 0.000;
             float green = 0.000;
