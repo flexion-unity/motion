@@ -13,7 +13,8 @@ namespace Motion
 {
     void CoherentExtensionDSD5217::AddUI()
     {
-        if (ImGui::Begin("DSD 5217 Disk Controller", &enabled))
+        // TODO: Add a tab for each supported device..
+        if (ImGui::Begin("DSD 5217 Disk, Floppy and Tape Controller", &enabled))
         {
             DSD5217* dsd5217 = (DSD5217*)component;
 
@@ -76,14 +77,17 @@ namespace Motion
 
             ImGui::Text("Bytes per Sector: 0x%04x", (dsd5217->inist.inib.bytesPerSectorHigh << 8) 
             | (dsd5217->inist.inib.bytesPerSectorLow));
-            ImGui::Text("Fixed Heads: 0x%04x", dsd5217->inist.inib.fixedHeads); 
-            ImGui::Text("# Cylinders: 0x%04x", dsd5217->inist.inib.nrCylinders);
+
+            if (dsd5217->iopb.deviceCode == DSD5217_DEVICE_CODE_FLOPPY)
+                ImGui::Text("Removable Heads: %d", dsd5217->inist.inib.removableHeads); 
+            else
+                ImGui::Text("Fixed Heads: %d", dsd5217->inist.inib.fixedHeads); 
+            ImGui::Text("# Cylinders: %d", dsd5217->inist.inib.nrCylinders);
             ImGui::SameLine(); 
-            ImGui::Text("Alt Cylinders: 0x%04x", dsd5217->inist.inib.numberOfAlternateCylinders); 
-            ImGui::Text("Sectors per Track: 0x%04x", dsd5217->inist.inib.sectorsPerTrack); 
-            ImGui::Text("Fixed Heads: 0x%04x", dsd5217->inist.inib.fixedHeads); 
+            ImGui::Text("Alt Cylinders: %d", dsd5217->inist.inib.numberOfAlternateCylinders); 
+            ImGui::Text("Sectors per Track: %d", dsd5217->inist.inib.sectorsPerTrack); 
+            ImGui::Text("Fixed Heads: %d", dsd5217->inist.inib.fixedHeads); 
             ImGui::SameLine();
-            ImGui::Text("Removable Heads: 0x%04x", dsd5217->inist.inib.removableHeads); 
         }
 
         ImGui::End();

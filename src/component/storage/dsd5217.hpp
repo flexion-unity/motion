@@ -126,7 +126,9 @@ namespace Motion
     #define DSD5217_HARDERR1_INVALID_ADDRESS    (1 << 5)    // invalid address (something is wrong)
     #define DSD5217_HARDERR1_UNIT_NOT_READY     (1 << 6)    // unit not ready
     #define DSD5217_HARDERR1_WRITE_PROTECTED    (1 << 7)    // write protected
-
+    
+    #define DSD5217_MAXIMUM_BUFFER_SIZE         1024        // Max buffer size
+    
     // the coherent extension
     class CoherentExtensionDSD5217 : public CoherentExtension
     {
@@ -287,9 +289,14 @@ namespace Motion
         // what IOPB.dba refers to
         DataBufferType bufferType = DataBufferType::INIB;
 
+        // Methods which exist because this is jank
         uint8_t ReadBuffer(int32_t offset);
         void WriteBuffer(int32_t offset, uint8_t value); 
 
+        // Methods related to causing the disk to actually do something
+        size_t CHSToLinear();
+
+        void ReadSector();
 
         // can't do any disk ops if there is no disk inserted lmao
         bool diskIsOpen;
@@ -297,6 +304,9 @@ namespace Motion
         // we don't execute a command on initial start
         bool initialStart = true; 
 
+        // Only one sector can be read at a time
+        uint8_t sectorBuffer[DSD5217_MAXIMUM_BUFFER_SIZE] = {0};
+        
         // execute command
         void ExecuteCommand();
         void AssertIRQLine();

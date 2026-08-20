@@ -76,29 +76,35 @@ namespace Motion
                 return 0xFF;
             }
 
+            // we have no idea where the buffer is in memory, or what its size is. so we have to ignore it if we want to read from some other register
+            bool isBufIo = true;
+
             // structure read
             // seems lke addresses in 24 bit segment mode are silently ANDed with FFFFF0
             if (wub.ccbPtr && 
                 addr >= (wub.ccbPtr & 0xFFFFF0) && (addr <= ((wub.ccbPtr & 0xFFFFF0) + sizeof(CCB))))
             {
+                isBufIo = false;
                 ret = *(((uint8_t *)&ccb) + (addr - (wub.ccbPtr & 0xFFFFF0)));
             }
 
             if (ccb.cibPtr 
                 && addr >= (ccb.cibPtr & 0xFFFFF0) && (addr <= (ccb.cibPtr & 0xFFFFF0) + sizeof(CIB)))
             {
+                isBufIo = false;
                 ret = *(((uint8_t *)&cib) + (addr - (ccb.cibPtr & 0xFFFFF0)));
             }
 
             if (cib.iopbPtr 
                 && addr >= (cib.iopbPtr & 0xFFFFF0) && (addr <= (cib.iopbPtr & 0xFFFFF0) + sizeof(IOPB)))
             {
+                isBufIo = false;
                 ret = *(((uint8_t *)&iopb) + (addr - (cib.iopbPtr & 0xFFFFF0)));
             }
 
             // some buffers are intneral to controller and others are in multibus ram...
             if (iopb.dba
-            && addr >= iopb.dba)
+            && isBufIo && addr >= iopb.dba)
                 ret = ReadBuffer(addr);
 
             break; 
@@ -153,10 +159,15 @@ namespace Motion
             break;
         // Non WUB
         default:
-            // we need the extension word to be written after here
+
+            // we have no idea where the buffer is in memory, or what its size is. so we have to ignore it if we want to read from some other register
+            bool isBufIo = true;
+
             if (wub.extension != DSD5217_24BIT_ADDRESSING)
             {
-                Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Write8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
+                // causes too much log spam due to IDIOT sgi driver attempting to clear the registers of the DSD in 20-BIT SEGMENTED ADDRESSING MODE,
+                // despite using 24-BIT LINEAR ADDRESSING with HARDCODED ADDRESSES and this being CLEARLY DOCUMENTED in the manual 
+                //Logger::Log(DSD5217_LOG_PREFIX, "DSD5217::Write8 - 20-bit segmented addressing is not implemented", LogChannels::Warning);
                 return;
             }
 
@@ -164,24 +175,27 @@ namespace Motion
             if (wub.ccbPtr && 
                 addr >= (wub.ccbPtr & 0xFFFFF0) && (addr <= ((wub.ccbPtr & 0xFFFFF0) + sizeof(CCB))))
             {
+                isBufIo = false;
                 *((uint8_t*)&ccb + (addr - wub.ccbPtr)) = value;
             }
 
             if (ccb.cibPtr 
                 && addr >= (ccb.cibPtr & 0xFFFFF0) && (addr <= (ccb.cibPtr & 0xFFFFF0) + sizeof(CIB)))
             {
+                isBufIo = false;
                 *(((uint8_t*)&cib) + (addr - ccb.cibPtr)) = value;
             }
 
             if (cib.iopbPtr 
                 && addr >= (cib.iopbPtr & 0xFFFFF0) && (addr <= (cib.iopbPtr & 0xFFFFF0) + sizeof(IOPB)))
             {
+                isBufIo = false;
                 *(((uint8_t*)&iopb) + (addr - cib.iopbPtr)) = value;
             }
 
             // some buffers are intneral to controller and others are in multibus ram...
             if (iopb.dba
-            && addr >= iopb.dba)
+            && isBufIo && addr >= iopb.dba)
                 WriteBuffer(addr, value);
 
             break;
@@ -213,30 +227,55 @@ namespace Motion
 
         ccb.busy = true;
         bool commandIsImplemented = true;
+        size_t offset = 0;
 
         if (iopb.deviceCode != DSD5217_DEVICE_CODE_HDD)
         {
             Logger::Log(DSD5217_LOG_PREFIX, "Only HDD commands are currently supported! (QIC, Floppy not implemented!)", LogChannels::Warning);
             goto done; 
         }
-        
+
         switch (iopb.function)
         {
             case DSD5217_FUNC_INIT:
+                bufferType = DataBufferType::INIB;
                 // read in the iIPB
                 break;
+            case DSD5217_FUNC_XFER_STATUS:
+                bufferType = DataBufferType::ST;
+                break;
+            case DSD5217_FUNC_READ_DATA:
+                ReadSector();
+                break; 
             default:
                 commandIsImplemented = false; 
                 break;
         }
 
         if (!commandIsImplemented)
-            Logger::Log(DSD5217_LOG_PREFIX, std::format("It's time to implement command 0x{:x}", iopb.function).c_str());
+            Logger::Log(DSD5217_LOG_PREFIX, std::format("It's time to implement command 0x{:x}", iopb.function).c_str(), LogChannels::Debug);
+        else
+            Logger::Log(DSD5217_LOG_PREFIX, std::format("Executed command 0x{:x}", iopb.function).c_str(), LogChannels::Debug);
 
     done:
         cib.statusSemaphore = 0xFF;
         ccb.busy = false;
 
+    }
+
+    void DSD5217::ReadSector()
+    {
+        size_t offset = CHSToLinear();
+        hdd->stream.seekp(offset, std::ios_base::beg);
+        size_t bytesPerSector = inist.inib.bytesPerSectorHigh << 8 | inist.inib.bytesPerSectorLow;
+
+        hdd->stream.read((char*)sectorBuffer, bytesPerSector);
+
+        // VERY slow test code
+        for (int32_t i = 0; i < bytesPerSector; i++)
+            multibus->Write8(iopb.dba + i, sectorBuffer[i]);
+
+        iopb.actualTransfers = bytesPerSector;
     }
 
     uint8_t DSD5217::ReadBuffer(int32_t offset)
@@ -248,14 +287,23 @@ namespace Motion
         switch (bufferType)
         {
             case DSD5217::DataBufferType::INIB:
-                        // INIB pointer
+                // INIB pointer
                 if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
                 {
                     ret = *(((uint8_t *)&inist.inib) + (offset - (iopb.dba & 0xFFFFF0)));
                 }
                 break;
+            case DSD5217::DataBufferType::ST:
+                // Status pointer
+                // This is smaller in raw emulation mode of iSBC 215 (i.e. 20 bit mode)
+                // But sgi doesn't use this (intentionally)
+                if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + DSD5217_SB_SIZE))
+                {
+                    ret = *(((uint8_t *)&inist.sb) + (offset - (iopb.dba & 0xFFFFF0)));
+                }
+                break; 
         }
-        
+
         return ret;
     }
 
@@ -264,13 +312,46 @@ namespace Motion
         switch (bufferType)
         {
             case DSD5217::DataBufferType::INIB:
-                        // INIB pointer
+                // INIB pointer
                 if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
                 {
                     *(((uint8_t*)&inist.inib) + (offset - iopb.dba)) = value;
                 }
                 break;
+            case DSD5217::DataBufferType::ST:
+                // Status pointer
+                // This is smaller in raw emulation mode of iSBC 215 (i.e. 20 bit mode)
+                // But sgi doesn't use this (intentionally)
+                if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + DSD5217_SB_SIZE))
+                {
+                    *(((uint8_t*)&inist.sb) + (offset - iopb.dba)) = value;
+                }
         }
+    }
+
+    // Convert CHS to linear address
+    // Probably should be in a "ComponentHDD" generic class
+    size_t DSD5217::CHSToLinear()
+    {
+        size_t cylinderWeWant = iopb.cylinder;
+        size_t headWeWant = iopb.head;
+        size_t sectorWeWant = iopb.sector;
+
+        // figure out the disk information
+        size_t sectorsPerTrack = inist.inib.sectorsPerTrack;
+        size_t bytesPerSector = inist.inib.bytesPerSectorHigh << 8 | inist.inib.bytesPerSectorLow;
+        size_t numCyls = inist.inib.nrCylinders;
+
+        size_t nrHeads = (iopb.deviceCode == DSD5217_DEVICE_CODE_FLOPPY) ? inist.inib.removableHeads : inist.inib.fixedHeads;
+       
+        // floppy - cyl's start at 1, otherwise 0
+        if (iopb.deviceCode == DSD5217_DEVICE_CODE_FLOPPY)
+            cylinderWeWant--;
+
+        MOTION_ASSERT(cylinderWeWant >= numCyls, "****** INVALID DISK CYLINDER REQUEST!!! ******");
+
+        size_t final = (((cylinderWeWant * nrHeads) + headWeWant) * (sectorWeWant)) * bytesPerSector;
+        return final;
     }
 
     void DSD5217::AssertIRQLine()
