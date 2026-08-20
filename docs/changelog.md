@@ -154,6 +154,18 @@ Similar to a .plan file
 * allow 8 bit reads from UCR register of UC4 as they are done  
 * change description of bp3 from "BP3 Bitplaned VRAM" to "Video RAM (BP3 bitplane board)" to make it easier to understand 
 
+
+## 2026-08-19
+* remove some parts of sdl 
+* added cool logo. consdiered sdl_image but didn't use it
+* fix endianness of 16 bit writes to DSD 5217
+
+## 2026-08-20
+* got mad yelling at dsd buffers 
+* figured out iopb->dba has multiple meanings so abstract it behind readbuffer/writebuffer and databuffertype
+* merge inib and fmtb into inist
+
+
 v0.2.0 TODO:
 
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE

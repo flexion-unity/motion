@@ -97,7 +97,8 @@ namespace Motion
             }
 
             // some buffers are intneral to controller and others are in multibus ram...
-            if (addr >= iopb.dba)
+            if (iopb.dba
+            && addr >= iopb.dba)
                 ret = ReadBuffer(addr);
 
             break; 
@@ -110,7 +111,6 @@ namespace Motion
 
     void DSD5217::Write8(size_t addr, uint8_t value)
     {
-
         // don't bother if no hdd
         if (!hdd)
             return;
@@ -180,7 +180,8 @@ namespace Motion
             }
 
             // some buffers are intneral to controller and others are in multibus ram...
-            if (addr >= iopb.dba)
+            if (iopb.dba
+            && addr >= iopb.dba)
                 WriteBuffer(addr, value);
 
             break;
@@ -240,8 +241,9 @@ namespace Motion
 
     uint8_t DSD5217::ReadBuffer(int32_t offset)
     {  
-        if (!iopb.dba)
-            return 0xFF;
+        // already checked for valid dba above so don't bother
+
+        uint8_t ret = 0xFF;
 
         switch (bufferType)
         {
@@ -249,17 +251,16 @@ namespace Motion
                         // INIB pointer
                 if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
                 {
-                    return *(((uint8_t *)&inist.inib) + (offset - (iopb.dba & 0xFFFFF0)));
+                    ret = *(((uint8_t *)&inist.inib) + (offset - (iopb.dba & 0xFFFFF0)));
                 }
                 break;
         }
+        
+        return ret;
     }
 
     void DSD5217::WriteBuffer(int32_t offset, uint8_t value)
     {
-        if (!iopb.dba)
-            return;
-
         switch (bufferType)
         {
             case DSD5217::DataBufferType::INIB:
