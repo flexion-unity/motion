@@ -164,7 +164,10 @@ namespace Motion
             uint16_t cylinder;              // cylinder
             uint8_t sector;                 // cylinder
             uint8_t head;                   // cylinder
-            uint32_t dba;                   // use as a pointer to the INIB
+            /* Data Buffer Address: This four-byte field contains the segmented address of the data buffer. 
+            For normal read or write operations, this is the address of the multibus memory buffer where
+            data is stored or fetched. For some commands, this is the address of additional control information */
+            uint32_t dba;                   
             uint8_t rbc;                    // requested byte count
             uint32_t generalPtr;            // use as a pointer
         }; 
@@ -203,7 +206,7 @@ namespace Motion
             uint32_t zero2;                 // must be zero
         };
 
-        /// @brief not sure what this is ? disk header ?
+        /// @brief Initialisation Information Block
         struct INIB
         {
             uint16_t nrCylinders;
@@ -244,7 +247,7 @@ namespace Motion
         {
             DSD5217::INIB inib;
             DSD5217::FMTB fmtb;
-            uint8_t sb[DSD5217_SB_SIZE];        // status bytes?
+            uint8_t sb[DSD5217_SB_SIZE];        // the status buffer ?
         }; 
 
 #pragma pack(pop)
@@ -271,8 +274,22 @@ namespace Motion
         CCB ccb = {0};
         CIB cib = {0};
         IOPB iopb = {0};
-        INIB inib = {0};
-        FMTB fmtb = {0};
+        INIST inist = {0};
+
+        // data buffer type
+        enum DataBufferType
+        {
+            INIB = 0,
+            ST = 1,
+            DiskBuffer = 2,
+        };
+
+        // what IOPB.dba refers to
+        DataBufferType bufferType = DataBufferType::INIB;
+
+        uint8_t ReadBuffer(int32_t offset);
+        void WriteBuffer(int32_t offset, uint8_t value); 
+
 
         // can't do any disk ops if there is no disk inserted lmao
         bool diskIsOpen;

@@ -31,7 +31,7 @@ namespace Motion
             ImGui::Text("CIB Pointer: 0x%05x", dsd5217->ccb.cibPtr & 0xFFFFF0);
             ImGui::Text("CP Pointer: 0x%05x", dsd5217->ccb.cpPtr & 0xFFFFF0);
             ImGui::Text("Control Pointer: 0x%05x", dsd5217->ccb.controlPtr & 0xFFFFF0);
-            ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Channel Info Block? (CIB)");
+            ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Controller Invocation Block (CIB)");
             ImGui::Text("Command Semaphore: 0x%05x", dsd5217->cib.commandSemaphore);
             ImGui::Text("Status Semaphore: 0x%05x", dsd5217->cib.statusSemaphore);
             ImGui::SameLine();
@@ -70,20 +70,20 @@ namespace Motion
             ImGui::Text("RBC: 0x%04x", dsd5217->iopb.rbc);  
 
             ImGui::Text("General Pointer: 0x%05x", dsd5217->iopb.generalPtr & 0xFFFFF0); 
-            ImGui::Text("INIB Pointer: 0x%05x", dsd5217->iopb.dba & 0xFFFFF0);
+            ImGui::Text("Data Buffer Pointer: 0x%05x", dsd5217->iopb.dba & 0xFFFFF0);
 
             ImGui::TextColored(CoherentUI::COLOUR_HEADER, "INIB / Data Buffer Information");
 
-            ImGui::Text("Bytes per Sector: 0x%04x", (dsd5217->inib.bytesPerSectorHigh << 8) 
-            | (dsd5217->inib.bytesPerSectorLow));
-            ImGui::Text("Fixed Heads: 0x%04x", dsd5217->inib.fixedHeads); 
-            ImGui::Text("# Cylinders: 0x%04x", dsd5217->inib.nrCylinders);
+            ImGui::Text("Bytes per Sector: 0x%04x", (dsd5217->inist.inib.bytesPerSectorHigh << 8) 
+            | (dsd5217->inist.inib.bytesPerSectorLow));
+            ImGui::Text("Fixed Heads: 0x%04x", dsd5217->inist.inib.fixedHeads); 
+            ImGui::Text("# Cylinders: 0x%04x", dsd5217->inist.inib.nrCylinders);
             ImGui::SameLine(); 
-            ImGui::Text("Alt Cylinders: 0x%04x", dsd5217->inib.numberOfAlternateCylinders); 
-            ImGui::Text("Sectors per Track: 0x%04x", dsd5217->inib.sectorsPerTrack); 
-            ImGui::Text("Fixed Heads: 0x%04x", dsd5217->inib.fixedHeads); 
+            ImGui::Text("Alt Cylinders: 0x%04x", dsd5217->inist.inib.numberOfAlternateCylinders); 
+            ImGui::Text("Sectors per Track: 0x%04x", dsd5217->inist.inib.sectorsPerTrack); 
+            ImGui::Text("Fixed Heads: 0x%04x", dsd5217->inist.inib.fixedHeads); 
             ImGui::SameLine();
-            ImGui::Text("Removable Heads: 0x%04x", dsd5217->inib.removableHeads); 
+            ImGui::Text("Removable Heads: 0x%04x", dsd5217->inist.inib.removableHeads); 
         }
 
         ImGui::End();

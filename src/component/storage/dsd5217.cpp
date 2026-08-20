@@ -96,11 +96,10 @@ namespace Motion
                 ret = *(((uint8_t *)&iopb) + (addr - (cib.iopbPtr & 0xFFFFF0)));
             }
 
-            if (iopb.dba 
-                && addr >= (iopb.dba & 0xFFFFF0) && (addr < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
-            {
-                ret = *(((uint8_t *)&inib) + (addr - (iopb.dba & 0xFFFFF0)));
-            }
+            // some buffers are intneral to controller and others are in multibus ram...
+            if (addr >= iopb.dba)
+                ret = ReadBuffer(addr);
+
             break; 
         }
 
@@ -180,12 +179,10 @@ namespace Motion
                 *(((uint8_t*)&iopb) + (addr - cib.iopbPtr)) = value;
             }
 
-            // INIB pointer
-            if (iopb.dba 
-                && addr >= (iopb.dba & 0xFFFFF0) && (addr < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
-            {
-                *(((uint8_t*)&inib) + (addr - iopb.dba)) = value;
-            }
+            // some buffers are intneral to controller and others are in multibus ram...
+            if (addr >= iopb.dba)
+                WriteBuffer(addr, value);
+
             break;
         }
 
@@ -214,6 +211,7 @@ namespace Motion
             return; 
 
         ccb.busy = true;
+        bool commandIsImplemented = true;
 
         if (iopb.deviceCode != DSD5217_DEVICE_CODE_HDD)
         {
@@ -221,11 +219,57 @@ namespace Motion
             goto done; 
         }
         
-        
+        switch (iopb.function)
+        {
+            case DSD5217_FUNC_INIT:
+                // read in the iIPB
+                break;
+            default:
+                commandIsImplemented = false; 
+                break;
+        }
+
+        if (!commandIsImplemented)
+            Logger::Log(DSD5217_LOG_PREFIX, std::format("It's time to implement command 0x{:x}", iopb.function).c_str());
+
     done:
         cib.statusSemaphore = 0xFF;
         ccb.busy = false;
 
+    }
+
+    uint8_t DSD5217::ReadBuffer(int32_t offset)
+    {  
+        if (!iopb.dba)
+            return 0xFF;
+
+        switch (bufferType)
+        {
+            case DSD5217::DataBufferType::INIB:
+                        // INIB pointer
+                if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
+                {
+                    return *(((uint8_t *)&inist.inib) + (offset - (iopb.dba & 0xFFFFF0)));
+                }
+                break;
+        }
+    }
+
+    void DSD5217::WriteBuffer(int32_t offset, uint8_t value)
+    {
+        if (!iopb.dba)
+            return;
+
+        switch (bufferType)
+        {
+            case DSD5217::DataBufferType::INIB:
+                        // INIB pointer
+                if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
+                {
+                    *(((uint8_t*)&inist.inib) + (offset - iopb.dba)) = value;
+                }
+                break;
+        }
     }
 
     void DSD5217::AssertIRQLine()
