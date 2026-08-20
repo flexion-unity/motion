@@ -238,7 +238,7 @@ namespace Motion
         switch (iopb.function)
         {
             case DSD5217_FUNC_INIT:
-                bufferType = DataBufferType::INIB;
+                bufferType = DataBufferType::INIT;
                 // read in the iIPB
                 break;
             case DSD5217_FUNC_XFER_STATUS:
@@ -273,9 +273,12 @@ namespace Motion
 
         // VERY slow test code
         for (int32_t i = 0; i < bytesPerSector; i++)
-            multibus->Write8(iopb.dba + i, sectorBuffer[i]);
+            multibus->WriteMB8(iopb.dba + i, sectorBuffer[i]);
 
         iopb.actualTransfers = bytesPerSector;
+
+        if (!(iopb.modifier & 0x01))
+            AssertIRQLine();
     }
 
     uint8_t DSD5217::ReadBuffer(int32_t offset)
@@ -286,9 +289,9 @@ namespace Motion
 
         switch (bufferType)
         {
-            case DSD5217::DataBufferType::INIB:
+            case DSD5217::DataBufferType::INIT:
                 // INIB pointer
-                if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
+                if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIT)))
                 {
                     ret = *(((uint8_t *)&inist.inib) + (offset - (iopb.dba & 0xFFFFF0)));
                 }
@@ -311,7 +314,7 @@ namespace Motion
     {
         switch (bufferType)
         {
-            case DSD5217::DataBufferType::INIB:
+            case DSD5217::DataBufferType::INIT:
                 // INIB pointer
                 if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
                 {

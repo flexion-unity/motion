@@ -114,8 +114,19 @@ namespace Motion
         void Write8(size_t addr, uint8_t value) override;
         void Write16(size_t addr, uint16_t value) override;
         void Write32(size_t addr, uint32_t value) override;
+
+        // These are some special methods that write to only the 1 meg of multibus address space.
+        uint8_t ReadMB8(size_t addr) { return Read8(multibusMemoryStart + (addr & 0xFFFFF)); }; 
+        uint16_t ReadMB16(size_t addr) { return Read16(multibusMemoryStart + (addr & 0xFFFFF)); }; 
+        uint32_t ReadMB32(size_t addr) { return Read32(multibusMemoryStart + (addr & 0xFFFFF)); }; 
+        void WriteMB8(size_t addr, uint8_t value) { Write8(multibusMemoryStart + (addr & 0xFFFFF), value); }
+        void WriteMB16(size_t addr, uint16_t value) { Write16(multibusMemoryStart + (addr & 0xFFFFF), value); }
+        void WriteMB32(size_t addr, uint32_t value) { Write32(multibusMemoryStart + (addr & 0xFFFFF), value); }
+
         // Fire a shared MultiBus IRQ.
         void FireMultibusIRQ(int32_t number);
+
+
     private:
         // This is an optimisation, because of the way our bus modelling works we can't actually reliably determine what slot is being written to or read from
         // Since multibus stuff needs to share irq we filter everything through the multibus class. 

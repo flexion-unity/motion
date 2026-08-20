@@ -281,13 +281,13 @@ namespace Motion
         // data buffer type
         enum DataBufferType
         {
-            INIB = 0,
+            INIT = 0, // not called INIB to reduce confusion
             ST = 1,
             DiskBuffer = 2,
         };
 
         // what IOPB.dba refers to
-        DataBufferType bufferType = DataBufferType::INIB;
+        DataBufferType bufferType = DataBufferType::INIT;
 
         // Methods which exist because this is jank
         uint8_t ReadBuffer(int32_t offset);
@@ -306,7 +306,7 @@ namespace Motion
 
         // Only one sector can be read at a time
         uint8_t sectorBuffer[DSD5217_MAXIMUM_BUFFER_SIZE] = {0};
-        
+
         // execute command
         void ExecuteCommand();
         void AssertIRQLine();
