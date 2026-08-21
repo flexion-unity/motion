@@ -272,8 +272,13 @@ namespace Motion
         hdd->stream.read((char*)sectorBuffer, bytesPerSector);
 
         // VERY slow test code
-        for (int32_t i = 0; i < bytesPerSector; i++)
-            multibus->WriteMB8(iopb.dba + i, sectorBuffer[i]);
+        for (int32_t i = 0; i < bytesPerSector - 1; i += 2)
+        {
+            // i think i need to do a 16 bit byteswap as the dat acomes in
+            // NOTE: Add an extra type of extension which is a pre-byteswapped image so we can use a faster path...
+            uint16_t dat = (sectorBuffer[i + 1] << 8) | sectorBuffer[i];
+            multibus->WriteMB16(iopb.dba + i, dat);
+        }
 
         iopb.actualTransfers = bytesPerSector;
 
@@ -291,10 +296,11 @@ namespace Motion
         {
             case DSD5217::DataBufferType::INIT:
                 // INIB pointer
-                if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIT)))
+                if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
                 {
                     ret = *(((uint8_t *)&inist.inib) + (offset - (iopb.dba & 0xFFFFF0)));
                 }
+
                 break;
             case DSD5217::DataBufferType::ST:
                 // Status pointer
@@ -353,7 +359,7 @@ namespace Motion
 
         MOTION_ASSERT(cylinderWeWant >= numCyls, "****** INVALID DISK CYLINDER REQUEST!!! ******");
 
-        size_t final = (((cylinderWeWant * nrHeads) + headWeWant) * (sectorWeWant)) * bytesPerSector;
+        size_t final = ((((cylinderWeWant * nrHeads) + headWeWant) * sectorsPerTrack) * (sectorWeWant)) * bytesPerSector;
         return final;
     }
 

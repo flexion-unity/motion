@@ -107,10 +107,11 @@ namespace Motion
 
                 ImGui::EndChild();
                 ImGui::SameLine();
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(1.0f, ImGui::GetStyle().ItemSpacing.y));
+
                 // draw an ascii view
                 if (ImGui::BeginChild("##AsciiView", ImVec2(200, 350)))
                 {
-                    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(1.0f, ImGui::GetStyle().ItemSpacing.y));
 
                     for (currentAddress = startDrawingAt; currentAddress < (startDrawingAt + settings.loadAtOnce); currentAddress += settings.lineSize)
                     {
