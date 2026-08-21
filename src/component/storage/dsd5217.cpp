@@ -102,9 +102,24 @@ namespace Motion
                 ret = *(((uint8_t *)&iopb) + (addr - (cib.iopbPtr & 0xFFFFF0)));
             }
 
+            bool needToUseBuffer = iopb.dba
+            && isBufIo && addr >= iopb.dba;
+
+            // IIPB is always meant to be 0x20 past the IOPB...So we have to hardcode it to be available anyway?!
+            // If this is a safe assumption on all versions of the card we can get rid of readbuffer/writebuffer entirely.
+
+            int32_t iipbStart = 0x20;
+            int32_t iipbEnd = 0x20 + sizeof(IOPB);
+
+            if (addr >= (cib.iopbPtr & 0xFFFFF0) + iipbStart
+            && addr <= (cib.iopbPtr & 0xFFFFF0) + iipbEnd)
+            {
+                needToUseBuffer = true;
+                bufferType = DataBufferType::INIT;
+            }
+
             // some buffers are intneral to controller and others are in multibus ram...
-            if (iopb.dba
-            && isBufIo && addr >= iopb.dba)
+            if (needToUseBuffer)
                 ret = ReadBuffer(addr);
 
             break; 
@@ -157,9 +172,7 @@ namespace Motion
             ccbMapping.memEnd = wub.ccbPtr + 0xFF;
 
             break;
-        // Non WUB
         default:
-
             // we have no idea where the buffer is in memory, or what its size is. so we have to ignore it if we want to read from some other register
             bool isBufIo = true;
 
@@ -193,9 +206,26 @@ namespace Motion
                 *(((uint8_t*)&iopb) + (addr - cib.iopbPtr)) = value;
             }
 
+            // SGI just uses hardcoded addresses for the structures that are meant to have dynamic addresses...WHAT
+
+            bool needToUseBuffer = iopb.dba
+            && isBufIo && addr >= iopb.dba;
+
+            // IIPB is always meant to be 0x20 past the IOPB...So we have to hardcode it to be available anyway?!
+            // If this is a safe assumption on all versions of the card we can get rid of readbuffer/writebuffer entirely.
+
+            int32_t iipbStart = 0x20;
+            int32_t iipbEnd = 0x20 + sizeof(IOPB);
+
+            if (addr >= (cib.iopbPtr & 0xFFFFF0) + iipbStart
+            && addr <= (cib.iopbPtr & 0xFFFFF0) + iipbEnd)
+            {
+                needToUseBuffer = true;
+                bufferType = DataBufferType::INIT;
+            }
+
             // some buffers are intneral to controller and others are in multibus ram...
-            if (iopb.dba
-            && isBufIo && addr >= iopb.dba)
+            if (needToUseBuffer)
                 WriteBuffer(addr, value);
 
             break;
