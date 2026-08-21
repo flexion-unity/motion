@@ -83,9 +83,9 @@ namespace Motion
 
         // big endian
         if (addr & 1)
-            val = (val | 0xFF00) & value;
+            val = (val & 0xFF00) | value;
         else
-            val = (val | 0x00FF) & (value << 8);
+            val = (val & 0x00FF) | (value << 8);
 
         Write16(addr, val);
     }
@@ -96,8 +96,9 @@ namespace Motion
 
         switch (addr)
         {
+            // this is an 8-bit register but it is easier becasue of how the MMU is designed to treat it as a 16 bit register.
             case REG_OS_BASE:
-                osBase = ((uint16_t)value << 8);
+                osBase = (value >> 8) & 0xFF;
                 break;
             case REG_STATUS:
                 status = value;
