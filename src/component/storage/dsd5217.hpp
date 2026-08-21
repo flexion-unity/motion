@@ -170,7 +170,7 @@ namespace Motion
             For normal read or write operations, this is the address of the multibus memory buffer where
             data is stored or fetched. For some commands, this is the address of additional control information */
             uint32_t dba;                   
-            uint8_t rbc;                    // requested byte count
+            uint32_t rbc;                    // requested byte count
             uint32_t generalPtr;            // use as a pointer
         }; 
 

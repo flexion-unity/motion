@@ -60,9 +60,7 @@ namespace Motion
             return 0xFF; // there is no point
 
         addr &= 0xFFFFF;
-
         uint8_t ret = 0x00;
-
 
         switch (addr)
         {
@@ -295,22 +293,40 @@ namespace Motion
 
     void DSD5217::ReadSector()
     {
-        size_t offset = CHSToLinear();
-        hdd->stream.seekp(offset, std::ios_base::beg);
         size_t bytesPerSector = inist.inib.bytesPerSectorHigh << 8 | inist.inib.bytesPerSectorLow;
+        size_t diskLinear = CHSToLinear();
 
-        hdd->stream.read((char*)sectorBuffer, bytesPerSector);
+        // sgi why did you not program the 
+        if (iopb.rbc == 0)
+            iopb.rbc = bytesPerSector;
 
-        // VERY slow test code
-        for (int32_t i = 0; i < bytesPerSector - 1; i += 2)
+        // real bytes transferred
+        int32_t real = 0;
+
+        while (iopb.rbc > 0)
         {
-            // i think i need to do a 16 bit byteswap as the dat acomes in
-            // NOTE: Add an extra type of extension which is a pre-byteswapped image so we can use a faster path...
-            uint16_t dat = (sectorBuffer[i + 1] << 8) | sectorBuffer[i];
-            multibus->WriteMB16(iopb.dba + i, dat);
-        }
+            uint32_t bytesRead = bytesPerSector;
 
-        iopb.actualTransfers = bytesPerSector;
+            if (iopb.rbc < bytesRead)
+                bytesRead = iopb.rbc;
+
+            hdd->stream.seekp(diskLinear + real, std::ios_base::beg);
+            hdd->stream.read((char*)sectorBuffer, bytesRead);
+
+            // VERY slow test code
+            // xfer the next sector
+            for (int32_t i = 0; i < bytesRead - 1; i += 2)
+            {
+                // i think i need to do a 16 bit byteswap as the dat acomes in
+                // NOTE: Add an extra type of extension which is a pre-byteswapped image so we can use a faster path...
+                uint16_t dat = (sectorBuffer[i + 1] << 8) | sectorBuffer[i];
+                multibus->WriteMB16(iopb.dba + real, dat);
+                real += 2;
+            }
+
+            iopb.actualTransfers += bytesRead;
+            iopb.rbc -= bytesRead;
+        }
 
         if (!(iopb.modifier & 0x01))
             AssertIRQLine();
