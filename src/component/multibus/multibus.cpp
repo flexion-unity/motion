@@ -135,13 +135,13 @@ namespace Motion
             || (addr >= slot.ioStart
             && addr <= slot.ioEnd))
             {
-                lastSlotRead = &slot;
+                lastSlotWritten = &slot;
                 return true;
             }
         }
 
         // fail
-        lastSlotRead = nullptr;
+        lastSlotWritten = nullptr;
         return false; 
     }
 
@@ -281,7 +281,7 @@ namespace Motion
                 return;
             }
             
-        lastSlotRead->component->Write8(addr, value);
+        lastSlotWritten->component->Write8(addr, value);
     }
 
     void Multibus::Write16(size_t addr, uint16_t value)
@@ -307,7 +307,7 @@ namespace Motion
                 return;
             }
 
-        lastSlotRead->component->Write16(addr, value);
+        lastSlotWritten->component->Write16(addr, value);
     }
     
     void Multibus::Write32(size_t addr, uint32_t value)
@@ -333,7 +333,7 @@ namespace Motion
                 return;
             }
 
-        lastSlotRead->component->Write32(addr, value);       
+        lastSlotWritten->component->Write32(addr, value);       
     }
 
     void Multibus::Shutdown()
