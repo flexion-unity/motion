@@ -98,7 +98,7 @@ namespace Motion
         {
             // this is an 8-bit register but it is easier becasue of how the MMU is designed to treat it as a 16 bit register.
             case REG_OS_BASE:
-                osBase = (value >> 8) & 0xFF;
+                osBase = (value >> 8) << 8;
                 break;
             case REG_STATUS:
                 status = value;
@@ -226,7 +226,7 @@ namespace Motion
                 || !(page & MMU_MASK_IS_PROTECTED)
                 || ((page & MMU_MASK_IS_PROTECTED) == MMU_MASK_SUPERVISOR_ONLY) && !(cpu->IsPrivilegedMode()))
             {
-                busError = true; 
+                //busError = true; 
             }
 
             if (!busError)
@@ -239,7 +239,7 @@ namespace Motion
                 || (page & MMU_MASK_IS_PROTECTED) == MMU_MASK_READ_ONLY // cannot write to readonly 
                 || ((page & MMU_MASK_IS_PROTECTED) == MMU_MASK_SUPERVISOR_ONLY) && !(cpu->IsPrivilegedMode()))
             {
-                busError = true; 
+                //busError = true; 
             }
 
             if (!busError)
