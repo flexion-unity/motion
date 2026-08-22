@@ -302,41 +302,37 @@ namespace Motion
 
         iopb.actualTransfers = 0; // reset actual transfer count
 
-        // real bytes transferred
-        int32_t count = 0;
-
         bool stop = false;
 
-        while (iopb.actualTransfers <= iopb.rbc
+        while (iopb.actualTransfers < iopb.rbc
         && !stop)
         {
-            uint32_t bytesRead = bytesPerSector;
+            uint32_t bytesToReadThisSector = bytesPerSector;
 
-            if (iopb.rbc < bytesRead)
-                bytesRead = iopb.rbc;
+            if (iopb.rbc < bytesToReadThisSector)
+                bytesToReadThisSector = iopb.rbc;
 
-            hdd->stream.seekp(diskLinear + count, std::ios_base::beg);
-            hdd->stream.read((char*)sectorBuffer, bytesRead);
+            hdd->stream.seekp(diskLinear + iopb.actualTransfers, std::ios_base::beg);
+            hdd->stream.read((char*)sectorBuffer, bytesToReadThisSector);
 
             if (hdd->stream.eof())
                 stop = true;
 
             // VERY slow test code
             // xfer the next sector
-            for (int32_t i = 0; i < bytesRead - 1; i += 2)
+            for (int32_t i = 0; i < bytesToReadThisSector - 1; i += 2)
             {
                 // i think i need to do a 16 bit byteswap as the dat acomes in
                 // NOTE: Add an extra type of extension which is a pre-byteswapped image so we can use a faster path...
                 uint16_t dat = (sectorBuffer[i + 1] << 8) | sectorBuffer[i];
-                multibus->WriteMB16(iopb.dba + count, dat);
-                count += 2;
+                multibus->WriteMB16(iopb.dba + iopb.actualTransfers, dat);
+                iopb.actualTransfers += 2;
             }
 
-            iopb.actualTransfers += bytesRead;
         }
 
         Logger::Log(DSD5217_LOG_PREFIX, std::format("Read Data Command: Read {} bytes to multibus memory 0x{:x} to 0x{:x} from disk position 0x{:x} to 0x{:x}",
-            iopb.actualTransfers, iopb.dba, iopb.dba + count, diskLinear, diskLinear + count).c_str());
+            iopb.actualTransfers, iopb.dba, iopb.dba + iopb.actualTransfers, diskLinear, diskLinear + iopb.actualTransfers).c_str());
 
         if (!(iopb.modifier & 0x01))
             AssertIRQLine();
