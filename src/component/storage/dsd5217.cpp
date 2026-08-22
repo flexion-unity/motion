@@ -300,18 +300,26 @@ namespace Motion
         if (iopb.rbc == 0)
             iopb.rbc = bytesPerSector;
 
-        // real bytes transferred
-        int32_t real = 0;
+        iopb.actualTransfers = 0; // reset actual transfer count
 
-        while (iopb.rbc > 0)
+        // real bytes transferred
+        int32_t count = 0;
+
+        bool stop = false;
+
+        while (iopb.actualTransfers <= iopb.rbc
+        && !stop)
         {
             uint32_t bytesRead = bytesPerSector;
 
             if (iopb.rbc < bytesRead)
                 bytesRead = iopb.rbc;
 
-            hdd->stream.seekp(diskLinear + real, std::ios_base::beg);
+            hdd->stream.seekp(diskLinear + count, std::ios_base::beg);
             hdd->stream.read((char*)sectorBuffer, bytesRead);
+
+            if (hdd->stream.eof())
+                stop = true;
 
             // VERY slow test code
             // xfer the next sector
@@ -320,13 +328,15 @@ namespace Motion
                 // i think i need to do a 16 bit byteswap as the dat acomes in
                 // NOTE: Add an extra type of extension which is a pre-byteswapped image so we can use a faster path...
                 uint16_t dat = (sectorBuffer[i + 1] << 8) | sectorBuffer[i];
-                multibus->WriteMB16(iopb.dba + real, dat);
-                real += 2;
+                multibus->WriteMB16(iopb.dba + count, dat);
+                count += 2;
             }
 
             iopb.actualTransfers += bytesRead;
-            iopb.rbc -= bytesRead;
         }
+
+        Logger::Log(DSD5217_LOG_PREFIX, std::format("Read Data Command: Read {} bytes to multibus memory 0x{:x} to 0x{:x} from disk position 0x{:x} to 0x{:x}",
+            iopb.actualTransfers, iopb.dba, iopb.dba + count, diskLinear, diskLinear + count).c_str());
 
         if (!(iopb.modifier & 0x01))
             AssertIRQLine();

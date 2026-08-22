@@ -82,6 +82,8 @@
 
 * 1987: 3.6 released, IRIS 4D/60 released (MIPS-based)
 
+* December 20, 1987: GL2-W3.6 TCP kernel (at least one version of) 3000.tcp built (however there were many subversions)
+
 * 1989: 3.7 worked on
 
 # IRIS models
