@@ -262,6 +262,7 @@ namespace Motion
         && addr <= MULTIBUS_PAGING_END)
         {
             UpdatePTEntry(addr, value);
+            return;
         }
 
         if (!UseCachedWriteSlot(addr))
@@ -282,7 +283,7 @@ namespace Motion
             SetCachedWriteMapping(addr);
 
         if (lastSlotWritten)
-            lastSlotWritten->component->Write16(addr, value); 
+            lastSlotWritten->component->Write32(addr, value); 
                            
         if (addr < MULTIBUS_IO_START)
             memory->Write32(TranslateAddress(addr), value); 
@@ -303,7 +304,7 @@ namespace Motion
         uint16_t index = ((addr & 0xFFFFF) >> 12) & 0x1FFF;
         pageTable[index] = value;
      
-        Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus page {:x} now points to physical page {:x}", index, value).c_str(), LogChannels::Debug);
+        //Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus page {:x} now points to physical page {:x}", index, value).c_str(), LogChannels::Debug);
     }
     
     void Multibus::Shutdown()

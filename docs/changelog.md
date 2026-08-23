@@ -171,6 +171,12 @@ Similar to a .plan file
 * register editing!
     * updated :;write to actually dereference
     * converrt to uint64_t and then t so ti works for all numeric types
+* multibus paging  
+    * 256 registers at 44100000...441ff000 with page numbers for MULTIBUS
+* still kludgy last 1meg mapping because bus model is abit fucked
+    * merge IP2MMU With multibus?
+* enough to get over very bad copy bug
+
 
 v0.2.0 TODO:
 

@@ -419,8 +419,12 @@ namespace Motion
 
         MOTION_ASSERT(cylinderWeWant >= numCyls, "****** INVALID DISK CYLINDER REQUEST!!! ******");
 
-        size_t final = (((cylinderWeWant * nrHeads) + headWeWant) * sectorsPerTrack + sectorWeWant) * bytesPerSector;
-        //size_t final = ((((cylinderWeWant * nrHeads) + headWeWant) * sectorsPerTrack) * (sectorWeWant)) * bytesPerSector;
+        if (cylinderWeWant > 0)
+            headWeWant = (inist.inib.fixedHeads * cylinderWeWant) + headWeWant;
+
+        size_t final = ((headWeWant * 255) + sectorWeWant) * bytesPerSector; 
+
+        //size_t final = (((cylinderWeWant * nrHeads) + headWeWant) * sectorsPerTrack + sectorWeWant) * bytesPerSector;
         return final;
     }
 

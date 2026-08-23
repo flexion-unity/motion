@@ -22,7 +22,8 @@ Release Notes
     * added ability to edit register values, click on them to edit them
     * DSD 5217 emulation
         * currently enough to "ls" but not to boot the kernel 
-
+    * multibus paging emulation
+    
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.
         * I forgot that strncpy with overlapping memory is undefined behaviour.
