@@ -19,6 +19,9 @@ Release Notes
     * change description of bp3 from "BP3 Bitplaned VRAM" to "Video RAM (BP3 bitplane board)" to make it easier to understand 
     * added a cool logo
     * assets now in assets folder
+    * added ability to edit register values, click on them to edit them
+    * DSD 5217 emulation
+        * currently enough to "ls" but not to boot the kernel 
 
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.

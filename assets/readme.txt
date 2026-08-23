@@ -85,7 +85,9 @@ Command line:
         profileFolder - the location of the profile
             RESET the profile - delete every folder in this folder.
                 This will also delete your user data.
-
+        dumpsFolder
+            Dumps folder goes here 
+            
             Profile files:
                 ip2_sram.bin: Private PROM SRAM.
         profileDisk0Path - the path of hard drive 0.
