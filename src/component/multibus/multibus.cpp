@@ -95,8 +95,8 @@ namespace Motion
         if (!lastSlotRead)
             return false;
 
-        return (addr >= lastSlotRead->ioStart
-        && addr <= lastSlotRead->ioEnd);
+        return ((addr >= lastSlotRead->memStart && addr <= lastSlotRead->memEnd)
+            || (addr >= lastSlotRead->ioStart && addr <= lastSlotRead->ioEnd));
     }
 
     bool Multibus::UseCachedWriteSlot(size_t addr)
@@ -301,6 +301,7 @@ namespace Motion
     void Multibus::UpdatePTEntry(size_t addr, uint16_t value)
     {
         uint16_t index = ((addr & 0xFFFFF) >> 12) & 0x1FFF;
+        pageTable[index] = value;
      
         Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus page {:x} now points to physical page {:x}", index, value).c_str(), LogChannels::Debug);
     }
