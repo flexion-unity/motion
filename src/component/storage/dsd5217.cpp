@@ -320,7 +320,7 @@ namespace Motion
             if (iopb.rbc < bytesToReadThisSector)
                 bytesToReadThisSector = iopb.rbc;
 
-            hdd->stream.seekp(diskLinear + iopb.actualTransfers, std::ios_base::beg);
+            hdd->stream.seekg(diskLinear + iopb.actualTransfers, std::ios_base::beg);
             hdd->stream.read((char*)sectorBuffer, bytesToReadThisSector);
 
             if (hdd->stream.eof())

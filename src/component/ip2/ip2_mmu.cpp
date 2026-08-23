@@ -206,12 +206,12 @@ namespace Motion
         {
             // bits 23-12
             pageNumber = (addr >> 12) ^ 0x3FFF;
-            finalPageNumber = baseValue - pageNumber;
+            finalPageNumber = (baseValue - pageNumber) & 0x3FFF;
         }
         else
         {
             pageNumber = (addr >> 12);
-            finalPageNumber = baseValue + pageNumber;
+            finalPageNumber = (baseValue + pageNumber) & 0x3FFF;
         }
 
         bool limitReached = limitValue && pageNumber > limitValue;
