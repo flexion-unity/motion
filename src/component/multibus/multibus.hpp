@@ -29,10 +29,18 @@
 namespace Motion
 {
     #define MULTIBUS_MEMORY_START           0x40000000
-    #define MULTIBUS_MEMORY_END             0x40FFFFFF
+    #define MULTIBUS_MEMORY_END             0x400FFFFF
+
+    #define MULTIBUS_PAGING_START           0x40100000
+    #define MULTIBUS_PAGING_END             0x401FFFFF
     
     #define MULTIBUS_IO_START               0x50000000
     #define MULTIBUS_IO_END                 0x5000FFFF
+
+    // Total number of pointers to physical pages in the MultiBus map
+    // 40100000 defines the page used for [40000000-40001000] etc
+    #define MULTIBUS_NUM_PAGE_ENTRIES       256
+    #define MULTIBUS_PAGE_SIZE              4096
 
     #define MULTIBUS_LOG_PREFIX             "Multibus"
 
@@ -116,12 +124,12 @@ namespace Motion
         void Write32(size_t addr, uint32_t value) override;
 
         // These are some special methods that write to only the 1 meg of multibus address space.
-        uint8_t ReadMB8(size_t addr) { return Read8(multibusMemoryStart + (addr & 0xFFFFF)); }; 
-        uint16_t ReadMB16(size_t addr) { return Read16(multibusMemoryStart + (addr & 0xFFFFF)); }; 
-        uint32_t ReadMB32(size_t addr) { return Read32(multibusMemoryStart + (addr & 0xFFFFF)); }; 
-        void WriteMB8(size_t addr, uint8_t value) { Write8(multibusMemoryStart + (addr & 0xFFFFF), value); }
-        void WriteMB16(size_t addr, uint16_t value) { Write16(multibusMemoryStart + (addr & 0xFFFFF), value); }
-        void WriteMB32(size_t addr, uint32_t value) { Write32(multibusMemoryStart + (addr & 0xFFFFF), value); }
+        uint8_t ReadMB8(size_t addr) { return Read8(MULTIBUS_MEMORY_START + (addr & 0xFFFFF)); }; 
+        uint16_t ReadMB16(size_t addr) { return Read16(MULTIBUS_MEMORY_START + (addr & 0xFFFFF)); }; 
+        uint32_t ReadMB32(size_t addr) { return Read32(MULTIBUS_MEMORY_START + (addr & 0xFFFFF)); }; 
+        void WriteMB8(size_t addr, uint8_t value) { Write8(MULTIBUS_MEMORY_START + (addr & 0xFFFFF), value); }
+        void WriteMB16(size_t addr, uint16_t value) { Write16(MULTIBUS_MEMORY_START + (addr & 0xFFFFF), value); }
+        void WriteMB32(size_t addr, uint32_t value) { Write32(MULTIBUS_MEMORY_START + (addr & 0xFFFFF), value); }
 
         // Fire a shared MultiBus IRQ.
         void FireMultibusIRQ(int32_t number);
@@ -141,6 +149,10 @@ namespace Motion
         bool SetCachedReadMapping(size_t addr);
         bool SetCachedWriteMapping(size_t addr);
 
+        // translate the address to the virtual multibus address
+        size_t TranslateAddress(size_t addr); 
+        void UpdatePTEntry(size_t addr, uint16_t value); // only on 16 bit i/o i think
+
         // THE CPU, so we can fire an irq
         ComponentCPU* cpu; 
         Memory* memory;
@@ -150,5 +162,7 @@ namespace Motion
         // so we can lob of 1mb
         size_t multibusMemoryStart;
         size_t multibusMemoryEnd;
+
+        uint16_t pageTable[MULTIBUS_NUM_PAGE_ENTRIES] = {0};
     };
 };

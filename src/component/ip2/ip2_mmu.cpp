@@ -186,14 +186,10 @@ namespace Motion
             limitValue = 0;             // 0 means no limit
         }
         // map Multibus Memory
-        // TODO: slave
-        else if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_MULTIBUS_MEMORY))
-        {
-            baseValue = limitValue = 0; // maybe it should be 40000000 ? seems to work not sure what this does here
-        }
         else
         {
             // these don't seem to use virtual memory, so just ignore them
+            // except for segment 4 (Multibus Memory) which happens to use its own thing
             *finalAddress = addr;
             return true; 
         }
