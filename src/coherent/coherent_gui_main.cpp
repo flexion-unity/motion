@@ -196,40 +196,72 @@ namespace Motion
 
             ImGui::EndChild();
 
+            char nameBuf[STRING_MAX_SHORT] = {0};
+            uint32_t id = 0;
             // "left" (register) pane
             if (ImGui::BeginChild("RegisterPane", registerPaneSize))
             {
                 ImGui::TextColored(CoherentUI::COLOUR_HEADER, "Registers");
 
-                for (auto aRegister : Coherent::currentSystem->registers)
+                for (auto& aRegister : Coherent::currentSystem->registers)
                 {
                     auto value = aRegister->Read();
 
+                    snprintf(nameBuf, STRING_MAX_SHORT, "##RegisterPane%d", id);
+                    id++;
+
                     // evil
+                    // throw the current value into aRegister->valBuf
                     if (value.type() == typeid(uint8_t)
                     || value.type() == typeid(int8_t))
                     {
                         uint8_t formattedValue = std::any_cast<uint8_t>(value);
-                        ImGui::Text("%s: %02x", aRegister->name, formattedValue);
+                        snprintf(aRegister->valBuf, STRING_MAX_SHORT, "%02x", formattedValue);    
                     }
                     else if (value.type() == typeid(uint16_t)
                     || value.type() == typeid(int16_t))
                     {
                         uint16_t formattedValue = std::any_cast<uint16_t>(value);
-                        ImGui::Text("%s: %04x", aRegister->name, formattedValue);
+                        snprintf(aRegister->valBuf, STRING_MAX_SHORT, "%04x", formattedValue);    
                     }
                     else if (value.type() == typeid(uint32_t)
                     || value.type() == typeid(int32_t))
                     {
                         uint32_t formattedValue = std::any_cast<uint32_t>(value);
-                        ImGui::Text("%s: %08x", aRegister->name, formattedValue);
+                        snprintf(aRegister->valBuf, STRING_MAX_SHORT, "%08x", formattedValue);    
                     }
                     else if (value.type() == typeid(uint64_t)
                     || value.type() == typeid(int64_t))
                     {
-                        uint32_t formattedValue = std::any_cast<uint32_t>(value);
-                        ImGui::Text("%s: %16x", aRegister->name, formattedValue);
-                    }         
+                        uint32_t formattedValue = std::any_cast<uint64_t>(value);
+                        snprintf(aRegister->valBuf, STRING_MAX_SHORT, "%16x", formattedValue);    
+                    }     
+                    
+                    // print the name of the register
+                    ImGui::Text("%s:", aRegister->name);
+                    ImGui::SameLine();
+
+                    // this makes the register text look like normal text
+                    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0, 0.0, 0.0, 0.0));
+                    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, CoherentUI::COLOUR_HEADER);
+                    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
+                    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));    
+
+                    ImGui::PushItemWidth(-FLT_MIN);
+                    
+                    // then the value
+                    if (ImGui::InputText(nameBuf, aRegister->valBuf, 32, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue))
+                    {
+                        // do some horrible kludge so we don't need to do this
+                        auto newValue = static_cast<uint64_t>(strtoull(aRegister->valBuf, NULL, 16));
+
+                        // for non 64 bit registers this just masks off the bits we don't need
+                        aRegister->Write(newValue);
+                    }
+
+                    ImGui::PopItemWidth();
+                    ImGui::PopStyleVar(2);
+                    ImGui::PopStyleColor(2);
 
                     i++;
                 }

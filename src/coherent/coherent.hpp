@@ -126,8 +126,11 @@ namespace Motion
         public:
             const char* name;
 
+            // this is a buffer where the value of this gets stored by the UI
+            char valBuf[STRING_MAX_SHORT];
+
             virtual std::any Read() = 0; 
-            virtual void Write(std::any& value) = 0;
+            virtual void Write(std::any value) = 0;
         };
 
         template <typename T>
@@ -145,8 +148,8 @@ namespace Motion
             std::any Read() override { return *value; };
 
             /// @brief Write the register
-            /// @param value The register value to write - *MUST* Be a pointer. It gets converted to a pointer automatically so make sure it isn't automatically destroyed
-            void Write(std::any& value) override { this->value = std::any_cast<T>(&value); }; 
+            /// @param value The register value to write. Must be an integer; it gets automatically converted to a uint64_t and then masekd of
+            void Write(std::any value) override { *(this->value) = static_cast<T>(std::any_cast<uint64_t>(value)); }; 
         private: 
             T* value; 
 

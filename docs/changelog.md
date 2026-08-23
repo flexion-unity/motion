@@ -165,6 +165,12 @@ Similar to a .plan file
 * figured out iopb->dba has multiple meanings so abstract it behind readbuffer/writebuffer and databuffertype
 * merge inib and fmtb into inist
 
+## 2026-08-21 & 2026-08-22
+* many fixes of DSD 5217, but not enough for it to actually boot the kernel.
+* let's do something else
+* register editing!
+    * updated :;write to actually dereference
+    * converrt to uint64_t and then t so ti works for all numeric types
 
 v0.2.0 TODO:
 
