@@ -78,31 +78,31 @@ namespace Motion
             bool isBufIo = true;
 
             // WHERE'S THE DAMN BYTE LANES?
-            if (cib.iopbPtr &&
+            /*if (cib.iopbPtr &&
                 (addr - (cib.iopbPtr & 0xFFFFF0)) >= offsetof(DSD5217::IOPB, dba)
                 && (addr - (cib.iopbPtr & 0xFFFFF0)) < offsetof(DSD5217::IOPB, dba) + sizeof(uint32_t))
             {
                 addr = (addr & 2) ? addr + 2 : addr - 2; 
-            }
+            }*/
 
             // structure read
             // seems lke addresses in 24 bit segment mode are silently ANDed with FFFFF0
             if (wub.ccbPtr && 
-                addr >= (wub.ccbPtr & 0xFFFFF0) && (addr <= ((wub.ccbPtr & 0xFFFFF0) + sizeof(CCB))))
+                addr >= (wub.ccbPtr & 0xFFFFF0) && (addr < ((wub.ccbPtr & 0xFFFFF0) + sizeof(CCB))))
             {
                 isBufIo = false;
                 ret = *(((uint8_t *)&ccb) + (addr - (wub.ccbPtr & 0xFFFFF0)));
             }
 
             if (ccb.cibPtr 
-                && addr >= (ccb.cibPtr & 0xFFFFF0) && (addr <= (ccb.cibPtr & 0xFFFFF0) + sizeof(CIB)))
+                && addr >= (ccb.cibPtr & 0xFFFFF0) && (addr < (ccb.cibPtr & 0xFFFFF0) + sizeof(CIB)))
             {
                 isBufIo = false;
                 ret = *(((uint8_t *)&cib) + (addr - (ccb.cibPtr & 0xFFFFF0)));
             }
 
             if (cib.iopbPtr 
-                && addr >= (cib.iopbPtr & 0xFFFFF0) && (addr <= (cib.iopbPtr & 0xFFFFF0) + sizeof(IOPB)))
+                && addr >= (cib.iopbPtr & 0xFFFFF0) && (addr < (cib.iopbPtr & 0xFFFFF0) + sizeof(IOPB)))
             {
                 isBufIo = false;
                 ret = *(((uint8_t *)&iopb) + (addr - (cib.iopbPtr & 0xFFFFF0)));
@@ -150,7 +150,7 @@ namespace Motion
             state = value;
 
             // if we are ready we are no longer busy
-            ccb.busy = (state != DSD5217_MBIO_STATUS_IS_READY);
+            //ccb.busy = (state != DSD5217_MBIO_STATUS_IS_READY);
 
             if (state == DSD5217_MBIO_STATUS_IS_READY)
             {
@@ -195,21 +195,21 @@ namespace Motion
                 addr >= (wub.ccbPtr & 0xFFFFF0) && (addr <= ((wub.ccbPtr & 0xFFFFF0) + sizeof(CCB))))
             {
                 isBufIo = false;
-                *((uint8_t*)&ccb + (addr - wub.ccbPtr)) = value;
+                *((uint8_t*)&ccb + (addr - (wub.ccbPtr & 0xFFFFF0))) = value;
             }
 
             if (ccb.cibPtr 
                 && addr >= (ccb.cibPtr & 0xFFFFF0) && (addr <= (ccb.cibPtr & 0xFFFFF0) + sizeof(CIB)))
             {
                 isBufIo = false;
-                *(((uint8_t*)&cib) + (addr - ccb.cibPtr)) = value;
+                *(((uint8_t*)&cib) + (addr - (ccb.cibPtr & 0xFFFFF0))) = value;
             }
 
             if (cib.iopbPtr 
                 && addr >= (cib.iopbPtr & 0xFFFFF0) && (addr <= (cib.iopbPtr & 0xFFFFF0) + sizeof(IOPB)))
             {
                 isBufIo = false;
-                *(((uint8_t*)&iopb) + (addr - cib.iopbPtr)) = value;
+                *(((uint8_t*)&iopb) + (addr - (cib.iopbPtr & 0xFFFFF0))) = value;
             }
 
             // SGI just uses hardcoded addresses for the structures that are meant to have dynamic addresses...WHAT
@@ -261,7 +261,7 @@ namespace Motion
         if (!hdd)
             return; 
 
-        ccb.busy = true;
+        //ccb.busy = true;
         bool commandIsImplemented = true;
         size_t offset = 0;
 
@@ -384,7 +384,7 @@ namespace Motion
                 // INIB pointer
                 if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + sizeof(INIB)))
                 {
-                    *(((uint8_t*)&inist.inib) + (offset - iopb.dba)) = value;
+                    *(((uint8_t*)&inist.inib) + (offset - (iopb.dba & 0xFFFFF0))) = value;
                 }
                 break;
             case DSD5217::DataBufferType::ST:
@@ -393,7 +393,7 @@ namespace Motion
                 // But sgi doesn't use this (intentionally)
                 if (offset >= (iopb.dba & 0xFFFFF0) && (offset < (iopb.dba & 0xFFFFF0) + DSD5217_SB_SIZE))
                 {
-                    *(((uint8_t*)&inist.sb) + (offset - iopb.dba)) = value;
+                    *(((uint8_t*)&inist.sb) + (offset - (iopb.dba & 0xFFFFF0))) = value;
                 }
         }
     }
