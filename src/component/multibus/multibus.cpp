@@ -190,7 +190,7 @@ namespace Motion
             return memory->Read8(addr); 
         else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
         {
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Read8 - invalid I/O read from 0x{:x}", addr).c_str());
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Read8 - invalid I/O read from 0x{:x}", addr).c_str(), LogChannels::Warning);
         }
         return 0xFF;
     }
@@ -208,7 +208,7 @@ namespace Motion
         if (addr < MULTIBUS_IO_START)
             return memory->Read16(addr); 
         else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Read16 - invalid I/O read from 0x{:x}", addr).c_str());
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Read16 - invalid I/O read from 0x{:x}", addr).c_str(), LogChannels::Warning);
             
         return 0xFF;
     }
@@ -226,7 +226,7 @@ namespace Motion
         if (addr < MULTIBUS_IO_START)
             return memory->Read32(addr); 
         else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Read32 - invalid I/O read from 0x{:x}", addr).c_str());
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Read32 - invalid I/O read from 0x{:x}", addr).c_str(), LogChannels::Warning);
 
         return 0xFF;
     }
@@ -242,7 +242,7 @@ namespace Motion
         if (addr < MULTIBUS_IO_START)
             memory->Write8(addr, value); 
         else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Write8 - invalid I/O write of 0x{:x} to 0x{:x}", addr, value).c_str());
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Write8 - invalid I/O write of 0x{:x} to 0x{:x}", addr, value).c_str(), LogChannels::Warning);
     }
 
     void Multibus::Write16(size_t addr, uint16_t value)
@@ -256,7 +256,7 @@ namespace Motion
         if (addr < MULTIBUS_IO_START)
             memory->Write16(addr, value); 
         else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Write16 - invalid I/O write of 0x{:x} to 0x{:x}", addr, value).c_str());
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Write16 - invalid I/O write of 0x{:x} to 0x{:x}", addr, value).c_str(), LogChannels::Warning);
     }
     
     void Multibus::Write32(size_t addr, uint32_t value)
@@ -270,7 +270,7 @@ namespace Motion
         if (addr < MULTIBUS_IO_START)
             memory->Write32(addr, value); 
         else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
-            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Write32 - invalid I/O write of 0x{:x} to 0x{:x}", addr, value).c_str());
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Write32 - invalid I/O write of 0x{:x} to 0x{:x}", addr, value).c_str(), LogChannels::Warning);
     }
 
     void Multibus::Shutdown()
