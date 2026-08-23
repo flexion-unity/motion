@@ -50,6 +50,31 @@ namespace Motion
         // guaranteed, the CPU Initialises before this.
         if (!cpu)
             cpu = Emulation::GetMachine()->FindComponentByType<ComponentCPU>();
+
+        // a TEMPORARY kludge. at some point we need to ***TELL*** the memory where multibus is
+        // multibus memory is re-pageable but our model does not really let us remap memory that easily.
+        // the last 0x80000 is translated to other addresses as its used as a generic buffer.
+
+        AddrSpaceMapping* memMapping = AddrSpace::GetMapping(0);
+        
+        // no physical memory
+        if (!memMapping->endAddr)
+        {
+            Logger::Log(MULTIBUS_LOG_PREFIX, "No physical memory, multibus won't work anyway, skipping rest of init", LogChannels::Warning);
+            return;
+        }
+
+        AddrSpaceMapping mappingMultibusMemory = AddrSpaceMapping();
+
+        mappingMultibusMemory.startAddr = multibusMemoryStart = memMapping->endAddr - 0x100000;
+        mappingMultibusMemory.endAddr = multibusMemoryEnd = memMapping->endAddr;
+        mappingMultibusMemory.component = this; 
+
+        // kludge to make memory test pas
+        pageTable[0] = multibusMemoryStart >> 12;
+        pageTable[1] = (multibusMemoryStart >> 12) + 1;
+
+        AddrSpace::AddMapping(mappingMultibusMemory);
     }
 
     void Multibus::FireMultibusIRQ(int32_t number)
