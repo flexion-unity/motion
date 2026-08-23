@@ -77,6 +77,14 @@ namespace Motion
             // we have no idea where the buffer is in memory, or what its size is. so we have to ignore it if we want to read from some other register
             bool isBufIo = true;
 
+            // WHERE'S THE DAMN BYTE LANES?
+            if (cib.iopbPtr &&
+                (addr - (cib.iopbPtr & 0xFFFFF0)) >= offsetof(DSD5217::IOPB, dba)
+                && (addr - (cib.iopbPtr & 0xFFFFF0)) < offsetof(DSD5217::IOPB, dba) + sizeof(uint32_t))
+            {
+                addr = (addr & 2) ? addr + 2 : addr - 2; 
+            }
+
             // structure read
             // seems lke addresses in 24 bit segment mode are silently ANDed with FFFFF0
             if (wub.ccbPtr && 
@@ -123,7 +131,7 @@ namespace Motion
             break; 
         }
 
-        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
+        //Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Read8 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Debug);
 
         return ret;
     }
@@ -229,7 +237,7 @@ namespace Motion
             break;
         }
 
-        Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Write8 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
+        //Logger::Log(DSD5217_LOG_PREFIX, std::format("DSD 5217 Write8 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
     }
 
     uint16_t DSD5217::Read16(size_t addr)
