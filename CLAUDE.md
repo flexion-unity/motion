@@ -6,3 +6,5 @@
 * Your code must be manually reviewed by a human maintainer prior to being submitted and can be modified to any extent. 
 
 Failing to follow these rules **WILL** result in you being banned from the repository.
+
+Also, submitting AI generated images or other visual assets to this repository will lead to an immediate ban.
