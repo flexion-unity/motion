@@ -221,6 +221,7 @@ namespace Motion
                     // tell the event system
                     KeyDownEvent evt = KeyDownEvent();
                     evt.key = event.key.key;
+                    evt.scancode = event.key.scancode;
                     evt.mod = event.key.mod;
                     evt.repeat = event.key.repeat;
                     EventSystem::FireEvent(evt);
@@ -229,6 +230,7 @@ namespace Motion
                 {
                     KeyUpEvent evt = KeyUpEvent();
                     evt.key = event.key.key;
+                    evt.scancode = event.key.scancode;
                     evt.mod = event.key.mod;
                     evt.repeat = event.key.repeat;
                     EventSystem::FireEvent(evt);
