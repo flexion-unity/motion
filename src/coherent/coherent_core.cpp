@@ -31,7 +31,7 @@ namespace Motion
 
     void Coherent::Init()
     {
-        startPaused = Cvar::Set("startPaused", "1");
+        startPaused = Cvar::Get("startPaused", "1");
 
         Logger::Log(COHERENT_LOG_PREFIX, COHERENT_VERSION " initialised");
         Logger::settings.SetPostLogFunction(Coherent_CTrampolineForLog);

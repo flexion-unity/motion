@@ -7,8 +7,8 @@ namespace Motion
     
     void PROM::Start()
     {
-        promPath = Cvar::Set("promPath", "./roms/iris3130/ip2/ip2_prom_3.0.10.bin");
-        promSize = Cvar::Set("promSize", "98304");
+        promPath = Cvar::Get("promPath", "./roms/iris3130/ip2/ip2_prom_3.0.10.bin");
+        promSize = Cvar::Get("promSize", "98304");
 
         Logger::Log(LOG_PREFIX_PROM, std::format("Loading {} from {}, size is {} bytes", GetName(), promPath->GetString(), promSize->GetString()).c_str(), 
         LogChannels::Message);
