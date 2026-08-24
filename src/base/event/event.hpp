@@ -44,8 +44,9 @@ namespace Motion
     class KeyDownEvent : public Event
     {
     public:
-        uint32_t key; 
-        uint32_t mod; 
+        uint32_t key;
+        uint32_t scancode;
+        uint32_t mod;
         bool repeat;
 
         KeyDownEvent() : Event(EventType::KeyDown) { };
@@ -53,10 +54,11 @@ namespace Motion
 
     class KeyUpEvent : public Event
     {
-    public: 
+    public:
         uint32_t key;
+        uint32_t scancode;
         uint32_t mod;
-        bool repeat; 
+        bool repeat;
 
         KeyUpEvent() : Event(EventType::KeyUp) { };
     }; 
