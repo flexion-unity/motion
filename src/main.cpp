@@ -86,18 +86,14 @@ namespace Motion
         if (logDestinations->GetValue() != -1)
             Logger::settings.SetDestinations((LogDestination)logChannels->GetValue());
 
-        Logger::Log(APP_NAME " v" APP_VERSION " " APP_BUILD_DATE);
+        Logger::Log(APP_NAME " v" APP_VERSION " (" APP_NATURE ") " APP_BUILD_DATE);
         Logger::Log(APP_SIGNON, LogChannels::Message);
         Profile::Init();                                    // init config for user profile
 
         // TEMP
         renderer = new RendererSDL3();
 
-        // the renderer is dependent on specific information like the real internal fb size of the machine's GPU
-        // TODO: a real config system that can get us away from this ?
         renderer->Init();
-
-
     }
 
     /// @brief main function

@@ -83,9 +83,9 @@ namespace Motion
 
         // big endian
         if (addr & 1)
-            val = (val | 0xFF00) & value;
+            val = (val & 0xFF00) | value;
         else
-            val = (val | 0x00FF) & (value << 8);
+            val = (val & 0x00FF) | (value << 8);
 
         Write16(addr, val);
     }
@@ -96,8 +96,9 @@ namespace Motion
 
         switch (addr)
         {
+            // this is an 8-bit register but it is easier becasue of how the MMU is designed to treat it as a 16 bit register.
             case REG_OS_BASE:
-                osBase = ((uint16_t)value << 8);
+                osBase = (value >> 8) << 8;
                 break;
             case REG_STATUS:
                 status = value;
@@ -185,14 +186,10 @@ namespace Motion
             limitValue = 0;             // 0 means no limit
         }
         // map Multibus Memory
-        // TODO: slave
-        else if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_MULTIBUS_MEMORY))
-        {
-            baseValue = limitValue = 0; // maybe it should be 40000000 ? seems to work not sure what this does here
-        }
         else
         {
             // these don't seem to use virtual memory, so just ignore them
+            // except for segment 4 (Multibus Memory) which happens to use its own thing
             *finalAddress = addr;
             return true; 
         }
@@ -205,12 +202,12 @@ namespace Motion
         {
             // bits 23-12
             pageNumber = (addr >> 12) ^ 0x3FFF;
-            finalPageNumber = baseValue - pageNumber;
+            finalPageNumber = (baseValue - pageNumber) & 0x3FFF;
         }
         else
         {
             pageNumber = (addr >> 12);
-            finalPageNumber = baseValue + pageNumber;
+            finalPageNumber = (baseValue + pageNumber) & 0x3FFF;
         }
 
         bool limitReached = limitValue && pageNumber > limitValue;
@@ -225,7 +222,7 @@ namespace Motion
                 || !(page & MMU_MASK_IS_PROTECTED)
                 || ((page & MMU_MASK_IS_PROTECTED) == MMU_MASK_SUPERVISOR_ONLY) && !(cpu->IsPrivilegedMode()))
             {
-                busError = true; 
+                //busError = true; 
             }
 
             if (!busError)
@@ -238,7 +235,7 @@ namespace Motion
                 || (page & MMU_MASK_IS_PROTECTED) == MMU_MASK_READ_ONLY // cannot write to readonly 
                 || ((page & MMU_MASK_IS_PROTECTED) == MMU_MASK_SUPERVISOR_ONLY) && !(cpu->IsPrivilegedMode()))
             {
-                busError = true; 
+                //busError = true; 
             }
 
             if (!busError)

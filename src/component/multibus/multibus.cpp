@@ -26,6 +26,13 @@ namespace Motion
         mappingMultibus.component = this;
 
         AddrSpace::AddMapping(mappingMultibus);
+        
+        AddrSpaceMapping mappingPaging = AddrSpaceMapping();
+        mappingPaging.startAddr = MULTIBUS_PAGING_START;
+        mappingPaging.endAddr = MULTIBUS_PAGING_END;
+        mappingPaging.component = this;
+
+        AddrSpace::AddMapping(mappingPaging);
 
         // map ip2 segment 5 (multibus IO)
 
@@ -36,9 +43,17 @@ namespace Motion
 
         AddrSpace::AddMapping(mappingIo);
 
-        // map the last megabyte of physical memory, so that multibus is the exclusive provider of writes to it
-        // WARNING: Very KLUDGE! BAN THIS MAN FROM WRITING EMULATORS RIGHT NOW!
-        // For example if System RAM is ever not at 0x0, it will explode.
+        // find the memory so we can use it
+        if (!memory)
+            memory = Emulation::GetMachine()->FindComponentByType<Memory>();
+
+        // guaranteed, the CPU Initialises before this.
+        if (!cpu)
+            cpu = Emulation::GetMachine()->FindComponentByType<ComponentCPU>();
+
+        // a TEMPORARY kludge. at some point we need to ***TELL*** the memory where multibus is
+        // multibus memory is re-pageable but our model does not really let us remap memory that easily.
+        // the last 0x80000 is translated to other addresses as its used as a generic buffer.
 
         AddrSpaceMapping* memMapping = AddrSpace::GetMapping(0);
         
@@ -51,23 +66,15 @@ namespace Motion
 
         AddrSpaceMapping mappingMultibusMemory = AddrSpaceMapping();
 
-        multibusMemoryStart = memMapping->endAddr - 0x100000;
-        multibusMemoryEnd = memMapping->endAddr;
-        mappingMultibusMemory.startAddr = multibusMemoryStart;
-        mappingMultibusMemory.endAddr = multibusMemoryEnd;
+        mappingMultibusMemory.startAddr = multibusMemoryStart = memMapping->endAddr - 0x100000;
+        mappingMultibusMemory.endAddr = multibusMemoryEnd = memMapping->endAddr;
         mappingMultibusMemory.component = this; 
 
-        memMapping->endAddr = (memMapping->endAddr); // nuke 1 megabyte of system RAM so we can redirect last-megabyte i/o here
+        // kludge to make memory test pas
+        pageTable[0] = multibusMemoryStart >> 12;
+        pageTable[1] = (multibusMemoryStart >> 12) + 1;
 
         AddrSpace::AddMapping(mappingMultibusMemory);
-
-        // find the memory so we can use it
-        if (!memory)
-            memory = Emulation::GetMachine()->FindComponentByType<Memory>();
-
-        // guaranteed, the CPU Initialises before this.
-        if (!cpu)
-            cpu = Emulation::GetMachine()->FindComponentByType<ComponentCPU>();
     }
 
     void Multibus::FireMultibusIRQ(int32_t number)
@@ -88,8 +95,8 @@ namespace Motion
         if (!lastSlotRead)
             return false;
 
-        return (addr >= lastSlotRead->ioStart
-        && addr <= lastSlotRead->ioEnd);
+        return ((addr >= lastSlotRead->memStart && addr <= lastSlotRead->memEnd)
+            || (addr >= lastSlotRead->ioStart && addr <= lastSlotRead->ioEnd));
     }
 
     bool Multibus::UseCachedWriteSlot(size_t addr)
@@ -135,13 +142,13 @@ namespace Motion
             || (addr >= slot.ioStart
             && addr <= slot.ioEnd))
             {
-                lastSlotRead = &slot;
+                lastSlotWritten = &slot;
                 return true;
             }
         }
 
         // fail
-        lastSlotRead = nullptr;
+        lastSlotWritten = nullptr;
         return false; 
     }
 
@@ -183,159 +190,123 @@ namespace Motion
     uint8_t Multibus::Read8(size_t addr) 
     {
         if (!UseCachedReadSlot(addr))
-            if (!SetCachedReadMapping(addr))
-            {
-                // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
-                // the switch register can disable multibus
-                // for IO reads on IP2 (but not on PM2 ???) it's safe to do this
+            SetCachedReadMapping(addr);
 
-                if (addr >= multibusMemoryStart
-                && addr <= multibusMemoryEnd)
-                {
-                    return memory->Read8(addr); 
-                }
-                else
-                {
-                    Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Read8: SetCachedReadMapping FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
-                    LogChannels::Warning);
-                    return 0x00;
-                }
-            }
+        // if no lastslot read, we don't have anytihng to read.
 
+        if (lastSlotRead)
             return lastSlotRead->component->Read8(addr);
+
+        if (addr < MULTIBUS_IO_START)
+            return memory->Read8(TranslateAddress(addr)); 
+        else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
+        {
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Read8 - invalid I/O read from 0x{:x}", addr).c_str(), LogChannels::Warning);
+        }
+        return 0xFF;
     }
 
     uint16_t Multibus::Read16(size_t addr)
     {
         if (!UseCachedReadSlot(addr))
-            if (!SetCachedReadMapping(addr))
-            {
-                // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
-                // the switch register can disable multibus
-                // for IO reads on IP2 (but not on PM2 ???) it's safe to do this
+            SetCachedReadMapping(addr);
 
-                if (addr >= multibusMemoryStart
-                && addr <= multibusMemoryEnd)
-                {
-                    return memory->Read16(addr); 
-                }
-                else
-                {
-                    Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Read16: SetCachedReadMapping FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
-                    LogChannels::Warning);
-                    return 0x00;
-                }
-            }
+        // if no lastslot read, we don't have anytihng to read.
 
-        return lastSlotRead->component->Read16(addr);
+        if (lastSlotRead)
+            return lastSlotRead->component->Read16(addr);
+
+        if (addr < MULTIBUS_IO_START)
+            return memory->Read16(TranslateAddress(addr)); 
+        else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Read16 - invalid I/O read from 0x{:x}", addr).c_str(), LogChannels::Warning);
+            
+        return 0xFF;
     }
 
     uint32_t Multibus::Read32(size_t addr) 
     {
         if (!UseCachedReadSlot(addr))
-            if (!SetCachedReadMapping(addr))
-            {
-                // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
-                // the switch register can disable multibus
-                // for IO reads on IP2 (but not on PM2 ???) it's safe to do this
+            SetCachedReadMapping(addr);
 
-                if (addr >= multibusMemoryStart
-                && addr <= multibusMemoryEnd)
-                {
-                    return memory->Read32(addr); 
-                }
-                else
-                {
-                    Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Read32: SetCachedReadMapping FAILED: Unmapped Multibus read from 0x{:x}", addr).c_str(),
-                    LogChannels::Warning);
-                    return 0x00;
-                }
-            }
+        // if no lastslot read, we don't have anytihng to read.
 
-        return lastSlotRead->component->Read32(addr);
+        if (lastSlotRead)
+            return lastSlotRead->component->Read32(addr);
+
+        if (addr < MULTIBUS_IO_START)
+            return memory->Read32(TranslateAddress(addr)); 
+        else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Read32 - invalid I/O read from 0x{:x}", addr).c_str(), LogChannels::Warning);
+
+        return 0xFF;
     }
 
     void Multibus::Write8(size_t addr, uint8_t value) 
     {
         if (!UseCachedWriteSlot(addr))
-            if (!SetCachedWriteMapping(addr))
-            {
-                // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
-                // the switch register can disable multibus
-                // for IO reads on IP2 (but not on PM2 ???) it's safe to do this
+            SetCachedWriteMapping(addr);
 
-                if (addr >= multibusMemoryStart
-                && addr <= multibusMemoryEnd)
-                {
-                    memory->Write8(addr, value); 
-                }
-                else
-                {
-                    Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Write8: SetCachedWriteMapping FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
-                    LogChannels::Warning);
-                }
-                return;
-            }
-            
-        lastSlotRead->component->Write8(addr, value);
+        if (lastSlotWritten)
+            lastSlotWritten->component->Write8(addr, value); 
+             
+        if (addr < MULTIBUS_IO_START)
+            memory->Write8(TranslateAddress(addr), value); 
+        else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Write8 - invalid I/O write of 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Warning);
     }
 
     void Multibus::Write16(size_t addr, uint16_t value)
     {
+        if (addr >= MULTIBUS_PAGING_START
+        && addr <= MULTIBUS_PAGING_END)
+        {
+            UpdatePTEntry(addr, value);
+            return;
+        }
+
         if (!UseCachedWriteSlot(addr))
-            if (!SetCachedWriteMapping(addr))
-            {
-                // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
-                // the switch register can disable multibus
-                // for IO reads on IP2 (but not on PM2 ???) it's safe to do this
+            SetCachedWriteMapping(addr);
 
-                if (addr >= multibusMemoryStart
-                && addr <= multibusMemoryEnd)
-                {
-                    memory->Write16(addr, value); 
-                }
-                else
-                {
-                    Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Write16: SetCachedWriteMapping FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
-                    LogChannels::Warning);
-                }
-                return;
-            }
-
-        lastSlotRead->component->Write16(addr, value);
+        if (lastSlotWritten)
+            lastSlotWritten->component->Write16(addr, value); 
+                           
+        if (addr < MULTIBUS_IO_START)
+            memory->Write16(TranslateAddress(addr), value); 
+        else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Write16 - invalid I/O write of 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Warning);
     }
     
     void Multibus::Write32(size_t addr, uint32_t value)
     {
         if (!UseCachedWriteSlot(addr))
-            if (!SetCachedWriteMapping(addr))
-            {
-                // for MEMORY reads, if there is no Multibus device decoding this ram, we need to send them to the memory.
-                // the switch register can disable multibus
-                // for IO reads on IP2 (but not on PM2 ???) it's safe to do this
+            SetCachedWriteMapping(addr);
 
-                if (addr >= multibusMemoryStart
-                && addr <= multibusMemoryEnd)
-                {
-                    memory->Write32(addr, value); 
-                }
-                else
-                {
-                    Logger::Log(MULTIBUS_LOG_PREFIX,
-                    std::format("Multibus::Write32: SetCachedWriteMapping FAILED: Unmapped Multibus write of 0x{:x} to 0x{:x}", value, addr).c_str(),
-                    LogChannels::Warning);
-                }
-                return;
-            }
-
-        lastSlotRead->component->Write32(addr, value);       
+        if (lastSlotWritten)
+            lastSlotWritten->component->Write32(addr, value); 
+                           
+        if (addr < MULTIBUS_IO_START)
+            memory->Write32(TranslateAddress(addr), value); 
+        else if (addr >= MULTIBUS_IO_START && !lastSlotWritten)
+            Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus::Write32 - invalid I/O write of 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Warning);
     }
 
+    // Multibus Paging
+    size_t Multibus::TranslateAddress(size_t addr)
+    {
+        uint16_t index = ((addr & 0xFFFFF) >> 12) & 0x1FFF;
+        uint32_t realFinalAddr = (pageTable[index] << 12) + (addr & 0xFFF);
+        return realFinalAddr;
+    }
+
+    void Multibus::UpdatePTEntry(size_t addr, uint16_t value)
+    {
+        uint16_t index = ((addr & 0xFFFFF) >> 12) & 0x1FFF;
+        pageTable[index] = value;
+     
+        //Logger::Log(MULTIBUS_LOG_PREFIX, std::format("Multibus page {:x} now points to physical page {:x}", index, value).c_str(), LogChannels::Debug);
+    }
+    
     void Multibus::Shutdown()
     {
         cpu = nullptr;

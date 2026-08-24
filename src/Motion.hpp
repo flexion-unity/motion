@@ -38,6 +38,16 @@
 #define APP_SIGNON          "The SGI Emulator\nEmulation engine © 2026 starfrost\nOriginal hardware and software by Silicon Graphics, Inc. © 1981-1989"
 // This part will be replaced by some fancy GHA script later
 #define APP_VERSION         "0.2.0"
+#ifdef DEBUG
+#define APP_NATURE          "Debug"
+#elif RELEASE_WITH_DEBUG_INFO
+#define APP_NATURE          "Release with Debug Info"
+#elif RELEASE
+#define APP_NATURE          "Release"
+#else 
+#define APP_NATURE          "????????"
+#endif
+
 #define APP_BUILD_DATE      "@ " __DATE__ " " __TIME__
 
 // Exit codes
@@ -73,7 +83,7 @@
 // Assertions.
 // I usually don't like them except in critical-path stuff, where it may be too slow to do manual checks.
 
-#ifndef NDEBUG
+#ifdef DEBUG
 #define MOTION_ASSERT(cond, msg)        if (cond) \
                                             Logger::Log(std::format("***** ASSERTION FAILED *****\n{}", msg).c_str(), LogChannels::FatalError) 
 #define MOTION_ASSET_UNSAFE(cond, msg)  if (cond) \

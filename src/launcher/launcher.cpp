@@ -92,12 +92,14 @@ namespace Motion
             RenderGridItem(gridEntrySize, startPaused, GridCvarType::Boolean, "Start Paused");
             RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Boolean, "Skip Launcher (only effective on next boot)");
             ImGui::SameLine();
-            RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Float, "Video Scale (1-4)");
+            RenderGridItem(gridEntrySize, vidScale, GridCvarType::Float, "Video Scale (1-4)");
             ImGui::SameLine();
-            RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Integer, "Log Channel Mask");
+            RenderGridItem(gridEntrySize, logChannels, GridCvarType::Integer, "Log Channel Mask");
             ImGui::SameLine();
-            RenderGridItem(gridEntrySize, skipLauncher, GridCvarType::Integer, "Log Destination Mask");
-            
+            RenderGridItem(gridEntrySize, logDestinations, GridCvarType::Integer, "Log Destination Mask");
+            ImGui::SameLine();
+            RenderGridItem(gridEntrySize, profileDisk0Path, GridCvarType::String, "Disk 0 Path");
+
             ImGui::NewLine();
             if (ImGui::Button("Go"))
                 Program::SetState(ProgramState::Emulation);

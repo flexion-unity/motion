@@ -138,6 +138,46 @@ Similar to a .plan file
 * Added last megabyte multibus mapping (memory by default unless MMIO mapped)
 * Added ascii view to memory viewer
 
+## 2026-08-15
+* Refactor multibus to support multiple mappings per slot and update debug window to do so.
+
+## 2026-08-16
+* did nothing other than half assed non working step over impl
+* merge the code from flexion to fix my brain dead ctrl handling
+
+## 2026-08-17
+* figured out pointers to DSD structs. just convert them to offsets and go
+    * enough to get past minit...stuck in mstatus.
+* add coherent DSD stuff
+* fix mapping of DSD. dynamically configure mapping based on WakeUp Board address 
+* add messages for unimplemented read/write methods
+* allow 8 bit reads from UCR register of UC4 as they are done  
+* change description of bp3 from "BP3 Bitplaned VRAM" to "Video RAM (BP3 bitplane board)" to make it easier to understand 
+
+
+## 2026-08-19
+* remove some parts of sdl 
+* added cool logo. consdiered sdl_image but didn't use it
+* fix endianness of 16 bit writes to DSD 5217
+
+## 2026-08-20
+* got mad yelling at dsd buffers 
+* figured out iopb->dba has multiple meanings so abstract it behind readbuffer/writebuffer and databuffertype
+* merge inib and fmtb into inist
+
+## 2026-08-21 & 2026-08-22
+* many fixes of DSD 5217, but not enough for it to actually boot the kernel.
+* let's do something else
+* register editing!
+    * updated :;write to actually dereference
+    * converrt to uint64_t and then t so ti works for all numeric types
+* multibus paging  
+    * 256 registers at 44100000...441ff000 with page numbers for MULTIBUS
+* still kludgy last 1meg mapping because bus model is abit fucked
+    * merge IP2MMU With multibus?
+* enough to get over very bad copy bug
+
+
 v0.2.0 TODO:
 
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE

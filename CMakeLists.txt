@@ -4,7 +4,7 @@
 #
 #   Copyright (c)2026 starfrost
 #
-#   CMakeLists.txt: Raw buildscript.
+#   CMakeLists.txt: Main buildscript.
 #
 
 cmake_minimum_required(VERSION 3.20)
@@ -19,7 +19,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/$<CONFIG>)
 set(ROM_SRC_DIR "${CMAKE_SOURCE_DIR}/roms")
 set(ROM_DST_DIR "${CMAKE_BINARY_DIR}/output/$<CONFIG>/roms")
 set(ASSET_SRC_DIR "${CMAKE_SOURCE_DIR}/assets")
-set(ASSET_DST_DIR "${CMAKE_BINARY_DIR}/output/$<CONFIG>/")
+set(ASSET_DST_DIR "${CMAKE_BINARY_DIR}/output/$<CONFIG>/assets")
 
 project(motion)
 
@@ -28,7 +28,15 @@ project(motion)
 set(SDL_SHARED OFF CACHE BOOL "Build SDL shared library" FORCE)
 set(SDL_STATIC ON CACHE BOOL "Build SDL static library" FORCE)
 
-# Add our submodule directories
+# Turn off bits of SDL we don't need
+set(SDL_HAPTIC FALSE CACHE BOOL "Build SDL haptic subsystem" FORCE)
+set(SDL_SENSOR FALSE CACHE BOOL "Build SDL sensor subsystem" FORCE)
+set(SDL_CAMERA FALSE CACHE BOOL "Build SDL camera subsystem" FORCE)
+set(SDL_DUMMYCAMERA FALSE CACHE BOOL "Build SDL dummy camera subsystem" FORCE)
+set(SDL_POWER FALSE CACHE BOOL "Build SDL power subsystem" FORCE)
+set(SDL_DIALOG FALSE CACHE BOOL "Build SDL dialog subsystem" FORCE)
+
+# Add our SDL submodule directories
 
 add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
 
@@ -71,16 +79,16 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 target_link_libraries(motion PRIVATE 
-SDL3::SDL3-static                   # static sdl3
-moira)                              # 68k
+SDL3::SDL3                          # static sdl3
+moira)                              # 68k lib
 
-# install
+# install below is only used for 'official' builds. we want the files there regardless of what hte user does.
 add_custom_target(InstallAssets 
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${ROM_SRC_DIR}" "${ROM_DST_DIR}"
     COMMENT "Updating ROMs..."
 
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${ASSET_SRC_DIR}" "${ASSET_DST_DIR}"
-    COMMENT "Updating ROMs..."
+    COMMENT "Updating assets..."
 )
 
 add_dependencies(motion InstallAssets)
@@ -97,3 +105,6 @@ if(MOTION_INSTALL_ROMS)
         PATTERN "Thumbs.db" EXCLUDE
     )
 endif()
+
+# install assets
+install(DIRECTORY "${ASSET_SRC_DIR}/" DESTINATION assets)

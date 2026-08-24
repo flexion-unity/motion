@@ -33,7 +33,7 @@ namespace Motion
         void Write16(size_t addr, uint16_t value) override;
         void Write32(size_t addr, uint32_t value) override; 
         
-        const char* GetName() override { return "BP3 Bitplaned VRAM"; };
+        const char* GetName() override { return "Video RAM (BP3 Bitplane boards)"; };
 
     private:
         // implements our BPs

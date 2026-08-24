@@ -40,6 +40,22 @@ namespace Motion
             Logger::SetChannelEnabled(UC4_LOG_CHANNEL_NAME);
     }
 
+    // this one is a weird one. only the ucr register is read as 8 bits.
+    // usually we try to only override as few methods as possible so let's just do this
+    uint8_t UC4::Read8(size_t addr)
+    {
+        uint8_t ret = 0xFF;
+
+        switch (addr)
+        {
+            case UC4_REG_UCR:
+                ret = ((ucr & 0xFFFF0000) >> 8);
+                break;
+        }
+
+        return ret; 
+    }
+
     // I/O
 
     uint16_t UC4::Read16(size_t addr) 

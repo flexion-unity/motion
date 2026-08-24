@@ -78,9 +78,11 @@
 
 * May 1986: 2.4 / 3.4 released
 
-* Late 1986 / Early 1987: 2.5 /3.5 releasd
+* December 13, 1986: 2.5 /3.5 released no later than this
 
 * 1987: 3.6 released, IRIS 4D/60 released (MIPS-based)
+
+* December 20, 1987: GL2-W3.6 TCP kernel (at least one version of) 3000.tcp built (however there were many subversions)
 
 * 1989: 3.7 worked on
 
@@ -105,7 +107,7 @@ Same time-ish: IRIS 1400 / 1500: Workstation. PM2M1 (10MHz 68010) Sun licensed, 
 
 IRIS 30x0's manufactured after August 1, 1985 have 8MHz Geometry Engines instead of 6MHz.
 
-* Late 1986 or 1987(?):
+* February 1987? Late 1986?:
 
 * IRIS 31x0 - same as IRIS 3030, but the Geometry Engines now run at 10MHz and there are more of them (usually 12 instead of 8) on the GF2 boards.
 

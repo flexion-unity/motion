@@ -157,6 +157,7 @@ namespace Motion
         
         // Register I/O
         // bus is 16 bit hopefully
+        uint8_t Read8(size_t addr) override;
         uint16_t Read16(size_t addr) override;
         void Write16(size_t addr, uint16_t value) override;
 

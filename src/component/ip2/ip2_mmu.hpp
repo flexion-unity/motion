@@ -47,6 +47,8 @@ namespace Motion
     #define MMU_SEGMENT_KERNEL              0x20000000      // System RAM, Kernel
     #define MMU_SEGMENT_SYSTEM              0x30000000      // Misc shit on IP2 Board & PROM
     #define MMU_SEGMENT_MULTIBUS_MEMORY     0x40000000      // multibus memory
+    #define MMU_MULTIBUS_PAGING_START       0x40100000
+    #define MMU_MULTIBUS_PAGING_END         0x401FFFFF
     #define MMU_SEGMENT_MULTIBUS_IO         0x50000000      // multibus io
     #define MMU_SEGMENT_GEOMETRY_ENGINE     0x60000000      // GE
     #define MMU_SEGMENT_FPA                 0xF0000000      // FPA

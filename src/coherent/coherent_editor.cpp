@@ -11,6 +11,70 @@
 
 namespace Motion
 {
+    Cvar* dumpsFolder;
+
+    // DUMP memory
+    void CoherentEditor::DumpMemory()
+    {
+        // first check if the file exists
+        int32_t dump = 0;
+
+        dumpsFolder = Cvar::Get("dumpsFolder", "./dumps");
+
+        if (!std::filesystem::exists(dumpsFolder->GetString()))
+        {
+            // create the directory
+            std::filesystem::create_directory(dumpsFolder->GetString()); 
+        }   
+        
+        char dumpFile[STRING_MAX_LONG] = {0};
+        char formattedEditorName[STRING_MAX_SHORT] = {0}; // null term
+        int32_t dumpFileNr = 0;
+        bool dumpFileAlreadyExists = true; 
+        
+        int32_t j = 0; 
+
+        // also we'll format the editor name to have no strings and normalise it to be lower-case too. maybe this should be a util method
+        for (int i = 0; i < strlen(settings.name); i++)
+        {
+            if (isspace(settings.name[i]))
+                continue;
+            else
+                formattedEditorName[j] = tolower(settings.name[i]);
+
+            j++;         
+        }
+
+        while (dumpFileAlreadyExists)
+        {
+            // format the file 
+            snprintf(dumpFile, STRING_MAX_LONG, "%s/dump_%s_%04d.bin", dumpsFolder->GetString(), formattedEditorName, dumpFileNr);
+
+            if (!std::filesystem::exists(dumpFile))
+            {
+                dumpFileAlreadyExists = false;
+                break; 
+            }
+            
+            // file exists so don't dump it
+            dumpFileNr++;
+        }
+
+        // open the file
+        FileStream* file = Filesystem::Open(dumpFile, (Motion::FileFlags)(FileFlags::Binary | FileFlags::CreateOrOpen));
+
+        if (!file)
+        {
+            Logger::Log(std::format("Failed to open dump file {}!", dumpFile).c_str(), LogChannels::Error);
+            return;
+        }
+
+        file->stream.write((char*)(settings.buf), settings.bufSize); // write it
+        Filesystem::Close(file);
+
+        Logger::Log(std::format("Dumped {} data to {}", settings.name, dumpFile).c_str());
+    }
+
     void CoherentEditor::AddUI()
     {
         ImGui::SetNextWindowSize(ImVec2(650, 350));
@@ -39,9 +103,19 @@ namespace Motion
         if (!name)
             name = "Name this editor please";
 
-        if (ImGui::Begin(name, &enabled))
+        if (ImGui::Begin(name, &enabled, ImGuiWindowFlags_MenuBar))
         {
             // temporary thing for v0.1.1 since we already wrote some code to do this
+
+            // menu item
+            if (ImGui::BeginMenuBar())
+            {
+                if (ImGui::MenuItem("Dump Memory"))
+                    DumpMemory();
+            
+                ImGui::EndMenuBar();
+            }
+
 
             bool updateMemoryView = false; 
 
@@ -107,10 +181,11 @@ namespace Motion
 
                 ImGui::EndChild();
                 ImGui::SameLine();
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(1.0f, ImGui::GetStyle().ItemSpacing.y));
+
                 // draw an ascii view
                 if (ImGui::BeginChild("##AsciiView", ImVec2(200, 350)))
                 {
-                    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(1.0f, ImGui::GetStyle().ItemSpacing.y));
 
                     for (currentAddress = startDrawingAt; currentAddress < (startDrawingAt + settings.loadAtOnce); currentAddress += settings.lineSize)
                     {

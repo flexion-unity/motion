@@ -24,7 +24,8 @@ namespace Motion
      
         fc->stream.open(path, flags);
     
-        if (fc->stream.fail())
+        if (fc->stream.fail()
+        || fc->stream.bad())
         {
             delete fc;
             //todo: fileflags for optional logging

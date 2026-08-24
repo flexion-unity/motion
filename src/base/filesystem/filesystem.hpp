@@ -32,6 +32,5 @@ namespace Motion
         static FileStream* Open(const char* path, FileFlags mode = FileFlags::Text);
         static void Seek(FileStream* fs, size_t offset);
         static void Close(FileStream* fs);
-
     };
 }; 

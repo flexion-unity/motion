@@ -17,24 +17,34 @@
 #include <Motion.hpp>
 #include <component/component.hpp>
 #include <component/multibus/multibus.hpp>
+#include <base/profile/profile.hpp>
+#include <base/filesystem/filesystem.hpp>
 
 namespace Motion
 {
     #define DSD5217_MBIO_START                  0x50007F00
     #define DSD5217_MBIO_END                    0x50007FFF
+    #define DSD5217_MBIO_STATUS                 0x7F01 // all addresses are 1mb region
+    #define DSD5217_MBIO_STATUS_IS_READY        1
 
-    // memory ranges. THis one decodes two regions
-    #define DSD5217_MEMORY_MAP0_START           0x1000
-    #define DSD5217_MEMORY_MAP0_END             0x10FF
+    // 20 bit seg:off addressing or 24 bit linear. we only implemetn2 4bit linear
+    #define DSD5217_24BIT_ADDRESSING            7
+
+    // memory ranges. THis one decodes one region which stores pointers to many others.
+    // The other memory regions need to be dynamically mapped based on the results of this, as
+    // Multibus Memory is mapped by the PROM using MBMALLOC. Map 0x10 bytes for safety
     #define DSD5217_MEMORY_MAP1_START           0x7F000
-    #define DSD5217_MEMORY_MAP1_END             0x7F001
+    #define DSD5217_WUB_EXTENSION               0x7F001
+    #define DSD5217_WUB_CCB_PTR                 0x7F002
+    #define DSD5217_MEMORY_MAP1_END             0x7F00F
+
+    // this is configurable on the real thing with jumpers but for now just do this
+    #define DSD5217_MULTIBUS_IRQ_LEVEL          1
 
     #define DSD5217_LOG_PREFIX                  "DSD 5217"
 
     // Fresh from my ass
     #define DSD5217_MULTIBUS_SLOTNUM            7
-
-    #define DSD5217_IO_PTR1                     0x50007F01
 
     // Device codes. These determine which device we are actually communicating with
     #define DSD5217_DEVICE_CODE_HDD             0   // 'Winchester' (Hard disk drive)
@@ -116,14 +126,31 @@ namespace Motion
     #define DSD5217_HARDERR1_INVALID_ADDRESS    (1 << 5)    // invalid address (something is wrong)
     #define DSD5217_HARDERR1_UNIT_NOT_READY     (1 << 6)    // unit not ready
     #define DSD5217_HARDERR1_WRITE_PROTECTED    (1 << 7)    // write protected
+    
+    #define DSD5217_MAXIMUM_BUFFER_SIZE         1024        // Max buffer size
+    
+    // the coherent extension
+    class CoherentExtensionDSD5217 : public CoherentExtension
+    {
+    public:
+        CoherentExtensionDSD5217(Component* component) : CoherentExtension(component) { };
+
+        void AddUI() override;
+    };
 
     class DSD5217 : public Component
     {
+        friend class CoherentExtensionDSD5217;
+        
     public:
+        DSD5217() : Component(), ccbMapping(this)
+        {
+        }
+
         void Start() override;
         void Shutdown() override; 
 
-        const char* GetName() { return "Data Storage Devices / Qualogy 8217 Multibus Disk & Tape Controller"; };
+        const char* GetName() { return "DSD/Qualogy 5217 Multibus Disk & Tape Controller"; };
 
 // make sure these are not packed so that the OS can use them
 #pragma pack(push, 1)
@@ -139,17 +166,20 @@ namespace Motion
             uint16_t cylinder;              // cylinder
             uint8_t sector;                 // cylinder
             uint8_t head;                   // cylinder
-            uint8_t* dba;                   // use as a pointer
-            uint8_t rbc;                    // requested byte count
-            uint8_t* generalPtr;            // use as a pointer
+            /* Data Buffer Address: This four-byte field contains the segmented address of the data buffer. 
+            For normal read or write operations, this is the address of the multibus memory buffer where
+            data is stored or fetched. For some commands, this is the address of additional control information */
+            uint32_t dba;                   
+            uint32_t rbc;                    // requested byte count
+            uint32_t generalPtr;            // use as a pointer
         }; 
 
-        // @brief not sure what this is yet
+        /// @brief Wake Up Block
         struct WUB
         {
             uint8_t dummy;
             uint8_t extension;              // 7 = 24 bit addressing?
-            uint8_t* ccbPtr;                 
+            uint32_t ccbPtr;                 
         }; 
 
         /// @brief Channel Control Block
@@ -157,27 +187,27 @@ namespace Motion
         {
             uint8_t busy;                   // ff = busy, 00 = idle
             uint8_t ccw1;                   // channel control word 1
-            uint8_t* cibPtr;                // CIB ptr
+            uint32_t cibPtr;                // CIB ptr
             uint16_t dummy;
             uint8_t busy2;                  // not used? 
             uint8_t ccw2;                   // not used? channel control word 2
-            uint8_t* cpPtr;                 // cp ptr
+            uint32_t cpPtr;                 // cp ptr
             uint16_t controlPtr;            // control pointer (not a pointer?)
         };
 
-        /// @brief Channel Information Block
+        /// @brief Controller Invocation Block
         struct CIB
         {
             uint8_t opStatus;               // operation status
             uint8_t reserved;
             uint8_t statusSemaphore;        // status semaphore
             uint8_t commandSemaphore;       // command semaphore
-            uint8_t* zero;                  // must be zero
-            uint8_t* iopbPtr;               // IOPB pointer
+            uint32_t zero;                  // must be zero
+            uint32_t iopbPtr;               // IOPB Pointer
             uint32_t zero2;                 // must be zero
         };
 
-        /// @brief not sure what this is ? disk header ?
+        /// @brief Initialisation Information Block
         struct INIB
         {
             uint16_t nrCylinders;
@@ -218,7 +248,7 @@ namespace Motion
         {
             DSD5217::INIB inib;
             DSD5217::FMTB fmtb;
-            uint8_t sb[DSD5217_SB_SIZE];        // status bytes?
+            uint8_t sb[DSD5217_SB_SIZE];        // the status buffer ?
         }; 
 
 #pragma pack(pop)
@@ -228,10 +258,56 @@ namespace Motion
         // Methods
         uint8_t Read8(size_t addr) override;
         void Write8(size_t addr, uint8_t value) override;
-
+        uint16_t Read16(size_t addr) override; 
+        void Write16(size_t addr, uint16_t value) override;
 
     private: 
         // Multibus IRQ1 is used.
         Multibus* multibus;
+        FileStream* hdd;
+        Multibus::SlotMapping ccbMapping;
+        CoherentExtensionDSD5217* dsdExtension;
+
+        // this is the wrong thing to do really. the actual system runs on a set of pointers but i just ignore them and do some horrible things in read8/write8
+        // we should either (a) allow access to raw MB memory bytes or (b) map each thing separately which is a mess
+        // but our design does not work with this.
+        WUB wub = {0};
+        CCB ccb = {0};
+        CIB cib = {0};
+        IOPB iopb = {0};
+        INIST inist = {0};
+
+        // data buffer type
+        enum DataBufferType
+        {
+            INIT = 0, // not called INIB to reduce confusion
+            ST = 1,
+            DiskBuffer = 2,
+        };
+
+        // what IOPB.dba refers to
+        DataBufferType bufferType = DataBufferType::INIT;
+
+        // Methods which exist because this is jank
+        uint8_t ReadBuffer(int32_t offset);
+        void WriteBuffer(int32_t offset, uint8_t value); 
+
+        // Methods related to causing the disk to actually do something
+        size_t CHSToLinear();
+
+        void ReadSector();
+
+        // can't do any disk ops if there is no disk inserted lmao
+        bool diskIsOpen;
+
+        // we don't execute a command on initial start
+        bool initialStart = true; 
+
+        // Only one sector can be read at a time
+        uint8_t sectorBuffer[DSD5217_MAXIMUM_BUFFER_SIZE] = {0};
+
+        // execute command
+        void ExecuteCommand();
+        void AssertIRQLine();
     }; 
 }; 

@@ -34,12 +34,47 @@ namespace Motion
         virtual void OnEvent(Event& evt) { };      // fire an event
         virtual void Shutdown() { };
         
-        virtual uint8_t Read8(size_t addr) { return 0; };
-        virtual uint16_t Read16(size_t addr) { return 0; };
-        virtual uint32_t Read32(size_t addr) { return 0; };
-        virtual void Write8(size_t addr, uint8_t value) { };
-        virtual void Write16(size_t addr, uint16_t value) { };
-        virtual void Write32(size_t addr, uint32_t value) { };
+        virtual uint8_t Read8(size_t addr) 
+        { 
+            Logger::Log(std::format("An 8-bit read from the address 0x{:x} occurred for the component {}, "
+                "but this component doesn't implement Component::Read8!", addr, GetName()).c_str(), LogChannels::Warning);
+
+            return 0; 
+        };
+
+        virtual uint16_t Read16(size_t addr) 
+        { 
+            Logger::Log(std::format("A 16-bit read from the address 0x{:x} occurred for the component {}, "
+            "but this component doesn't implement Component::Read16!", addr, GetName()).c_str(), LogChannels::Warning);
+
+            return 0; 
+        };
+
+        virtual uint32_t Read32(size_t addr) 
+        { 
+            Logger::Log(std::format("A 32-bit read from the address 0x{:x} occurred for the component {}, "
+            "but this component doesn't implement Component::Read32!", addr, GetName()).c_str(), LogChannels::Warning);
+
+            return 0; 
+        };
+
+        virtual void Write8(size_t addr, uint8_t value)
+        { 
+            Logger::Log(std::format("An 8-bit write of 0x{:x} to the address 0x{:x} occurred for the component {}, "
+            "but this component doesn't implement Component::Write8!", value, addr, GetName()).c_str(), LogChannels::Warning);
+        };
+
+        virtual void Write16(size_t addr, uint16_t value) 
+        { 
+            Logger::Log(std::format("A 16-bit write of 0x{:x} to the address 0x{:x} occurred for the component {}, "
+            "but this component doesn't implement Component::Write16!", value, addr, GetName()).c_str(), LogChannels::Warning);
+        };
+        
+        virtual void Write32(size_t addr, uint32_t value) 
+        { 
+            Logger::Log(std::format("A 32-bit write of 0x{:x} to the address 0x{:x} occurred for the component {}, "
+            "but this component doesn't implement Component::Write32!", value, addr, GetName()).c_str(), LogChannels::Warning);
+        };
 
         /// @brief Called when it is time for this component to render.
         /// @param texture the texture to render to

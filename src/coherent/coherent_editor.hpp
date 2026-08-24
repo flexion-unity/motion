@@ -45,5 +45,6 @@ namespace Motion
         /// @brief determines if the current address to be viewed is valid
         bool addressIsValid = true; 
 
+        void DumpMemory();
     }; 
 }
