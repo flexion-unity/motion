@@ -49,6 +49,7 @@ namespace Motion
         switch (addr)
         {
             case UC4_REG_UCR:
+                ucr |= UC4_UCR_VERTICAL; // a scam for our terrible gf2hle emu
                 ret = ((ucr & 0xFFFF0000) >> 8);
                 break;
         }
@@ -65,6 +66,7 @@ namespace Motion
         switch (addr)
         {
             case UC4_REG_UCR:
+                ucr |= UC4_UCR_VERTICAL; // a scam for our terrible gf2hle emu
                 ret = ucr;
                 break;
             default: // ???

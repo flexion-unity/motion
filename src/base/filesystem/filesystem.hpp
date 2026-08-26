@@ -8,6 +8,8 @@
 // THis one just provides a very narrow thing...
 //
 
+#define FILESYSTEM_LOG_PREFIX           "Filesystem"
+
 namespace Motion
 {
     class FileStream
@@ -15,6 +17,7 @@ namespace Motion
     public: 
         // the stream of the file
         std::fstream stream;
+        bool eof = false;
     };
 
     enum FileFlags
@@ -31,6 +34,12 @@ namespace Motion
     public:
         static FileStream* Open(const char* path, FileFlags mode = FileFlags::Text);
         static void Seek(FileStream* fs, size_t offset);
+        static size_t GetSize(FileStream* fs);
+
+        /// @brief safer way of calling eof which does not lock teh stream
+        /// @param fs  the filestream to checl
+        /// @return a boolean indicating if we read everything
+        static bool IsEOF(FileStream* fs);
         static void Close(FileStream* fs);
     };
 }; 

@@ -74,5 +74,6 @@ add_executable(motion
     component/storage/dsd5217.cpp
     base/profile/profile_cvars.cpp
     component/storage/dsd5217_debug.cpp
+    component/ip2/ip2_interrupt.cpp
 )
 

@@ -24,25 +24,44 @@
 
 // also depends on the CPU
 #include <component/cpu/cpu.hpp>
+#include <component/ip2/ip2_interrupt.hpp>
 #include <component/memory.hpp>
 
 namespace Motion
 {
     #define MULTIBUS_MEMORY_START           0x40000000
-    #define MULTIBUS_MEMORY_END             0x400FFFFF
-
-    #define MULTIBUS_PAGING_START           0x40100000
-    #define MULTIBUS_PAGING_END             0x401FFFFF
+    #define MULTIBUS_MEMORY_END             0x40FFFFFF
     
     #define MULTIBUS_IO_START               0x50000000
     #define MULTIBUS_IO_END                 0x5000FFFF
 
-    // Total number of pointers to physical pages in the MultiBus map
-    // 40100000 defines the page used for [40000000-40001000] etc
-    #define MULTIBUS_NUM_PAGE_ENTRIES       256
-    #define MULTIBUS_PAGE_SIZE              4096
+    /*
+        The IP2 does not put its RAM on the backplane directly. Sheet 14 (MAP.ADDRESS.GENERATION)
+        sits four AM2148 1Kx4 SRAMs between the two, giving 1024 sixteen-bit entries of which the low
+        14 bits are a page frame number. A Multibus address in the first megabyte is translated as
+        frame[addr >> 12] << 12 | (addr & 0xFFF), so the window is 256 pages of 4KB, and the second
+        megabyte is the map SRAM itself - writing anywhere inside a 4KB block sets that block's entry.
+
+        This is how the PROM aims DMA. It fills all 256 entries at 0x30000770 with
+        map[i] = [0x33000010] + i before it boots anything, then hands Multibus addresses to the disk
+        controller and reads the results back through segment 4.
+    */
+    // The same map upstream spells absolutely as MULTIBUS_PAGING_START/END; keep both in step when rebasing.
+    #define MULTIBUS_SLAVE_WINDOW_END       0x0FFFFF
+    #define MULTIBUS_SLAVE_MAP_START        0x100000
+    #define MULTIBUS_SLAVE_MAP_END          0x1FFFFF
+    #define MULTIBUS_SLAVE_MAP_ENTRIES      256
+    #define MULTIBUS_SLAVE_PAGE_SHIFT       12
+    #define MULTIBUS_SLAVE_PAGE_MASK        0xFFF
+    #define MULTIBUS_SLAVE_FRAME_MASK       0x3FFF
+
+    // The 5217 drives 24 address lines.
+    #define MULTIBUS_ADDRESS_MASK           0xFFFFFF
 
     #define MULTIBUS_LOG_PREFIX             "Multibus"
+
+    // The kernel probes for every board SGI ever shipped, and a missing one is not news after the first time.
+    #define MULTIBUS_MAX_UNMAPPED_LOGGED    200
 
     #define MULTIBUS_NUM_IRQ                0x8
     // we use a raw array because its the fastest and a lot of this stuff is EXTREMELY Hot path! Like UC4/DC4. 
@@ -123,17 +142,36 @@ namespace Motion
         void Write16(size_t addr, uint16_t value) override;
         void Write32(size_t addr, uint32_t value) override;
 
-        // These are some special methods that write to only the 1 meg of multibus address space.
-        uint8_t ReadMB8(size_t addr) { return Read8(MULTIBUS_MEMORY_START + (addr & 0xFFFFF)); }; 
-        uint16_t ReadMB16(size_t addr) { return Read16(MULTIBUS_MEMORY_START + (addr & 0xFFFFF)); }; 
-        uint32_t ReadMB32(size_t addr) { return Read32(MULTIBUS_MEMORY_START + (addr & 0xFFFFF)); }; 
-        void WriteMB8(size_t addr, uint8_t value) { Write8(MULTIBUS_MEMORY_START + (addr & 0xFFFFF), value); }
-        void WriteMB16(size_t addr, uint16_t value) { Write16(MULTIBUS_MEMORY_START + (addr & 0xFFFFF), value); }
-        void WriteMB32(size_t addr, uint32_t value) { Write32(MULTIBUS_MEMORY_START + (addr & 0xFFFFF), value); }
+        // For bus MASTERS other than the CPU. Raw backplane addresses, resolved exactly as a CPU access through segment 4.
+        uint8_t ReadMB8(size_t addr) { return Read8(MULTIBUS_MEMORY_START + (addr & MULTIBUS_ADDRESS_MASK)); }; 
+        uint16_t ReadMB16(size_t addr) { return Read16(MULTIBUS_MEMORY_START + (addr & MULTIBUS_ADDRESS_MASK)); }; 
+        uint32_t ReadMB32(size_t addr) { return Read32(MULTIBUS_MEMORY_START + (addr & MULTIBUS_ADDRESS_MASK)); }; 
+        void WriteMB8(size_t addr, uint8_t value) { Write8(MULTIBUS_MEMORY_START + (addr & MULTIBUS_ADDRESS_MASK), value); }
+        void WriteMB16(size_t addr, uint16_t value) { Write16(MULTIBUS_MEMORY_START + (addr & MULTIBUS_ADDRESS_MASK), value); }
+        void WriteMB32(size_t addr, uint32_t value) { Write32(MULTIBUS_MEMORY_START + (addr & MULTIBUS_ADDRESS_MASK), value); }
 
-        // Fire a shared MultiBus IRQ.
-        void FireMultibusIRQ(int32_t number);
+        /// @brief Drive or release one of the eight shared Multibus interrupt lines.
+        void SetMultibusIRQ(int32_t number, bool asserted);
 
+
+        /// @brief What, if anything, on the IP2 itself answers for a Multibus address no card claimed.
+        enum class SlaveTarget
+        {
+            None,       // nothing drove DSACK, the cycle times out and BERR is asserted
+            Ram,        // system RAM, through the slave map
+            Map,        // the slave map SRAM itself
+        };
+
+        /// @brief Resolve a segment 4 address no card claimed; `target` comes back a RAM address or a map entry index.
+        SlaveTarget DecodeSlave(size_t addr, size_t* target);
+
+        /// @brief Report an access nothing answered for, rate limited.
+        void LogUnmapped(const char* what, size_t addr, bool isWrite, uint32_t value);
+
+        int32_t unmappedLogged = 0;
+
+        /// @brief The slave map. Public so the debugger can show it.
+        uint16_t slaveMap[MULTIBUS_SLAVE_MAP_ENTRIES] = {0};
 
     private:
         // This is an optimisation, because of the way our bus modelling works we can't actually reliably determine what slot is being written to or read from
@@ -149,20 +187,12 @@ namespace Motion
         bool SetCachedReadMapping(size_t addr);
         bool SetCachedWriteMapping(size_t addr);
 
-        // translate the address to the virtual multibus address
-        size_t TranslateAddress(size_t addr); 
-        void UpdatePTEntry(size_t addr, uint16_t value); // only on 16 bit i/o i think
-
         // THE CPU, so we can fire an irq
         ComponentCPU* cpu; 
+        IP2Interrupt* interrupts = nullptr;
         Memory* memory;
         // our coherent extension
         CoherentExtensionMultibus* multibusExtension;
     
-        // so we can lob of 1mb
-        size_t multibusMemoryStart;
-        size_t multibusMemoryEnd;
-
-        uint16_t pageTable[MULTIBUS_NUM_PAGE_ENTRIES] = {0};
     };
 };

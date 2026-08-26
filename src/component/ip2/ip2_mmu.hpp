@@ -14,6 +14,7 @@
 #include <coherent/coherent.hpp>
 #include <component/mmu/mmu.hpp>
 #include <component/cpu/cpu.hpp>
+#include <component/ip2/ip2_interrupt.hpp>
 
 namespace Motion
 {
@@ -33,6 +34,11 @@ namespace Motion
 
     #define REG_OS_BASE                     0x36000000
     #define REG_STATUS                      0x38000000
+
+        // Status register bits. Only the ones something actually uses are named.
+    #define MMU_STATUS_ENABLE_EXTERNAL      0x0010      // enable the external interrupt input
+    #define MMU_STATUS_ENABLE_INTERRUPTS    0x0020      // master interrupt enable
+
     #define REG_PARITY                      0x39000000
     #define REG_MULTIBUS_PROTECT            0x3A000000
     #define REG_PAGETABLE_BASE              0x3B000000
@@ -88,6 +94,8 @@ namespace Motion
         void Start() override
         {
             ComponentMMU::Start();
+
+            interrupts = Emulation::GetMachine()->FindComponentByType<IP2Interrupt>();
 
             // map the private ram
             AddrSpaceMapping mapping = AddrSpaceMapping();
@@ -146,6 +154,7 @@ namespace Motion
     private: 
         CoherentExtensionIP2MMU* mmuExtension; 
         ComponentCPU* cpu = nullptr;
+        IP2Interrupt* interrupts = nullptr;
         LogChannel mmuChannel;
 
     };

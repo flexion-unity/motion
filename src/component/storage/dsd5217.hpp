@@ -2,41 +2,84 @@
     m  o  t  i  o  n
     The SGI Emulator
 
-    Copyright (c)2026 starfrost
+    Copyright (c)2026 danifunker
 
-    dsd5217.hpp: The Qualogy (previously known as Data Systems Design) DSD 8217 Multibus Disk & Tape Controller
+    dsd5217.hpp: The Qualogy (previously known as Data Systems Design) DSD 5217 Multibus Disk & Tape Controller
     This is a combined QIC tape, hard drive and floppy controller.
     
     Technically not used on the 3130 (3120) but this is the only controller that I've got a disk image for right now
     Later on we can run mkboot and boot this
 
     Currently this is a high-level emulation, but this uses the Intel 8085. Later on we'll write an 8085 emulation.
+
+    The controller is a Multibus BUS MASTER and only decodes its single programmed I/O port.
+    The wake-up block, channel control block, controller invocation block, I/O parameter block and every
+    data buffer live in ordinary Multibus RAM; the controller walks that chain of pointers itself when the
+    host pokes a start command into the port. We do the same, rather than trying to snoop the host's writes
+    to those structures - claiming a memory window for them punches a hole in whatever the host is DMAing
+    through, which is exactly the sort of thing that eats half a kernel.
+
+    The first version of this code was written by starfrost with his own hands and was absolute garbage
+    The second version of this code was written by danifunker using Claude and then hacked up by starfrost to be way more generic.
+    Usually I wouldn't allow AI Generated code, but in this case, the AI generated code was actually better than mine and not fundamentally broken,
+    so I just acepted that I'm a hypocrite and my principles are malleable, and merged this part of it anyway :kekw:
+
+    Sources:
+    https://bitsavers.trailing-edge.com/pdf/dsd/5215_5217/040040-01_5215_Users_Guide_198404.pdf
+    https://bitsavers.trailing-edge.com/pdf/dsd/5215_5217/040069-01_5217_Users_Guide_Addendu_198404.pdf
 */
 
 #pragma once
 #include <Motion.hpp>
 #include <component/component.hpp>
 #include <component/multibus/multibus.hpp>
+#include <component/multibus/multibus_component.hpp>
 #include <base/profile/profile.hpp>
 #include <base/filesystem/filesystem.hpp>
 
 namespace Motion
 {
+    // One jumper-selected byte-wide port, writes only. Claiming the whole 0x7F00 page made the EXOS probe at 0x7ffc find a phantom board.
     #define DSD5217_MBIO_START                  0x50007F00
-    #define DSD5217_MBIO_END                    0x50007FFF
-    #define DSD5217_MBIO_STATUS                 0x7F01 // all addresses are 1mb region
-    #define DSD5217_MBIO_STATUS_IS_READY        1
+    #define DSD5217_MBIO_END                    0x50007F01
+    #define DSD5217_MBIO_COMMAND                0x7F01 // all addresses are 1mb region
 
-    // 20 bit seg:off addressing or 24 bit linear. we only implemetn2 4bit linear
+    // Programmed I/O commands, bottom two bits only (5215 User Guide, 4.6.1)
+    #define DSD5217_IO_COMMAND_MASK             0x03
+    #define DSD5217_IO_CLEAR                    0x00    // clear interrupt / remove reset
+    #define DSD5217_IO_START                    0x01    // start operation
+    #define DSD5217_IO_RESET                    0x02    // reset controller
+
+    // 20 bit seg:off addressing or 24 bit linear. we only implement 24 bit linear
     #define DSD5217_24BIT_ADDRESSING            7
 
-    // memory ranges. THis one decodes one region which stores pointers to many others.
-    // The other memory regions need to be dynamically mapped based on the results of this, as
-    // Multibus Memory is mapped by the PROM using MBMALLOC. Map 0x10 bytes for safety
-    #define DSD5217_MEMORY_MAP1_START           0x7F000
-    #define DSD5217_WUB_EXTENSION               0x7F001
-    #define DSD5217_WUB_CCB_PTR                 0x7F002
-    #define DSD5217_MEMORY_MAP1_END             0x7F00F
+    // Jumper-selected, and SGI hardcode this one. The controller READS it out of Multibus RAM - we do not decode it.
+    #define DSD5217_WUB_ADDRESS                 0x7F000
+    #define DSD5217_WUB_OFF_EXTENSION           0x00    // multibus byte offsets within the WUB
+    #define DSD5217_WUB_OFF_CCB_PTR             0x02
+
+    /*
+        Control block pointers are paragraph (16 byte) granular: the low four bits of every block pointer
+        the controller chains through are ignored. SGI's PROM depends on this - it hands the controller a
+        CIB pointer four bytes into its own structure and expects it to be rounded back down, which is the
+        only way its operation status byte, status semaphore and IOPB pointer land where the manual says
+        they should. Data buffer addresses are NOT rounded.
+    */
+    // Block pointers are 24 bit Multibus addresses and are used as they stand.
+    #define DSD5217_BLOCK_PTR_MASK              0xFFFFFF
+
+    /*
+        The CIB pointer is the one exception: it names the CIB's byte 4 rather than its base. SGI's
+        driver builds the block, hands the controller `lea 4(cib)`, and then writes operation status,
+        the semaphores and the IOPB pointer at the manual's offsets from the *base*.
+
+        This used to be handled by rounding every block pointer down to a 16 byte boundary, which is
+        the same thing only while the block happens to be paragraph aligned. The PROM's blocks are;
+        the kernel's are not - its CCB sits at multibus 0x1cde and its CIB at 0x1cee - so rounding
+        read every field fourteen bytes low, the CIB pointer came back as zero and dsdinit sat in its
+        ten million iteration timeout and printed "dsd0: ccb timeout during init".
+    */
+    #define DSD5217_CIB_PTR_BIAS                4
 
     // this is configurable on the real thing with jumpers but for now just do this
     #define DSD5217_MULTIBUS_IRQ_LEVEL          1
@@ -51,6 +94,7 @@ namespace Motion
     #define DSD5217_DEVICE_CODE_FLOPPY          1   // Floppy Disk
     #define DSD5217_DEVICE_CODE_QIC             2   // QIC tape drive
     #define DSD5217_DEVICE_CODE_TAPE            3   // Tape
+    #define DSD5217_DEVICE_CODE_217_TAPE        4   // iSBX 217 emulation tape functions (5217 addendum)
 
     // Number of each
     #define DSD5217_MAX_DISK_DRIVES             2   
@@ -65,10 +109,10 @@ namespace Motion
     #define DSD5217_OPERATION_SEEK_COMPLETE     (1 << 1)
     #define DSD5217_OPERATION_MEDIA_CHANGE      (1 << 2)
     #define DSD5217_OPERATION_FLOPPYQIC_DONE    0x09
-    #define DSD5217_OPERATION_FLOPPYQIC_DONE    0x09
     #define DSD5217_OPERATION_TAPE_MEDIA_CHANGE 0x0E
     #define DSD5217_OPERATION_TAPE_LONG_COMMAND 0x0F
     #define DSD5217_OPERATION_UNIT_BITS         0x30        // these determine which unit initiated the operaiton
+    #define DSD5217_OPERATION_UNIT_SHIFT        4
     #define DSD5217_OPERATION_HARD_ERROR        (1 << 6)    // ah crap
     #define DSD5217_OPERATION_SUMMARY_ERROR     (1 << 7)
     #define DSD5217_OPERATION_STATUS_MASK       0xF0
@@ -127,7 +171,7 @@ namespace Motion
     #define DSD5217_HARDERR1_UNIT_NOT_READY     (1 << 6)    // unit not ready
     #define DSD5217_HARDERR1_WRITE_PROTECTED    (1 << 7)    // write protected
     
-    #define DSD5217_MAXIMUM_BUFFER_SIZE         1024        // Max buffer size
+    #define DSD5217_MAXIMUM_BUFFER_SIZE         1024        // largest sector the on-board buffer holds
     
     // the coherent extension
     class CoherentExtensionDSD5217 : public CoherentExtension
@@ -138,12 +182,12 @@ namespace Motion
         void AddUI() override;
     };
 
-    class DSD5217 : public Component
+    class DSD5217 : public MultibusSlotComponent
     {
         friend class CoherentExtensionDSD5217;
         
     public:
-        DSD5217() : Component(), ccbMapping(this)
+        DSD5217() : MultibusSlotComponent()
         {
         }
 
@@ -152,77 +196,79 @@ namespace Motion
 
         const char* GetName() { return "DSD/Qualogy 5217 Multibus Disk & Tape Controller"; };
 
-// make sure these are not packed so that the OS can use them
-#pragma pack(push, 1)
-        // @brief I/O Parameter Block
+        /*
+            These are DECODED COPIES of the control blocks, not overlays onto guest memory - the controller
+            fetches them out of Multibus RAM when it is started. The comment on each field is its Multibus
+            byte offset within the block, which is what the manuals use. Note that the IP2 crosses the byte
+            lanes, so Multibus offset N is the byte the host wrote at N ^ 1: that is why the layout below
+            looks transposed compared to what you see in a memory viewer.
+        */
+
+        /// @brief Wake Up Block (5215 User Guide, figure 4-4)
+        struct WUB
+        {
+            uint8_t extension;              // +0: 7 = 24 bit linear addressing
+            uint32_t ccbPtr;                // +2: CCB address
+        }; 
+
+        /// @brief Channel Control Block (5215 User Guide, figure 4-3)
+        struct CCB
+        {
+            uint8_t ccw1;                   // +0: channel control word 1 (always 01h)
+            uint8_t busy;                   // +1: ff = busy, 00 = idle
+            uint32_t cibPtr;                // +2: CIB address
+            uint8_t ccw2;                   // +8: not used (always 01h)
+            uint8_t busy2;                  // +9: not used
+            uint32_t cpPtr;                 // +a: not used
+            uint16_t controlPtr;            // +e: not used (always 0004h)
+        };
+
+        /// @brief Controller Invocation Block (5217 Addendum figure 4-1, replaces 5215 section 4.6.7)
+        struct CIB
+        {
+            uint8_t opStatus;               // +1: operation status
+            uint8_t commandSemaphore;       // +2: the controller never touches this one
+            uint8_t statusSemaphore;        // +3: status semaphore
+            uint32_t iopbPtr;               // +8: IOPB Pointer
+        };
+
+        /// @brief Base of the CIB - see DSD5217_CIB_PTR_BIAS.
+        size_t CIBAddress() { return (ccb.cibPtr & DSD5217_BLOCK_PTR_MASK) - DSD5217_CIB_PTR_BIAS; }
+
+        /// @brief I/O Parameter Block (5215 User Guide, figure 4-3)
         struct IOPB
         {
-            uint32_t dummy;                 // required for size
-            uint32_t actualTransfers;
-            uint16_t deviceCode;
-            uint8_t function;
-            uint8_t unit;
-            uint16_t modifier;
-            uint16_t cylinder;              // cylinder
-            uint8_t sector;                 // cylinder
-            uint8_t head;                   // cylinder
+            uint32_t actualTransfers;       // +4:  returned at end of operation
+            uint16_t deviceCode;            // +8
+            uint8_t unit;                   // +a
+            uint8_t function;               // +b
+            uint16_t modifier;              // +c
+            uint16_t cylinder;              // +e
+            uint8_t head;                   // +10
+            uint8_t sector;                 // +11
             /* Data Buffer Address: This four-byte field contains the segmented address of the data buffer. 
             For normal read or write operations, this is the address of the multibus memory buffer where
             data is stored or fetched. For some commands, this is the address of additional control information */
-            uint32_t dba;                   
-            uint32_t rbc;                    // requested byte count
-            uint32_t generalPtr;            // use as a pointer
+            uint32_t dba;                   // +12
+            uint32_t rbc;                   // +16: requested byte count
+            uint32_t generalPtr;            // +1a: use as a pointer
         }; 
 
-        /// @brief Wake Up Block
-        struct WUB
-        {
-            uint8_t dummy;
-            uint8_t extension;              // 7 = 24 bit addressing?
-            uint32_t ccbPtr;                 
-        }; 
-
-        /// @brief Channel Control Block
-        struct CCB
-        {
-            uint8_t busy;                   // ff = busy, 00 = idle
-            uint8_t ccw1;                   // channel control word 1
-            uint32_t cibPtr;                // CIB ptr
-            uint16_t dummy;
-            uint8_t busy2;                  // not used? 
-            uint8_t ccw2;                   // not used? channel control word 2
-            uint32_t cpPtr;                 // cp ptr
-            uint16_t controlPtr;            // control pointer (not a pointer?)
-        };
-
-        /// @brief Controller Invocation Block
-        struct CIB
-        {
-            uint8_t opStatus;               // operation status
-            uint8_t reserved;
-            uint8_t statusSemaphore;        // status semaphore
-            uint8_t commandSemaphore;       // command semaphore
-            uint32_t zero;                  // must be zero
-            uint32_t iopbPtr;               // IOPB Pointer
-            uint32_t zero2;                 // must be zero
-        };
-
-        /// @brief Initialisation Information Block
+        /// @brief Initialisation Information Block - the data buffer used by the initialize command
         struct INIB
         {
-            uint16_t nrCylinders;
-            uint8_t removableHeads;
-            uint8_t fixedHeads;
-            uint8_t bytesPerSectorLow;
-            uint8_t sectorsPerTrack;
-            uint8_t numberOfAlternateCylinders;
-            uint8_t bytesPerSectorHigh;
+            uint16_t nrCylinders;               // +0
+            uint8_t fixedHeads;                 // +2
+            uint8_t removableHeads;             // +3
+            uint8_t sectorsPerTrack;            // +4
+            uint8_t bytesPerSectorLow;          // +5
+            uint8_t bytesPerSectorHigh;         // +6
+            uint8_t numberOfAlternateCylinders; // +7
         };
 
         /// @brief format related/
         struct FMTB
         {
-            // BE
             uint8_t pattern1;
             uint8_t function;               // format function
             uint8_t pattern3;
@@ -251,9 +297,15 @@ namespace Motion
             uint8_t sb[DSD5217_SB_SIZE];        // the status buffer ?
         }; 
 
-#pragma pack(pop)
+        // one physical drive
+        struct Drive
+        {
+            FileStream* stream;
+            INIB inib = {0};
+            bool initialised = false;
+        };
 
-        uint8_t state;                          // holds reset state
+        uint8_t state;                          // last byte written to the programmed i/o port
 
         // Methods
         uint8_t Read8(size_t addr) override;
@@ -262,46 +314,43 @@ namespace Motion
         void Write16(size_t addr, uint16_t value) override;
 
     private: 
-        // Multibus IRQ1 is used.
-        Multibus* multibus;
-        FileStream* hdd;
-        Multibus::SlotMapping ccbMapping;
-        CoherentExtensionDSD5217* dsdExtension;
+        Drive drives[DSD5217_MAX_DISK_DRIVES];
+        CoherentExtensionDSD5217* dsdExtension = nullptr;
 
-        // this is the wrong thing to do really. the actual system runs on a set of pointers but i just ignore them and do some horrible things in read8/write8
-        // we should either (a) allow access to raw MB memory bytes or (b) map each thing separately which is a mess
-        // but our design does not work with this.
+        /// @brief The drive the IOPB in hand is addressed to, or nullptr if that unit is not fitted.
+        Drive* CurrentDrive();
+
+        /// @brief Set from CurrentDrive() when a command is fetched, so the helpers need not each be handed it.
+        Drive* currentDrive = nullptr;
+
         WUB wub = {0};
         CCB ccb = {0};
         CIB cib = {0};
         IOPB iopb = {0};
         INIST inist = {0};
 
-        // data buffer type
-        enum DataBufferType
-        {
-            INIT = 0, // not called INIB to reduce confusion
-            ST = 1,
-            DiskBuffer = 2,
-        };
+        // Chain through the control blocks in Multibus memory the way the real 8085 firmware does
+        bool FetchWakeUpBlock();
+        bool FetchChannelBlocks();
+        void FetchIOPB();
 
-        // what IOPB.dba refers to
-        DataBufferType bufferType = DataBufferType::INIT;
-
-        // Methods which exist because this is jank
-        uint8_t ReadBuffer(int32_t offset);
-        void WriteBuffer(int32_t offset, uint8_t value); 
+        // Post the result of a command back into the CIB and drop the busy flag in the CCB
+        void PostStatus(uint8_t opStatus);
+        void SetControllerBusy(bool busy);
 
         // Methods related to causing the disk to actually do something
         size_t CHSToLinear();
+        size_t GetBytesPerSector();
 
-        void ReadSector();
+        bool ReadSector();
+        bool WriteSector();
+        bool ReadInitBlock();
+        bool WriteStatusBlock();
 
-        // can't do any disk ops if there is no disk inserted lmao
-        bool diskIsOpen;
-
-        // we don't execute a command on initial start
-        bool initialStart = true; 
+        // Held in reset at power on; the first start after that only chains the tables (5215 User Guide, 4.5 step C)
+        bool inReset = true;
+        bool tablesFetched = false;
+        bool irqAsserted = false;
 
         // Only one sector can be read at a time
         uint8_t sectorBuffer[DSD5217_MAXIMUM_BUFFER_SIZE] = {0};
@@ -309,5 +358,6 @@ namespace Motion
         // execute command
         void ExecuteCommand();
         void AssertIRQLine();
+        void ClearIRQLine();
     }; 
 }; 

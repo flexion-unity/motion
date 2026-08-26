@@ -44,12 +44,35 @@ namespace Motion
 
     void Filesystem::Seek(FileStream* fs, size_t offset)
     {
-        fs->stream.seekp(0, std::ios_base::beg);
+        fs->stream.seekg(offset, std::ios_base::beg); // seekg == seekp
     }
 
-    void Filesystem::Close(FileStream* fc)
+    size_t Filesystem::GetSize(FileStream* fs)
+    {
+        fs->stream.clear(); // clear any failbits we may need
+        fs->stream.seekg(0, std::ios_base::end);
+        
+        auto size = fs->stream.tellg();
+
+        if (size == -1)
+        {
+            Logger::Log(FILESYSTEM_LOG_PREFIX, std::format("Somehow we failed to seek?!").c_str(), LogChannels::FatalError);
+            return 0; // doesn't mater
+        }
+
+        return fs->stream.tellg();
+    }
+
+    bool Filesystem::IsEOF(FileStream* fs)
+    {
+        fs->eof = fs->stream.eof();
+        fs->stream.clear(); //unset failbit so you can read again
+        return fs->eof; 
+    }
+
+    void Filesystem::Close(FileStream* fs)
     {
         // YOU MUST SET TO NULLPTR!
-        delete fc; 
+        delete fs; 
     }
 }

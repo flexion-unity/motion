@@ -37,6 +37,7 @@ namespace Motion
         AddComponent<BP3>();
         AddComponent<PROM>();
         AddComponent<PROM_SRAM>();
+        AddComponent<IP2Interrupt>();
         AddComponent<IP2MMU>();
         AddComponent<DUART68681>();
         AddComponent<IP2Switches>();

@@ -50,6 +50,7 @@ namespace Motion
     #define DC4_REG_COLOURMAP_BLUE_END  0x500047FF
 
     #define DC4_COLOUR_RAM_SIZE         49152
+    #define DC4_COLOUR_MAP_SIZE         768             // size of one colourmap
 
     // Single map stuff
     #define DC4_SINGLEMAP_MASK          0xFFF
@@ -98,7 +99,7 @@ namespace Motion
     private: 
         void UpdateColourmap(size_t addr, uint16_t value);
 
-        uint16_t GetMultimapAddress(uint32_t offset) { return (((3 * (flags & 0x0F) << 8)) + ((offset - DC4_REG_COLOURMAP_START) >> 1));};
+        size_t DetermineColourmapIndex(size_t addr) { return (((3 * (flags & 0x0F) << 8)) + ((addr - DC4_REG_COLOURMAP_START) >> 1));};
 
         // this is 16 bit so we index it with logical map indices not bytes as it is more logical
         uint16_t colourMap[DC4_COLOUR_RAM_SIZE >> 1]; // safe to put in BSS ????

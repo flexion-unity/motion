@@ -48,6 +48,9 @@ namespace Motion
             case DC4_REG_FLAGS:
                 ret = flags;
                 break; 
+            case DC4_REG_COLOURMAP_START ... DC4_REG_COLOURMAP_END:
+                ret = colourMap[DetermineColourmapIndex(addr)];
+                break;
             default:
                 Logger::Log(LOG_PREFIX_DC4, std::format("UNKNOWN DC4 Read16 0x{:x} from 0x{:x}", ret, addr).c_str(), LogChannels::Warning);
                 break;
@@ -89,7 +92,7 @@ namespace Motion
         uint32_t index = 0;
 
         if (flags & DC4_FLAG_REG_ADDRMAP)
-            index = GetMultimapAddress(addr); 
+            index = DetermineColourmapIndex(addr); 
         else
             index = (addr - DC4_REG_COLOURMAP_START) >> 1; // this indicates that it is single map.
 
@@ -129,11 +132,13 @@ namespace Motion
 
                     uint16_t colourmapAddress = 0;
 
+                    // In single map mode the top 4 bits of the pixel determine the bank.
+                    // Only 12 bits are used.
 
                     if (isMultimap)
-                        colourmapAddress = GetMultimapAddress(paletteValue & 0xFF);
+                        colourmapAddress = DetermineColourmapIndex(paletteValue & 0xFF);
                     else
-                        colourmapAddress = paletteValue;
+                        colourmapAddress = (((paletteValue >> 8) & 0x0F) * DC4_COLOUR_MAP_SIZE) +  paletteValue;
 
                     // technically RGB161616 but treated as RGB 888. Huh.
                     uint32_t colour = ((colourMap[paletteValue] & 0xFF))
@@ -147,7 +152,7 @@ namespace Motion
 
         }
     }
-    
+
     void DC4::Shutdown()
     {
         delete extensionDC4;

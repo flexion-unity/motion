@@ -102,6 +102,8 @@ namespace Motion
                 break;
             case REG_STATUS:
                 status = value;
+                
+                interrupts->SetEnabled(value & MMU_STATUS_ENABLE_INTERRUPTS);
                 break;
             case REG_PARITY:
                 parity = value;
@@ -222,7 +224,7 @@ namespace Motion
                 || !(page & MMU_MASK_IS_PROTECTED)
                 || ((page & MMU_MASK_IS_PROTECTED) == MMU_MASK_SUPERVISOR_ONLY) && !(cpu->IsPrivilegedMode()))
             {
-                //busError = true; 
+                busError = true; 
             }
 
             if (!busError)
@@ -235,7 +237,7 @@ namespace Motion
                 || (page & MMU_MASK_IS_PROTECTED) == MMU_MASK_READ_ONLY // cannot write to readonly 
                 || ((page & MMU_MASK_IS_PROTECTED) == MMU_MASK_SUPERVISOR_ONLY) && !(cpu->IsPrivilegedMode()))
             {
-                //busError = true; 
+                busError = true; 
             }
 
             if (!busError)
@@ -244,16 +246,16 @@ namespace Motion
 
         if (busError)
         {
-            Logger::Log(LOG_PREFIX_IP2MMU, 
-                std::format("***** VERY BIG PROBLEM ***** Bus error @ segment {} offset {} (haven't figured out the interface yet)", 
-                segment, (addr << 2)).c_str(), LogChannels::FatalError);
+            // CPU will handle it
+            Logger::Log(LOG_PREFIX_IP2MMU,
+            std::format("Bus error: {} of unmapped page 0x{:x} (segment {}, pte index 0x{:x}, pte 0x{:08x})",
+            isWrite ? "write" : "read", addr, segment, finalPageNumber, page).c_str(), LogChannels::Warning);
 
             return false; 
         }
-        
+
         // calculate a real physical ram address with 13...0 page adn teh bottom1 0 bits of the real address
         *finalAddress = (page & 0x3FFF) << 12 | (addr & 0x1FFF);
-        //Logger::Log(LOG_PREFIX_IP2MMU, std::format("Translated virtual address {:x} to physical address {:x}", addr, *finalAddress).c_str(), LogChannels::Debug);
         return true; 
     }
 }

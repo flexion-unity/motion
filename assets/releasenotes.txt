@@ -7,10 +7,11 @@ Release Notes
     * Video scaling (thanks to flexion)
     * --help for common convars (thanks to flexion)
     * a launcher that lets you configure the most common settings
-    * lisburn: hardcode DASM and regsiter info to ON since we really don't need them to be an option
-    * Allow multibus memory mapping
+    * lisburn: hardcode DASM and register info to ON since we really don't need them to be an option
+    * lisburn: fix 68020 format B stack frames
     * Fix emulator input being sent to main emulator as well as IMGUI
     * Fix shift and ctrl keys 
+    * Fix Filesystem::Seek being broken
     * Fix busted back switches impl (was using pm2's???)
     * Last megabyte multibus memory is now emulated
         * It tries to map the last megabyte to a multibus device and treats it as RAM if it fails. Not sure if this is right
@@ -20,8 +21,8 @@ Release Notes
     * added a cool logo
     * assets now in assets folder
     * added ability to edit register values, click on them to edit them
-    * DSD 5217 emulation
-        * currently enough to "ls" but not to boot the kernel 
+    * DSD 5217 emulation (thanks danifunker)
+    * IP2 interrupt emulation (thanks danifunker)
     * multibus paging emulation
     
 0.1.1 (August 10, 2026)
