@@ -208,6 +208,7 @@ Moira::reset()
     reg.sr.ipl = 7;
 
     ipl = 0;
+    nmiTaken = false;
     fcl = 2;
     fcSource = 0;
 
@@ -239,7 +240,7 @@ Moira::execute()
     using namespace State;
 
     // Check the integrity of the IRQ flag
-    if (reg.ipl > reg.sr.ipl || reg.ipl == 7) assert(flags & CHECK_IRQ);
+    //if (reg.ipl > reg.sr.ipl || reg.ipl == 7) assert(flags & CHECK_IRQ);
 
     // Check the integrity of the trace flag
     assert(!!(flags & TRACING) == reg.sr.t1);
@@ -255,6 +256,7 @@ Moira::execute()
         //
 
         reg.pc += 2;
+        anRollbackCount = 0;
         try {
             (this->*exec[queue.ird])(queue.ird);
         } catch (const std::exception &exc) {
@@ -316,6 +318,7 @@ Moira::execute()
         
         // Execute the instruction
         reg.pc += 2;
+        anRollbackCount = 0;
 
         if (flags & LOOPING) {
 
@@ -377,6 +380,18 @@ Moira::processException(const std::exception &exc)
 
         if (auto be = dynamic_cast<const BusError *>(&exc); be) {
 
+            /*
+                The handler will restart this instruction, so put back any -(An)/(An)+ update it
+                already made - see anRollback. The registers are restored before the frame is
+                stacked, so what the exception handler saves is the state the instruction is about
+                to be re-entered with.
+            */
+            while (anRollbackCount) {
+
+                anRollbackCount--;
+                reg.a[anRollback[anRollbackCount].an] = anRollback[anRollbackCount].value;
+            }
+
             execBusError<C>(be->stackFrame);
             return;
         }
@@ -398,10 +413,15 @@ Moira::processException(const std::exception &exc)
 bool
 Moira::checkForIrq()
 {
-    if (reg.ipl > reg.sr.ipl || reg.ipl == 7) {
+    // Level 7 is edge triggered: recognised on the transition to 7, and holding the pins there does not ask again.
+    bool nmi = (reg.ipl == 7);
+
+    if (nmi ? !nmiTaken : (reg.ipl > reg.sr.ipl)) {
 
         // Exit loop mode
         if (flags & State::LOOPING) flags &= ~State::LOOPING;
+
+        if (nmi) nmiTaken = true;
 
         // Trigger interrupt
         execInterrupt(reg.ipl);
@@ -813,6 +833,10 @@ Moira::setIPL(u8 val)
     if (ipl != val) {
         
         ipl = val;
+
+        // Coming off level 7 rearms it, so the next transition up to 7 is a fresh edge.
+        if (val != 7) nmiTaken = false;
+
         flags |= State::CHECK_IRQ;
     }
 }

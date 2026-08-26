@@ -217,13 +217,23 @@ Moira::readOp(int n, u32 *ea, u32 *result)
             // Compute effective address
             *ea = computeEA<C, M, S, F>(n);
 
-            // Emulate -(An) register modification
-            updateAnPD<M, S>(n);
-
             // Read from effective address
             *result = readM<C, M, S, F>(*ea);
 
-            // Emulate (An)+ register modification
+            /* Note An before moving it: a later access in the same instruction can still fault and restart it. See anRollback. */
+            if constexpr (M == Mode::PD || M == Mode::PI) {
+
+                if (anRollbackCount < (int)std::size(anRollback)) {
+
+                    anRollback[anRollbackCount].an = n;
+                    anRollback[anRollbackCount].value = readA(n);
+                    anRollbackCount++;
+                }
+            }
+
+            /* -(An) must decrement after the access, so a fault leaves An where the restart needs it. */
+            // Emulate -(An) and (An)+ register modification
+            updateAnPD<M, S>(n);
             updateAnPI<M, S>(n);
     }
 }
@@ -244,13 +254,12 @@ Moira::writeOp(int n, u32 val)
             // Compute effective address
             u32 ea = computeEA<C, M, S>(n);
 
-            // Emulate -(An) register modification
-            updateAnPD<M, S>(n);
-
             // Write to effective address
             writeM<C, M, S, F>(ea, val);
 
-            // Emulate (An)+ register modification
+            /* -(An) must decrement after the access, so a fault leaves An where the restart needs it. */
+            // Emulate -(An) and (An)+ register modification
+            updateAnPD<M, S>(n);
             updateAnPI<M, S>(n);
     }
 }
@@ -494,8 +503,9 @@ Moira::readI()
 template <Core C, Size S, Flags F> void
 Moira::push(u32 val)
 {
+    /* Move the stack pointer only once the write has landed, so a push onto an absent page can be restarted. */
+    write<C, AddrSpace::DATA, S, F>(U32_SUB(reg.sp, S), val);
     reg.sp -= S;
-    write<C, AddrSpace::DATA, S, F>(reg.sp, val);
 }
 
 template <Core C, Size S, Flags F> u32
@@ -580,6 +590,9 @@ template <Core C, Flags F, int delay> void
 Moira::fullPrefetch()
 {
     assert(!misaligned<C>(reg.pc));
+
+    /* pc0 here, not just in prefetch(): if this first fetch at the new pc faults, a stale pc0 restarts the instruction that jumped here. */
+    reg.pc0 = reg.pc;
 
     queue.irc = (u16)read<C, AddrSpace::PROG, Word>(reg.pc);
     if (delay) SYNC(delay);

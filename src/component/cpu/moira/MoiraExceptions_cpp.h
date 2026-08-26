@@ -140,30 +140,30 @@ Moira::writeStackFrame1001(u16 sr, u32 pc, u32 ia, u16 nr)
 }
 
 template <Core C> void
-Moira::writeStackFrame1010(u16 sr, u32 pc, u16 nr)
+Moira::writeStackFrame1010(StackFrame &frame, u16 sr, u32 pc, u16 nr)
 {
     // Internal registers
     push<C, Word>(0);
     push<C, Word>(0);
 
     // Data output buffer
-    push<C, Long>(0);
+    push<C, Long>(writeBuffer);
 
     // Internal registers
     push<C, Word>(0);
     push<C, Word>(0);
 
     // Data cycle fault address
-    push<C, Long>(0);
+    push<C, Long>(frame.addr);
 
     // Instruction pipe stage B
-    push<C, Word>(0);
+    push<C, Word>(queue.irc);
 
     // Instruction pipe stage C
-    push<C, Word>(0);
+    push<C, Word>(queue.ird);
 
     // Special status word
-    push<C, Word>(0);
+    push<C, Word>(frame.ssw);
 
     // Internal register
     push<C, Word>(0);
@@ -269,8 +269,10 @@ Moira::execAddressError(StackFrame frame, int delay)
     // Write stack frame
     if (C == Core::C68000) {
         writeStackFrameAEBE<C>(frame);
-    } else {
+    } else if (C == Core::C68010) {
         writeStackFrame1000<C>(frame, status, frame.pc, reg.pc0, 3, frame.addr);
+    } else {
+        writeStackFrame1010<C>(frame, status, reg.pc0, 3);
     }
     SYNC(2);
 
@@ -303,11 +305,13 @@ Moira::execBusError(StackFrame frame, int delay)
     // A misaligned stack pointer will cause a double fault
     if (misaligned<C>(reg.sp)) throw DoubleFault();
 
-    // Write stack frame
+    /* Format A, not the 68010's format 8, which a 68020 kernel misreads and cannot RTE out of - and pc0, because format A restarts the instruction. */
     if (C == Core::C68000) {
         writeStackFrameAEBE<C>(frame);
-    } else {
+    } else if (C == Core::C68010) {
         writeStackFrame1000<C>(frame, status, frame.pc, reg.pc0, 2, frame.addr);
+    } else {
+        writeStackFrame1010<C>(frame, status, reg.pc0, 2);
     }
     SYNC(2);
 
