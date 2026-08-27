@@ -103,10 +103,10 @@
                                                         | ((uint32_t)space[addr + 2] << 8) \
                                                         | (uint32_t)space[addr + 3]
 
-#define WRITE16_BE(space, addr, value)          space[addr] = (uint8_t)(value >> 8) \
+#define WRITE16_BE(space, addr, value)          space[addr] = (uint8_t)(value >> 8); \
                                                         space[addr + 1] = (uint8_t)value
 
-#define WRITE32_BE(space, addr, value)          space[addr] = (uint8_t)(value >> 24) \
-                                                        space[addr + 1] = (uint8_t)(value >> 16) \
-                                                        space[addr + 2] = (uint8_t)(value >> 8) \
+#define WRITE32_BE(space, addr, value)          space[addr] = (uint8_t)(value >> 24); \
+                                                        space[addr + 1] = (uint8_t)(value >> 16); \
+                                                        space[addr + 2] = (uint8_t)(value >> 8); \
                                                         space[addr + 3] = (uint8_t)value

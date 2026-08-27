@@ -7,18 +7,18 @@
     ip2_rtc.hpp: The MC146818 real time clock on the IP2, and the periodic interrupt the kernel
     schedules on.
 
-    The IP2 does not hand the CPU the RTC's own bus. Two byte-wide ports stand in for it: a control
+    The IP2 communicates with the RTC using two byte-wide ports stand in for it: a control
     port carrying the strobe lines, and a data port that latches the register address on a write when
     the clock is not selected, and carries data when it is.
 
+    How it works:
+    
         write data, ctrl != CE          latch the register address
         write data, ctrl == CE          write the latched register
         read data,  ctrl == RE|DS       read the latched register
-        read data,  otherwise           read the latched address back
-
-    The periodic interrupt out of this part is local interrupt 3, which the vector PROM turns into
-    vector 0x53 - the kernel's Xclock. Nothing else in the machine generates a periodic interrupt, so
-    without it the scheduler has nothing to wake it and idles in _swtch forever.
+        read data,  otherwise           read the latched address 
+        
+    Fires interrupt 3 which is sent to Xclock (required for the scheduler to work)
 */
 
 #pragma once

@@ -183,6 +183,8 @@ Similar to a .plan file
 * yea it boots (panic: something wrong with intpixel32)
 * RTC emulation
 
+## 2026-08-27
+* unaligned ram accesses
 
 v0.2.0 TODO:
 

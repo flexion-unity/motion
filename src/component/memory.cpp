@@ -127,10 +127,7 @@ namespace Motion
             return;
         } 
 
-        uint32_t* ram32 = (uint32_t*)ram;
-        // IRIS is a big-endian system.
-        TOBE32(value);
-        ram32[addr >> 2] = value;
+        WRITE32_BE(ram, addr, value);
     }
 
     void Memory::Shutdown()

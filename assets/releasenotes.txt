@@ -21,9 +21,11 @@ Release Notes
     * added a cool logo
     * assets now in assets folder
     * added ability to edit register values, click on them to edit them
-    * DSD 5217 emulation (thanks danifunker)
+    * DSD 5217 emulation (first version sucked, thanks danifunker)
     * IP2 interrupt emulation (thanks danifunker)
+    * proper RTC emulation (thanks danifunker)
     * multibus paging emulation
+    * working unaligned memory access
     
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.
