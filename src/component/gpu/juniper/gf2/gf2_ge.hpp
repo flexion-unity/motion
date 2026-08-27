@@ -16,7 +16,7 @@ namespace Motion
     class GF2GE : public Component 
     {
     public: 
-        const char* GetName() { "Geometry Engine Rev 2.0/2.5"; }; 
+        const char* GetName() { return "Geometry Engine Rev 2.0/2.5"; }; 
 
         void Start() override;
         void Tick() override;
