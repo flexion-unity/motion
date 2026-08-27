@@ -28,4 +28,9 @@ namespace Motion
     {
 
     }
+
+    void GF2GE::Tick()
+    {
+        
+    }
 }
