@@ -6,6 +6,8 @@
 
     ip2_interrupt.hpp: The interrupt logic on the IP2 board.
 
+    The interrupt controller has 
+
     The 68020 has three IPL pins and the IP2 drives them from two groups of sources: the eight shared
     Multibus interrupt lines, and a handful of "local" interrupts from the parts on the board itself.
     Several sources share a level, so an interrupt acknowledge cycle reads a vector number out of a
@@ -28,9 +30,8 @@ namespace Motion
     #define IP2_NUM_MULTIBUS_IRQ            8
 
     /*
-        U118, a 27S29 512x8 PROM, turns the interrupt level and the state of the local interrupt lines
-        into a vector number. The part is not in the archive, so this reproduces its contents from the
-        table in the IP2 documentation, which the kernel's own vector table agrees with exactly:
+        U118, a 27S29 512x8 PROM, converts the interrupt level and the state of the local interrupt lines
+        into a vector number. It's dumped but we don't need to load it, it is set up like this:
 
             level 1   0x41  Multibus 0 and 1
             level 2   0x42  Multibus 2
@@ -45,7 +46,7 @@ namespace Motion
             0x41-0x46  Xmbintr2..Xmbintr7      0x50  ducom      0x51  Xclock
             0x53       _save                   0x55  Xaddrerr   0x56/0x57  Xduart0
 
-        Note that the scheduler clock is uart1, not the RTC.
+        scheduler is clocked using DUART 1 because the rtc is not enough
     */
     #define IP2_VECTOR_MULTIBUS_BASE        0x40        // + level
     #define IP2_VECTOR_LOCAL_BASE           0x50        // + local source index
@@ -63,7 +64,7 @@ namespace Motion
         IP2_NUM_LOCAL_INTERRUPTS = 8,
     };
 
-    // Which sources sit on which level. Local 4 is not wired to anything.
+    // The above local interrupts are crunched into the code.
     #define IP2_LOCAL_MASK_LEVEL6           0x0F        // duart0, duart1, ext, rtc
     #define IP2_LOCAL_MASK_LEVEL7           0xE0        // parity, mouse, mouse unplugged
 
@@ -79,16 +80,13 @@ namespace Motion
         void Shutdown() override { cpu = nullptr; };
 
         /// @brief Assert or release one of the eight shared Multibus interrupt lines.
-        void SetMultibusIRQ(int32_t number, bool asserted);
+        void SetMultibusIRQ(uint32_t number, bool asserted);
 
         /// @brief Assert or release one of the interrupt sources on the IP2 itself.
         void SetLocalInterrupt(IP2LocalInterrupt source, bool asserted);
 
         /// @brief Master interrupt enable, from ST_ENABINT in the status register.
         void SetEnabled(bool enabled);
-
-        /// @brief The vector an interrupt acknowledge cycle at this level reads out of U118.
-        uint8_t GetVector(int32_t level);
 
         /// @brief Which levels are currently being driven, for the debugger.
         uint8_t GetPendingLevels() { return PendingLevels(); };
@@ -97,7 +95,7 @@ namespace Motion
         /// @brief Fold the sources into a bitmask of the seven interrupt levels.
         uint8_t PendingLevels();
 
-        /// @brief Work out the highest pending level and hand it to the CPU.
+        /// @brief Fire the highest pending interrupt level.
         void Update();
 
         uint8_t multibusAsserted = 0;

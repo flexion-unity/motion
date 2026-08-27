@@ -12,9 +12,9 @@
 
 namespace Motion
 {
-    void IP2Interrupt::SetMultibusIRQ(int32_t number, bool asserted)
+    void IP2Interrupt::SetMultibusIRQ(uint32_t number, bool asserted)
     {
-        if (number < 0 || number >= IP2_NUM_MULTIBUS_IRQ)
+        if (number >= IP2_NUM_MULTIBUS_IRQ)
         {
             Logger::Log(LOG_PREFIX_IP2INT, std::format("Tried to drive invalid Multibus IRQ #{}", number).c_str(), LogChannels::Warning);
             return;
@@ -87,7 +87,7 @@ namespace Motion
         if (!cpu)
             return;
 
-        // ST_ENABINT gates the lot, as in MAME: int_w only reaches the CPU while the status register enable is set.
+        // ST_ENABINT determines if interrupts are enabled
         uint8_t levels = enabled ? PendingLevels() : 0;
         int32_t level = 0;
 
@@ -105,29 +105,5 @@ namespace Motion
 
         lastLevel = level;
         cpu->SetIRQLine(level);
-    }
-
-    /*
-        The level alone picks the vector for everything except levels 6 and 7, where whichever local
-        source is asserting decides. Where more than one is, the real PROM encodes a fixed priority;
-        the order used here is by line number, which is the order the vector numbers are assigned in.
-    */
-    uint8_t IP2Interrupt::GetVector(int32_t level)
-    {
-        uint8_t candidates = 0;
-
-        if (level == 6)
-            candidates = localAsserted & IP2_LOCAL_MASK_LEVEL6;
-        else if (level == 7)
-            candidates = localAsserted & IP2_LOCAL_MASK_LEVEL7;
-
-        for (int32_t i = 0; i < IP2_NUM_LOCAL_INTERRUPTS; i++)
-        {
-            if (candidates & (1 << i))
-                return (uint8_t)(IP2_VECTOR_LOCAL_BASE + i);
-        }
-
-        // nothing local, so it is the Multibus line that shares the level
-        return (uint8_t)(IP2_VECTOR_MULTIBUS_BASE + level);
     }
 }
