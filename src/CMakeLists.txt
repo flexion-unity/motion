@@ -25,7 +25,6 @@ add_executable(motion
     base/machine/machine.cpp
     base/filesystem/filesystem.cpp
     base/cvar/cvar.cpp
-    component/component.cpp
     component/addrspace.cpp
     component/memory.cpp
     component/cpu/mc68020_core.cpp

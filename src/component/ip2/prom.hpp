@@ -60,6 +60,8 @@ namespace Motion
             Logger::Log(LOG_PREFIX_PROM, std::format("Tried to write 32-bit {:x} to PROM mapped {:x}", value, addr).c_str(), LogChannels::Warning);
         };
 
+        bool IsEarlyStart() override { return true; }; 
+
     private: 
         uint8_t* rom;
 

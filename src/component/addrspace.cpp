@@ -23,20 +23,15 @@ namespace Motion
 
     void AddrSpace::LogUnmapped(const char* what, size_t addr, bool isWrite, uint32_t value)
     {
-        if (peekDepth || unmappedLogged >= ADDRSPACE_MAX_UNMAPPED_LOGGED)
+        if (peekDepth)
             return;
 
-        unmappedLogged++;
-
-        std::string tail = (unmappedLogged == ADDRSPACE_MAX_UNMAPPED_LOGGED)
-            ? " - further unmapped accesses will not be logged" : "";
-
         if (isWrite)
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::{} - Unmapped write of 0x{:x} to 0x{:x}!{}",
-                what, value, addr, tail).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::{} - Unmapped write of 0x{:x} to 0x{:x}!",
+                what, value, addr).c_str(), LogChannels::Warning);
         else
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::{} - Unmapped read from 0x{:x}!{}",
-                what, addr, tail).c_str(), LogChannels::Warning);
+            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::{} - Unmapped read from 0x{:x}!",
+                what, addr).c_str(), LogChannels::Warning);
     }
 
     uint8_t AddrSpace::ReadU8(size_t addr)

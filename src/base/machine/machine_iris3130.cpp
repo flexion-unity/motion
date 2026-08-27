@@ -17,6 +17,7 @@
 #include <component/ip2/ip2_rtc.hpp>
 #include <component/ip2/ip2_duart.hpp>
 #include <component/ip2/ip2_dip_switches.hpp>
+#include <component/ip2/ip2_mouse.hpp>
 #include <component/keyboard/keyboard_iris.hpp>
 #include <component/multibus/multibus.hpp>
 #include <component/gpu/juniper/dc4/dc4.hpp>
@@ -34,11 +35,11 @@ namespace Motion
     void IRIS3130::AddComponents()
     {
         AddComponent<Memory>();
+        AddComponent<PROM>();
         AddComponent<MC68020>();
+        AddComponent<PROMSRAM>();
         AddComponent<Multibus>();
         AddComponent<BP3>();
-        AddComponent<PROM>();
-        AddComponent<PROMSRAM>();
         AddComponent<IP2Interrupt>();
         AddComponent<IP2MMU>();
         AddComponent<DUART68681>();
@@ -51,6 +52,7 @@ namespace Motion
         // add in reverse order
         AddComponent<GF2FBC>();
         AddComponent<GF2GE>();
+        AddComponent<IP2Mouse>();
 
         forceEnterSerialMonitor = Cvar::Get("forceEnterSerialMonitor", "0");
 

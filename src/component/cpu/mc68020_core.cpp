@@ -30,7 +30,7 @@ namespace Motion
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.a[6], "a6"));
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.a[7], "sp [a7]"));
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.pc, "pc"));
-        // NEED TO BE some changes to MOIRA for these ones
+        // NEED TO BE some changes to LISBURN for these ones
         //system->AddRegister(new CoherentSystem::Register<uint8_t>(&this->moiraCpu.reg), "ccr"); // flags (technically lower byte of status)
         //system->AddRegister(new CoherentSystem::Register<uint8_t>(&this->moiraCpu.reg.sr.), "status"); 
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.usp, "usp"));
@@ -50,10 +50,16 @@ namespace Motion
         // convert to nanoseconds
 
         Logger::Log(LOG_PREFIX_68020, "Resetting CPU...");
+
+        // ignore autovectors. THe IP2 reads out of PROM U118 to determine what vectors to call  on interrupts
+        moiraCpu.irqMode = Motion::Lisburn::IrqMode::USER;
         moiraCpu.reset();
 
         // moira has a didReset delegate, but due to various design reasons (mostly include cycles) we can't use it 
         isInReset = false;
+
+        // so we don't bus fault 8 morbillion times during reset
+        AddrSpace::SetFaultsEnabled(true);
     }
 
     void MC68020::Tick()

@@ -112,10 +112,11 @@
     (todo)
 
 35000000h -> Clock Data (8-bit)
-    (todo)
+    (todo)````
 
 36000000h -> "OS Base" (8-bit)
-    (todo)
+    Base pagetable used for kernel segment shifted right by 8 bits. So page 1 would become page 256, 2 512 and so on
+    This also means that the kernel must start on a megabyte boundar
 
 38000000h -> Status Register (16-bit)
 

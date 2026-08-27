@@ -166,10 +166,11 @@ namespace Motion
     }   
 
     /*
-        Nothing on the backplane claimed this address, so the IP2 answers for it itself: the first
+        Nothing on the backplane decoded this address, so the IP2 answers for it itself: the first
         megabyte of Multibus memory is a window onto system RAM through the slave map, and the second
-        is the map SRAM. Anything else is a hole - nothing drives DSACK, the cycle times out and BERR
-        is asserted. The PROM relies on that: gl2_probe decides whether a GF2 is fitted by reading the
+        is the map SRAM. Anything else is a bus error
+    
+        The PROM relies on that: gl2_probe decides whether a GF2 is fitted by reading the
         FBC flags at 0x50002400 and seeing whether it bus errors.
     */
     void Multibus::LogUnmapped(const char* what, size_t addr, bool isWrite, uint32_t value)

@@ -248,7 +248,7 @@ namespace Motion
         {
             // CPU will handle it
             Logger::Log(LOG_PREFIX_IP2MMU,
-            std::format("Bus error: {} of unmapped page 0x{:x} (segment {}, pte index 0x{:x}, pte 0x{:08x})",
+            std::format("Bus error: {} of unmapped address 0x{:x} (segment {}, pte index 0x{:x}, pte 0x{:08x})",
             isWrite ? "write" : "read", addr, segment, finalPageNumber, page).c_str(), LogChannels::Warning);
 
             return false; 

@@ -44,7 +44,7 @@ namespace Motion
 
     // Class implementing address space.
     // It is tied to the Machine.
-    // By default each machine has
+    // By default each machine has an addres space
     class AddrSpace
     {
         public:
@@ -78,8 +78,8 @@ namespace Motion
             static void SetFaultsEnabled(bool enabled) { faultsEnabled = enabled; };
 
             /*
-                Bring-up instrumentation. An unmapped access is nearly always a pointer that was
-                corrupted somewhere upstream, and the only way to find upstream is to see who was
+                An unmapped access is nearly always a pointer that was corrupted somewhere earlier int he boot process,
+                and the only way to find upstream is to see who was
                 executing at the time. The CPU installs a hook here because AddrSpace cannot include
                 the CPU headers without a cycle.
             */
@@ -125,17 +125,7 @@ namespace Motion
             /// @brief Whether a failed translation should be recorded at all. Set once at startup.
             inline static bool faultsEnabled = false;
 
-            /*
-                Thread local, and it matters. These are a handshake between one memory access and the
-                code right after it that turns a failed translation into an exception, so they belong
-                to whoever is making the access - and the emulation thread is not the only one making
-                them. The debugger disassembles around the PC from the render thread every frame,
-                inside an AddrSpacePeek, and with a shared peekDepth that window suppressed faults on
-                the *emulation* thread: SignalFault returned early, the CPU read 0xFF instead of
-                taking a bus error, and carried on into whatever that decoded as. It showed up as a
-                boot that died with an illegal instruction roughly one run in four, because it
-                depended on a debugger frame happening to overlap a page fault.
-            */
+            /* this is terrible. debugger does not need thread_local it should just be peeking */
             inline static thread_local bool faultPending = false;
             inline static thread_local size_t faultAddress = 0;
             inline static thread_local bool faultWasWrite = false;
