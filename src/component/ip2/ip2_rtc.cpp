@@ -2,6 +2,7 @@
     m  o  t  i  o  n
     The SGI Emulator
 
+    Copyright (c)2026 danifunker
     Copyright (c)2026 starfrost
 
     ip2_rtc.cpp: The MC146818 real time clock on the IP2.
@@ -13,14 +14,46 @@
 
 namespace Motion
 {
+    Cvar* logIP2RTC;
+
+    void IP2Clock::Start()
+    {
+        logIP2RTC = Cvar::Get("logIP2RTC", "0");
+
+        AddrSpaceMapping mapping = AddrSpaceMapping();
+
+        mapping.component = this;
+        mapping.startAddr = IP2_CLOCK_START;
+        mapping.endAddr = IP2_CLOCK_END;
+
+        AddrSpace::AddMapping(mapping);
+
+        // A real one has a battery, so the machine expects to find its RAM and time valid.
+        registers[RTC_REG_D] = RTC_D_VALID_RAM_AND_TIME;
+
+        rtcChannel = LogChannel(LOG_CHANNEL_IP2RTC, ConsoleColor::BrightCyan, ConsoleColor::White);
+        Logger::AddChannel(rtcChannel);
+        logEnabled = logIP2RTC->GetValue();
+
+        if (logEnabled)
+            Logger::SetChannelEnabled(LOG_CHANNEL_IP2RTC);
+    }
+
     uint8_t IP2Clock::Read8(size_t addr)
     {
+        uint8_t ret = 0x00;
+        
         if (addr < IP2_CLOCK_DATA)
-            return (uint8_t)control;
+            ret = (uint8_t)control;
 
         // Data only while the read strobes are up; otherwise the port reads back the latched address, which the PROM checks.
         if (control == (RTC_CTRL_READ_ENABLE | RTC_CTRL_DATA_STROBE))
-            return ReadRegister(address);
+            ret =  ReadRegister(address);
+
+        ret = address;
+
+        if (logIP2RTC->GetValue())
+            Logger::Log(LOG_PREFIX_IP2RTC, std::format("IP2 RTC read {:x} from {:x}", ret, address).c_str(), LOG_CHANNEL_IP2RTC);
 
         return address;
     }
@@ -63,6 +96,10 @@ namespace Motion
                 registers[address] = value;
                 break;
         }
+
+
+        if (logIP2RTC->GetValue())
+            Logger::Log(LOG_PREFIX_IP2RTC, std::format("IP2 RTC write {:x} to {:x}", value, address).c_str(), LOG_CHANNEL_IP2RTC);
     }
 
     /*

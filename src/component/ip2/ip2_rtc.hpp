@@ -36,7 +36,8 @@ namespace Motion
     #define IP2_CLOCK_CTRL                      0x34000000          // strobe lines to the RTC
     #define IP2_CLOCK_DATA                      0x35000000          // address latch, or register data
 
-    #define LOG_PREFIX_IP2RTC                   "Emulation - IP2 RTC"
+    #define LOG_PREFIX_IP2RTC                   "IP2 RTC"
+    #define LOG_CHANNEL_IP2RTC                  "IP2 RTC"
 
     // Strobe lines on the control port.
     #define RTC_CTRL_ADDRESS_STROBE             0x01
@@ -84,26 +85,15 @@ namespace Motion
     // The oscillator is a 32.768kHz watch crystal.
     #define RTC_OSCILLATOR_HZ                   32768
 
+
     class IP2Clock : public Component
     {
-    public:
-        void Start() override
-        {
-            AddrSpaceMapping mapping = AddrSpaceMapping();
-
-            mapping.component = this;
-            mapping.startAddr = IP2_CLOCK_START;
-            mapping.endAddr = IP2_CLOCK_END;
-
-            AddrSpace::AddMapping(mapping);
-
-            // A real one has a battery, so the machine expects to find its RAM and time valid.
-            registers[RTC_REG_D] = RTC_D_VALID_RAM_AND_TIME;
-        }
+    public: 
+        void Start() override;
 
         const char* GetName() override { return "IP2 Real Time Clock [MC146818]"; };
 
-        // Free running, like the DUART - the periodic interrupt is derived from elapsed time.
+        // the periodic interrupt is derived from elapsed time.
         uint32_t GetClockSpeed() override { return 0; };
 
         void Tick() override;
@@ -128,15 +118,19 @@ namespace Motion
         /// @brief Periodic interrupt rate in Hz, or 0 if the rate select is off.
         uint32_t PeriodicRate();
 
-        /// @brief The clock registers read as BCD unless register B says otherwise.
+        /// @brief The clock registers. Usually read as BCD, but register B may lead them to be read differently.
         uint8_t ToClockFormat(int32_t value);
 
         uint8_t registers[RTC_NUM_REGISTERS] = {0};
         uint8_t address = 0;
+
+        // address specified to write
         uint8_t control = 0;
 
         uint64_t lastPeriodicNs = 0;
 
         IP2Interrupt* interrupts = nullptr;
+        LogChannel rtcChannel;
+        bool logEnabled;
     };
 }
