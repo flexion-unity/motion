@@ -75,10 +75,7 @@ namespace Motion
             return 0;
         } 
 
-        uint16_t* ram16 = (uint16_t*)ram;
-        uint16_t value = ram16[addr >> 1];
-        TOBE16(value);
-        return value;
+        return READ16_BE(ram, addr);
     }
 
     uint32_t Memory::Read32(size_t addr)
@@ -91,12 +88,7 @@ namespace Motion
             return 0;
         } 
 
-        uint32_t* ram32 = (uint32_t*)ram;
-        uint32_t value = ram32[addr >> 2];
-
-        // IRIS is a big-endian system.
-        TOBE32(value);
-        return value;
+        return READ32_BE(ram, addr);
     }
 
     void Memory::Write8(size_t addr, uint8_t value)
@@ -121,10 +113,8 @@ namespace Motion
             Logger::Log("Memory::Write16 - Tried to write to invalid RAM address!");
             return;
         } 
-    
-        uint16_t* ram16 = (uint16_t*)ram;       
-        TOBE16(value);
-        ram16[addr >> 1] = value;
+
+        WRITE16_BE(ram, addr, value);
     }
 
     void Memory::Write32(size_t addr, uint32_t value)

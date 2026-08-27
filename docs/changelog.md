@@ -177,6 +177,12 @@ Similar to a .plan file
     * merge IP2MMU With multibus?
 * enough to get over very bad copy bug
 
+## 2026-08-23 to 2026-08-27
+* to keep a long story short, rewrote a bunch of originally-AI code: DSD 5217 emulation based on danifunker's
+* IP2 U118 vectors & Multibus implementation
+* yea it boots (panic: something wrong with intpixel32)
+* RTC emulation
+
 
 v0.2.0 TODO:
 

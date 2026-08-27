@@ -86,8 +86,27 @@
 #ifdef DEBUG
 #define MOTION_ASSERT(cond, msg)                if (cond) \
                                                     Logger::Log(std::format("***** ASSERTION FAILED *****\n{}", msg).c_str(), LogChannels::FatalError) 
-#define MOTION_ASSET_UNSAFE(cond, msg)          if (cond) \
+#define MOTION_ASSERT_UNSAFE(cond, msg)         if (cond) \
                                                     Logger::Log(std::format("***** ASSERTION FAILED *****\n{}", msg).c_str(), LogChannels::UnsafeShutdown)
 #else
 #define MOTION_ASSERT(cond, msg)
+#define MOTION_ASSERT_UNSAFE(cond, msg)
 #endif
+
+// Memory I/O macros for unaligned address access support
+
+#define READ16_BE(space, addr)                  (uint16_t)(((uint16_t)ram[addr] << 8 \
+                                                        | ram[(addr + 1)])) // % mask to prevent issues
+
+#define READ32_BE(space, addr)                  ((uint32_t)space[addr] << 24) \
+                                                        | ((uint32_t)space[addr + 1] << 16) \
+                                                        | ((uint32_t)space[addr + 2] << 8) \
+                                                        | (uint32_t)space[addr + 3]
+
+#define WRITE16_BE(space, addr, value)          space[addr] = (uint8_t)(value >> 8) \
+                                                        space[addr + 1] = (uint8_t)value
+
+#define WRITE32_BE(space, addr, value)          space[addr] = (uint8_t)(value >> 24) \
+                                                        space[addr + 1] = (uint8_t)(value >> 16) \
+                                                        space[addr + 2] = (uint8_t)(value >> 8) \
+                                                        space[addr + 3] = (uint8_t)value

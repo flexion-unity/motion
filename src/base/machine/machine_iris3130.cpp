@@ -23,6 +23,8 @@
 #include <component/gpu/juniper/uc4/uc4.hpp>
 #include <component/gpu/juniper/bp3/bp3.hpp>
 #include <component/storage/dsd5217.hpp>
+#include <component/gpu/juniper/gf2/gf2_fbc.hpp>
+#include <component/gpu/juniper/gf2/gf2_ge.hpp>
 
 namespace Motion
 {
@@ -36,7 +38,7 @@ namespace Motion
         AddComponent<Multibus>();
         AddComponent<BP3>();
         AddComponent<PROM>();
-        AddComponent<PROM_SRAM>();
+        AddComponent<PROMSRAM>();
         AddComponent<IP2Interrupt>();
         AddComponent<IP2MMU>();
         AddComponent<DUART68681>();
@@ -45,6 +47,10 @@ namespace Motion
         AddComponent<DC4>();
         AddComponent<UC4>();
         AddComponent<DSD5217>();
+        
+        // add in reverse order
+        AddComponent<GF2FBC>();
+        AddComponent<GF2GE>();
 
         forceEnterSerialMonitor = Cvar::Get("forceEnterSerialMonitor", "0");
 

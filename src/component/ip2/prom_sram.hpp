@@ -27,7 +27,7 @@ namespace Motion
 
     // FOR COMPONENTS, WE DON'T NEED TO BOUNDS CHECK BECAUSE WE ALREADY MAPPED IT!
 
-    class PROM_SRAM : public Component
+    class PROMSRAM : public Component
     {
     public: 
         void Start() override
