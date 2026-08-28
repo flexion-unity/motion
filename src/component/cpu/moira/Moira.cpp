@@ -240,7 +240,7 @@ Moira::execute()
     using namespace State;
 
     // Check the integrity of the IRQ flag
-    //if (reg.ipl > reg.sr.ipl || reg.ipl == 7) assert(flags & CHECK_IRQ);
+    if (reg.ipl > reg.sr.ipl || reg.ipl == 7) assert(flags & CHECK_IRQ);
 
     // Check the integrity of the trace flag
     assert(!!(flags & TRACING) == reg.sr.t1);
@@ -380,12 +380,7 @@ Moira::processException(const std::exception &exc)
 
         if (auto be = dynamic_cast<const BusError *>(&exc); be) {
 
-            /*
-                The handler will restart this instruction, so put back any -(An)/(An)+ update it
-                already made - see anRollback. The registers are restored before the frame is
-                stacked, so what the exception handler saves is the state the instruction is about
-                to be re-entered with.
-            */
+            // The handler will restart this instruction, so put back any -(An)/(An)+ update it already made - see anRollback.
             while (anRollbackCount) {
 
                 anRollbackCount--;

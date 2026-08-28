@@ -59,6 +59,14 @@ namespace Motion
                 Profile::Close(sramFile);
                 sramFile = nullptr;
             }
+
+            CoherentEditor::Settings settings;
+            settings.buf = sram;
+            settings.bufSize = SRAM_SIZE;
+            settings.name = "SRAM Editor";
+
+            editor = new CoherentEditor(this, settings);
+            Coherent::RegisterExtension(editor);
         }
 
         const char* GetName() override { return "IRIS 3130 System PROM Private SRAM [MCM2016HN16 - IP2/U95]"; };
@@ -72,41 +80,32 @@ namespace Motion
         uint16_t Read16(size_t addr) override 
         { 
             addr %= (size_t)SRAM_SIZE;
-            uint16_t* rom16 = (uint16_t*)sram; 
-            uint16_t value = rom16[addr >> 1];
-            TOBE16(value);
-            return value;
+
+            return READ16_BE(sram, addr);
         }
 
         uint32_t Read32(size_t addr) override 
         { 
             addr %= (size_t)SRAM_SIZE;
-            uint32_t* rom32 = (uint32_t*)sram; 
-            uint16_t value = rom32[addr >> 2];
-            TOBE32(value);
-            return rom32[addr >> 2]; 
+            return READ32_BE(sram, addr);
         }
 
         void Write8(size_t addr, uint8_t value) override
         { 
             addr %= (size_t)SRAM_SIZE;
-            sram[addr] = value; 
+            sram[addr] = value;
         }
 
         void Write16(size_t addr, uint16_t value) override
         { 
             addr %= (size_t)SRAM_SIZE;
-            uint16_t* rom16 = (uint16_t*)sram; 
-            TOBE16(value);
-            rom16[addr >> 1] = value; 
+            WRITE16_BE(sram, addr, value);
         }
 
         void Write32(size_t addr, uint32_t value) override
         { 
             addr %= (size_t)SRAM_SIZE;
-            uint32_t* rom32 = (uint32_t*)sram; 
-            TOBE32(value);
-            rom32[addr >> 2] = value; 
+            WRITE32_BE(sram, addr, value);
         }
 
         void Shutdown() override
@@ -119,11 +118,14 @@ namespace Motion
             Filesystem::Seek(sramFile, 0);
             sramFile->stream.write((char*)sram, SRAM_SIZE);
             Profile::Close(sramFile);
+
+            delete editor; 
         }
 
     private: 
         uint8_t sram[SRAM_SIZE];
 
         FileStream* sramFile;
+        CoherentEditor* editor;
     };
 }

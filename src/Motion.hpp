@@ -95,8 +95,8 @@
 
 // Memory I/O macros for unaligned address access support
 
-#define READ16_BE(space, addr)                  (uint16_t)(((uint16_t)ram[addr] << 8 \
-                                                        | ram[(addr + 1)])) // % mask to prevent issues
+#define READ16_BE(space, addr)                  (uint16_t)(((uint16_t)space[addr] << 8 \
+                                                        | space[(addr + 1)])) // % mask to prevent issues
 
 #define READ32_BE(space, addr)                  ((uint32_t)space[addr] << 24) \
                                                         | ((uint32_t)space[addr + 1] << 16) \
