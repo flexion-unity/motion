@@ -1,15 +1,17 @@
-// -----------------------------------------------------------------------------
-// This file is part of Moira - A Motorola 68k emulator
-//
-// Copyright (C) Dirk W. Hoffmann. www.dirkwhoffmann.de
-// Published under the terms of the MIT License
-// -----------------------------------------------------------------------------
+/*
+    "Lisburn" 68020 core (just down the road from Moira)
+    Moira with amiga stuff cleaned up
+    Copyright (c) 2019-2025 Dirk W. Hoffmann. www.dirkwhoffmann.de
+    Copyright (c) 2026 Connor Hyde (starfrost). www.starfrost.net
+
+    Published under the terms of the MIT license
+*/
 
 /* Creates a stack frame of a certain format
  *
  * Format  Description                  68000  68010  68020  68030
  * ----------------------------------------------------------------------------
- *  AEBE   Address error / Bus error      X
+ *  AEBE   Address error / Bus error      X      X      
  *  0000   Short format                   X      X      X      X
  *  0001   Throwaway                                    X      X
  *  0010   Instruction exception                        X      X

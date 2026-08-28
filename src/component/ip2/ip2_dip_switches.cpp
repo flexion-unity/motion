@@ -226,7 +226,7 @@ namespace Motion
 
             cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_MT;
 
-            if (ImGui::MenuItem("[DSD 2917] Tape [mtX]", nullptr, &cond))
+            if (ImGui::MenuItem("[DSD 5217] Tape [mtX]", nullptr, &cond))
             {
                 switches->switchState &= (~SWITCH_BOOT_DEVICE_MT);
                 FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_MT << SWITCH_BOOT_TYPE_END));
@@ -234,7 +234,7 @@ namespace Motion
 
             cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_MF;
 
-            if (ImGui::MenuItem("[DSD 2917] Tape [mfX]", nullptr, &cond))
+            if (ImGui::MenuItem("[DSD 5217] Tape [mfX]", nullptr, &cond))
             {
                 switches->switchState &= (~SWITCH_BOOT_DEVICE_MF);
                 FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_MF << SWITCH_BOOT_TYPE_END));
@@ -242,7 +242,7 @@ namespace Motion
 
             cond = (switches->switchState & SWITCH_BOOT_TYPE) == SWITCH_BOOT_DEVICE_MD;
 
-            if (ImGui::MenuItem("[DSD 2917] HDD [mdX]", nullptr, &cond))
+            if (ImGui::MenuItem("[DSD 5217] HDD [mdX]", nullptr, &cond))
             {
                 switches->switchState &= (~SWITCH_BOOT_DEVICE_MD);
                 FLIP_MASK_STATE(switches->switchState, (SWITCH_BOOT_DEVICE_MD << SWITCH_BOOT_TYPE_END));

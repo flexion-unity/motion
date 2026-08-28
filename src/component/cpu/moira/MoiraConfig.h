@@ -1,7 +1,6 @@
 /*
-    Lisburn68000: just down the road from Moira)
-    Moira with less optional paths
-    
+    "Lisburn" 68020 core (just down the road from Moira)
+    Moira with amiga stuff cleaned up
     Copyright (c) 2019-2025 Dirk W. Hoffmann. www.dirkwhoffmann.de
     Copyright (c) 2026 Connor Hyde (starfrost). www.starfrost.net
 

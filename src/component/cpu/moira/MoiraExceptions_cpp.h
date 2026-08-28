@@ -1,9 +1,11 @@
-// -----------------------------------------------------------------------------
-// This file is part of Moira - A Motorola 68k emulator
-//
-// Copyright (C) Dirk W. Hoffmann. www.dirkwhoffmann.de
-// Published under the terms of the MIT License
-// -----------------------------------------------------------------------------
+/*
+    "Lisburn" 68020 core (just down the road from Moira)
+    Moira with amiga stuff cleaned up
+    Copyright (c) 2019-2025 Dirk W. Hoffmann. www.dirkwhoffmann.de
+    Copyright (c) 2026 Connor Hyde (starfrost). www.starfrost.net
+
+    Published under the terms of the MIT license
+*/
 
 template <Core C> void
 Moira::writeStackFrameAEBE(StackFrame &frame)
@@ -305,7 +307,7 @@ Moira::execBusError(StackFrame frame, int delay)
     // A misaligned stack pointer will cause a double fault
     if (misaligned<C>(reg.sp)) throw DoubleFault();
 
-    /* Format A, not the 68010's format 8, which a 68020 kernel misreads and cannot RTE out of - and pc0, because format A restarts the instruction. */
+    /* Format A is used on the 68020 for bus errors. Use pc0 because format A restarts the instruction. */
     if (C == Core::C68000) {
         writeStackFrameAEBE<C>(frame);
     } else if (C == Core::C68010) {

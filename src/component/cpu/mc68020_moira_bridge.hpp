@@ -10,6 +10,8 @@
 
 namespace Motion
 {
+    #define LOG_PREFIX_BRIDGE        "68020 CPU Lisburn-to-Motion Bridge"
+
     class MC68020MoiraBridge : public Motion::Lisburn::Moira 
     {
         friend class MC68020;
@@ -46,9 +48,9 @@ namespace Motion
 
         uint16_t readIrqUserVector(uint8_t level) const override
         {
-            // obtain the user vector IRQ from the interrupt controler
-            // NOTE: this also SUCKS UNBELIEVABLE
-            auto* interrupts = Emulation::GetMachine()->FindComponentByType<IP2Interrupt>();
+            if (!interrupts)
+                interrupts = Emulation::GetMachine()->FindComponentByType<IP2Interrupt>();
+
             return interrupts->GetVector(level);
         }
 
@@ -95,14 +97,14 @@ namespace Motion
             */
 
             // TODO: make LISBURN not use EXCEPTIONS !!! EXCEPTIONS SUCK !!!
-            
 
-            // WHAT'S GOING ON. ONLY ONE INSTRUCTION IS INTERPRETED WRONG WITH A HARMLESS FFFFFFFE WRITE ?!
-            // Prevent nested bus errors
+
             throw Motion::Lisburn::BusError(frame);
-
         };
 
         void didExecuteException(Motion::Lisburn::M68kException exc, uint16_t vector) override { Coherent::Exception(vector); } ;
+
+    private:
+        mutable IP2Interrupt* interrupts;
     };
 }

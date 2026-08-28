@@ -55,8 +55,8 @@ namespace Motion
         void Tick() override;
         void Shutdown() override; 
 
-        // other stuff may be dependent on the CPU, so start it first
-        bool IsEarlyStart() override { return true; };
+        // Reset vectors must be read after the memory and PROM mappings exist.
+        bool IsEarlyStart() override { return false; };
 
         /// @brief get the name of this component. immutable const char*.
         const char* GetName() override { return "Motorola MC68020 CPU (Lisburn)"; };
