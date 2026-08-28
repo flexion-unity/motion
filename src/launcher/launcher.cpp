@@ -45,11 +45,11 @@ namespace Motion
             ImGui::SameLine(); 
             // AI would never add this feature
             if (ImGui::Button("+ Ticker Speed"))
-                aboutWindowState.speed += 50.0f;
+                aboutWindowState.speed += 10.0f;
 
             ImGui::SameLine(); 
             if (ImGui::Button("-"))
-                aboutWindowState.speed -= 50.0f;
+                aboutWindowState.speed -= 10.0f;
             ImGui::SameLine();
 
             ImGui::Text("Ticker Speed: %.1f", aboutWindowState.speed);
