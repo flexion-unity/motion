@@ -56,7 +56,7 @@ namespace Motion
 
         if (ImGui::Begin("MMU State", &enabled))
         {
-            ImGui::Text("OS Base [0x%x]:          0x%x", REG_OS_BASE, mmu->osBase);
+            ImGui::Text("OS Base [0x%x]:          page %d", REG_OS_BASE, mmu->osBase);
             ImGui::Text("Status [0x%x]:           0x%x", REG_STATUS, mmu->status);
             ImGui::Text("Parity [0x%x]:           0x%x", REG_PARITY, mmu->parity);
             ImGui::Text("Multibus Protect [0x%x]: 0x%x", REG_MULTIBUS_PROTECT, mmu->multibusProtect);
