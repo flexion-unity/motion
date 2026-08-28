@@ -91,6 +91,9 @@ namespace Motion
         /// @brief Which levels are currently being driven, for the debugger.
         uint8_t GetPendingLevels() { return PendingLevels(); };
 
+        /// @brief Return the PROM-selected vector for an interrupt level.
+        uint16_t GetVector(uint8_t level);
+
     private:
         /// @brief Fold the sources into a bitmask of the seven interrupt levels.
         uint8_t PendingLevels();

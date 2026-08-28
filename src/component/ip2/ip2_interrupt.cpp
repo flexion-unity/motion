@@ -79,6 +79,25 @@ namespace Motion
         return levels;
     }
 
+    uint16_t IP2Interrupt::GetVector(uint8_t level)
+    {
+        uint8_t candidates = 0;
+
+        if (level == 6)
+            candidates = localAsserted & IP2_LOCAL_MASK_LEVEL6;
+        else if (level == 7)
+            candidates = localAsserted & IP2_LOCAL_MASK_LEVEL7;
+
+        for (int32_t i = 0; i < IP2_NUM_LOCAL_INTERRUPTS; i++)
+        {
+            if (candidates & (1 << i))
+                return (uint8_t)(IP2_VECTOR_LOCAL_BASE + i);
+        }
+
+        // nothing local, so it is the Multibus line that shares the level
+        return (uint8_t)(IP2_VECTOR_MULTIBUS_BASE + level);
+    }
+
     void IP2Interrupt::Update()
     {
         if (!cpu)

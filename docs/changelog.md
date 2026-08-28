@@ -186,6 +186,8 @@ Similar to a .plan file
 ## 2026-08-27
 * unaligned ram accesses
 * fixed init order issue causing first instruction to be corrupted
+* SRAM Editor
+* can partially boot unix 
 
 v0.2.0 TODO:
 

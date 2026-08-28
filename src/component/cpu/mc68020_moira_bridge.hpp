@@ -5,6 +5,7 @@
 #include <component/component.hpp>
 #include <component/cpu/cpu.hpp>
 #include <component/cpu/moira/Moira.h>
+#include <component/ip2/ip2_interrupt.hpp>
 #include <base/emulation.hpp>
 
 namespace Motion
@@ -42,6 +43,14 @@ namespace Motion
             AddrSpace::WriteU16(addr, value); 
             FireBusErrorIfNeeded(true, false);
         }; 
+
+        uint16_t readIrqUserVector(uint8_t level) const override
+        {
+            // obtain the user vector IRQ from the interrupt controler
+            // NOTE: this also SUCKS UNBELIEVABLE
+            auto* interrupts = Emulation::GetMachine()->FindComponentByType<IP2Interrupt>();
+            return interrupts->GetVector(level);
+        }
 
         // what we want the 68020 to do after we fire the bus error
         static const uint16_t SSW_DATA_FAULT     = 0x0400;  // DF: rerun the data cycle

@@ -69,7 +69,7 @@ namespace Motion
             Coherent::RegisterExtension(editor);
         }
 
-        const char* GetName() override { return "IRIS 3130 System PROM Private SRAM [MCM2016HN16 - IP2/U95]"; };
+        const char* GetName() override { return "IP2 SRAM"; };
 
         uint8_t Read8(size_t addr) override 
         { 
