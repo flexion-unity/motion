@@ -8,11 +8,62 @@ namespace Motion
     {  
 
     }
+    void Launcher::RenderEmulatorAbout()
+    {
+        if (ImGui::Begin("About", &aboutWindowState.enabled))
+        {
+            if (aboutWindowState.scrollPos == ABOUT_WINDOW_POS_NOT_SET_YET)
+                aboutWindowState.scrollPos = ImGui::GetWindowWidth();
+
+            ImGui::SetWindowFontScale(2.0f);
+            ImGui::TextColored(ImVec4(0.2, 0.2, 0.9, 1.0), "Motion!");
+            ImGui::SetWindowFontScale(1.0f);
+
+            ImGui::Text("An emulator for very expensive old computers");
+            ImGui::Text("© 2026 starfrost and contributors");
+            ImGui::SetWindowFontScale(1.5f);
+            ImGui::Text("Thanks to:");
+            ImGui::SetWindowFontScale(1.0f);
+
+            aboutWindowState.scrollPos -= ImGui::GetIO().DeltaTime * aboutWindowState.speed;
+
+            int32_t textSizeX = ImGui::CalcTextSize(ABOUT_WINDOW_TICKER_TEXT).x;
+
+            // if it's off screen put it back
+            if (aboutWindowState.scrollPos < -textSizeX)
+                aboutWindowState.scrollPos = (ImGui::GetWindowWidth() + textSizeX); // epsilon
+            // can also go in reverse
+            if (aboutWindowState.scrollPos > ImGui::GetWindowWidth() + textSizeX)
+                aboutWindowState.scrollPos = -textSizeX;
+
+            ImGui::SetCursorPosX(aboutWindowState.scrollPos);
+            ImGui::Text(ABOUT_WINDOW_TICKER_TEXT);
+
+            if (ImGui::Button("OK"))
+                aboutWindowState.enabled = false; 
+
+            ImGui::SameLine(); 
+            // AI would never add this feature
+            if (ImGui::Button("+ Ticker Speed"))
+                aboutWindowState.speed += 50.0f;
+
+            ImGui::SameLine(); 
+            if (ImGui::Button("-"))
+                aboutWindowState.speed -= 50.0f;
+            ImGui::SameLine();
+
+            ImGui::Text("Ticker Speed: %.1f", aboutWindowState.speed);
+        }
+
+        ImGui::End();
+    }
 
     void Launcher::RenderGridItem(ImVec2 size, Cvar* cvar, GridCvarType type, const char* friendlyName)
     {
         if (ImGui::BeginChild("##gridItem", size))
         {
+            // MENU BAR
+
             const char* name = cvar->GetName();
             ImGui::Text("%s: ", friendlyName); 
             ImGui::SameLine();
@@ -70,9 +121,18 @@ namespace Motion
     void Launcher::Frame()
     {
         Program::GetRenderer()->FramePreRender();
-
-        if (ImGui::Begin("Launcher"))
+ 
+        // can't be closed
+        if (ImGui::Begin("Launcher", nullptr, ImGuiWindowFlags_MenuBar))
         {
+            if (ImGui::BeginMenuBar())
+            {
+                if (ImGui::MenuItem("About"))
+                    aboutWindowState.enabled = true;
+
+                ImGui::EndMenuBar();
+            }
+            
             // reset the number
             lastImguiNum = 0; 
 
@@ -106,6 +166,9 @@ namespace Motion
         }
         
         ImGui::End();
+
+        if (aboutWindowState.enabled)
+            RenderEmulatorAbout();
 
         Program::GetRenderer()->FramePostRender();
     }
