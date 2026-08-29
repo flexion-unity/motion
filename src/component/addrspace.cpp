@@ -142,6 +142,67 @@ namespace Motion
         return (int32_t)ReadU32(addr);
     }
 
+    // todo: make readxx call this peakxx function
+
+    uint8_t AddrSpace::PeekU8(size_t addr)
+    {
+        size_t physAddr = addr;
+
+        if (mmu)
+        {
+            if (!mmu->Translate(addr, &physAddr, false))
+                return 0x00;
+        }
+
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
+
+        if (mapping)
+            return mapping->component->Read8(physAddr);
+    
+        return 0x00;
+    }
+
+    uint16_t AddrSpace::PeekU16(size_t addr)
+    {
+        size_t physAddr = addr;
+
+        if (mmu)
+        {
+            if (!mmu->Translate(addr, &physAddr, false))
+                return 0x00;
+
+        }
+
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
+
+        if (mapping)
+            return mapping->component->Read16(physAddr);
+
+        return 0x00;
+    }
+
+    uint32_t AddrSpace::PeekU32(size_t addr)
+    {
+        size_t physAddr = addr;
+
+        if (mmu)
+        {
+            if (!mmu->Translate(addr, &physAddr, false))
+                return 0x00;
+        }
+
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
+
+        if (mapping)
+            return mapping->component->Read32(physAddr);
+
+        return 0x00;
+    }
+
+    int8_t AddrSpace::PeekS8(size_t addr) { return (int8_t)PeekU8(addr); };
+    int16_t AddrSpace::PeekS16(size_t addr) { return (int16_t)PeekU16(addr); };
+    int32_t AddrSpace::PeekS32(size_t addr) { return (int32_t)PeekU32(addr); };
+
     void AddrSpace::AddMapping(AddrSpaceMapping mapping)
     {
         // this seems like a good place to put this
@@ -287,9 +348,6 @@ namespace Motion
 
         SignalFault(addr, isWrite);
     }
-
-    AddrSpacePeek::AddrSpacePeek() { AddrSpace::PushPeek(); }
-    AddrSpacePeek::~AddrSpacePeek() { AddrSpace::PopPeek(); }
 
     void AddrSpace::SignalFault(size_t addr, bool isWrite)
     {

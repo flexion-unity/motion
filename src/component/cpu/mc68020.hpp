@@ -29,7 +29,7 @@ namespace Motion
         /// @brief for the coherent stack window
         uint32_t GetStack32(uint32_t offset) override
         {
-            return AddrSpace::ReadU32(moiraCpu->reg.sp + (offset << 2));
+            return AddrSpace::PeekU32(moiraCpu->reg.sp + (offset << 2));
         };
 
     private: 

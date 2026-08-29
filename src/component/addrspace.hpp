@@ -34,14 +34,6 @@ namespace Motion
         Component* component;
     };
 
-    /// @brief Suppresses fault reporting for reads the emulated machine is not really making.
-    class AddrSpacePeek
-    {
-    public:
-        AddrSpacePeek();
-        ~AddrSpacePeek();
-    };
-
     // Class implementing address space.
     // It is tied to the Machine.
     // By default each machine has an addres space
@@ -57,6 +49,14 @@ namespace Motion
             static int8_t ReadS8(size_t addr);
             static int16_t ReadS16(size_t addr);
             static int32_t ReadS32(size_t addr);
+
+            /* Peeks have no side effects and are used by the debugger */
+            static uint8_t PeekU8(size_t addr);
+            static uint16_t PeekU16(size_t addr);
+            static uint32_t PeekU32(size_t addr);
+            static int8_t PeekS8(size_t addr);
+            static int16_t PeekS16(size_t addr);
+            static int32_t PeekS32(size_t addr);
  
             static void WriteU8(size_t addr, uint8_t value);
             static void WriteU16(size_t addr, uint16_t value);
@@ -93,17 +93,6 @@ namespace Motion
                     unmappedHook(addr, isWrite, width);
             }
 
-            /*
-                A read made on behalf of the debugger is not a bus cycle. Disassembling whatever the
-                PC happens to point at, or drawing the stack window, must not record a fault - the
-                CPU would then raise a bus error for an access the emulated machine never made, and
-                because those reads happen outside the execute loop there is nothing to catch it.
-            */
-            static void PushPeek() { peekDepth++; };
-            static void PopPeek() { if (peekDepth) peekDepth--; };
-
-            /// @brief True while the read is the debugger's, so a register with a read side effect can decline to fire it.
-            static bool IsPeeking() { return peekDepth > 0; };
 
             static void SignalFault(size_t addr, bool isWrite);
             static void SignalFaultIfDeviceSpace(size_t addr, bool isWrite);

@@ -326,7 +326,7 @@ namespace Motion
             Watchpoint(size_t addr) : Guard(addr) { }
 
             // TODO: Add templates for these & use std::any
-            uint32_t GetValue() { return AddrSpace::ReadU32(addr); }; 
+            uint32_t GetValue() { return AddrSpace::PeekU32(addr); }; 
         }; 
 
         /// @brief Called when the coherent system was requested to remove a breakpoint.

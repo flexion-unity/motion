@@ -151,7 +151,7 @@ namespace Motion
     // The actual MMU parts
     //
 
-    bool IP2MMU::Translate(size_t addr, size_t* finalAddress, bool isWrite)
+    bool IP2MMU::Translate(size_t addr, size_t* finalAddress, bool isWrite, bool isPeek)
     {
         // IN order to minimise overhead, only get the CPU once (otherwise, everything would be massively slowed down)
         // ensure it irght here
@@ -203,13 +203,27 @@ namespace Motion
         if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_STACK))
         {
             // bits 23-12
-            pageNumber = (addr >> 12) ^ 0x3FFF;
-            finalPageNumber = (baseValue - pageNumber) & 0x3FFF;
+            pageNumber = ((addr >> 12) & 0x3FFF)  ^ 0x3FFF;
+            finalPageNumber = (baseValue - pageNumber);
         }
         else
         {
             pageNumber = (addr >> 12);
-            finalPageNumber = (baseValue + pageNumber) & 0x3FFF;
+            finalPageNumber = (baseValue + pageNumber);
+        }
+
+        // allow a fault if we are outside of the page number range
+        if (finalPageNumber >= PAGETABLE_MAX_PAGES)
+        {
+            // peek's ignore logging 
+            if (isPeek)
+            {
+                Logger::Log(LOG_PREFIX_IP2MMU,
+                std::format("Bus error: {} of 0x{:x} indexes page table entry 0x{:x}, past the end of the table",
+                isWrite ? "write" : "read", addr, finalPageNumber).c_str(), LogChannels::Warning);
+            }
+
+            return false;
         }
 
         bool limitReached = limitValue && pageNumber > limitValue;
@@ -246,10 +260,13 @@ namespace Motion
 
         if (busError)
         {
-            // CPU will handle it
-            Logger::Log(LOG_PREFIX_IP2MMU,
-            std::format("Bus error: {} of unmapped address 0x{:x} (segment {}, pte index 0x{:x}, pte 0x{:08x})",
-            isWrite ? "write" : "read", addr, segment, finalPageNumber, page).c_str(), LogChannels::Warning);
+            if (!isPeek)
+            {
+                // CPU will handle it
+                Logger::Log(LOG_PREFIX_IP2MMU,
+                std::format("Bus error: {} of unmapped address 0x{:x} (segment {}, pte index 0x{:x}, pte 0x{:08x})",
+                isWrite ? "write" : "read", addr, segment, finalPageNumber, page).c_str(), LogChannels::Warning);
+            }
 
             return false; 
         }

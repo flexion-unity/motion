@@ -17,7 +17,7 @@ namespace Motion
     {
     public:         
         // these methods indicate success by their return value, generate a translated address and then send it back to AddrSpace
-        virtual bool Translate(size_t addr, size_t* finalAddress, bool isWrite) { return true;  };
+        virtual bool Translate(size_t addr, size_t* finalAddress, bool isWrite, bool isPeek = false) { return true;  };
 
         void Start() override;
         void Shutdown() override;

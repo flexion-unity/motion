@@ -189,6 +189,12 @@ Similar to a .plan file
 * SRAM Editor
 * can partially boot unix 
 
+## 2026-08-29
+* added AddrSpace::PeekXX and isPeek boolean to MMU Translation to suppress logging
+    * not razy about this
+    * these simply translate and return if bus error, bus 
+    * Moira::read16Dasm does this
+
 v0.2.0 TODO:
 
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE

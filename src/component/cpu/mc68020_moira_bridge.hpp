@@ -32,6 +32,12 @@ namespace Motion
             return value;
         };
 
+        // peek to not cause spurious bus errors
+        uint16_t read16Dasm(uint32_t addr) const override
+        {
+            return AddrSpace::PeekU16(addr);
+        };
+
         void write8(uint32_t addr, uint8_t value) const override 
         { 
             AddrSpace::ClearFault();
@@ -76,7 +82,7 @@ namespace Motion
             frame.pc = getPC();
             frame.sr = getSR();
             frame.ird = getIRD();
-            frame.code = (uint16_t)((frame.ird & 0xFFE0) | (isWrite ? 0x00 : 0x10));
+            frame.code = (uint16_t)((frame.ird & 0xFFE0) | (faultWasWrite ? 0x00 : 0x10));
 
             bool isSupervisor = (getSR() & 0x2000); // bit 13 of status register indicates supervsior mode
 
@@ -102,7 +108,7 @@ namespace Motion
             // handle a fatal error
             if (std::current_exception())
             {
-                Logger::Log("The emulator is going down due to a recursive bus error. This should never happen", LogChannels::FatalError);
+                //Logger::Log("The emulator is going down due to a recursive bus error. This should never happen", LogChannels::FatalError);
                 return;
             }
 

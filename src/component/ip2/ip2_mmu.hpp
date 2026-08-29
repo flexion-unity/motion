@@ -134,7 +134,7 @@ namespace Motion
         void Write16(size_t addr, uint16_t value) override;
         void Write32(size_t addr, uint32_t value) override; 
 
-        bool Translate(size_t addr, size_t* finalAddress, bool isWrite) override;
+        bool Translate(size_t addr, size_t* finalAddress, bool isWrite, bool isPeek = false) override;
 
         // well probably need to change these so just make them public
 
