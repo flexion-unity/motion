@@ -99,6 +99,13 @@ namespace Motion
             // TODO: make LISBURN not use EXCEPTIONS !!! EXCEPTIONS SUCK !!!
 
 
+            // handle a fatal error
+            if (std::current_exception())
+            {
+                Logger::Log("The emulator is going down due to a recursive bus error. This should never happen", LogChannels::FatalError);
+                return;
+            }
+
             throw Motion::Lisburn::BusError(frame);
         };
 
