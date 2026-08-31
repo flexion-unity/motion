@@ -23,9 +23,6 @@ namespace Motion
 
     void AddrSpace::LogUnmapped(const char* what, size_t addr, bool isWrite, uint32_t value)
     {
-        if (peekDepth)
-            return;
-
         if (isWrite)
             Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::{} - Unmapped write of 0x{:x} to 0x{:x}!",
                 what, value, addr).c_str(), LogChannels::Warning);
@@ -351,7 +348,7 @@ namespace Motion
 
     void AddrSpace::SignalFault(size_t addr, bool isWrite)
     {
-        if (!faultsEnabled || peekDepth)
+        if (!faultsEnabled)
             return;
 
         faultPending = true;

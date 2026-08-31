@@ -111,7 +111,7 @@ namespace Motion
             case REG_MULTIBUS_PROTECT:
                 multibusProtect = value;
                 break;       
-            case REG_PAGETABLE_BASE ... PAGETABLE_INDEX(PAGETABLE_MAX_PAGES):
+            case REG_PAGETABLE_BASE ... PAGETABLE_INDEX(PAGETABLE_MAX_PAGES) - 1:
                 index = (addr - REG_PAGETABLE_BASE) >> 2;
         
                 if (addr & 2)
@@ -203,14 +203,16 @@ namespace Motion
         if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_STACK))
         {
             // bits 23-12
-            pageNumber = ((addr >> 12) & 0x3FFF)  ^ 0x3FFF;
+            pageNumber = ((addr >> 12) & MMU_PAGE_MASK) ^ MMU_PAGE_MASK;
             finalPageNumber = (baseValue - pageNumber);
         }
         else
         {
-            pageNumber = (addr >> 12);
+            pageNumber = (addr >> 12) & MMU_PAGE_MASK;
             finalPageNumber = (baseValue + pageNumber);
         }
+        
+        bool limitReached = limitValue && pageNumber > limitValue;
 
         // allow a fault if we are outside of the page number range
         if (finalPageNumber >= PAGETABLE_MAX_PAGES)
@@ -226,7 +228,6 @@ namespace Motion
             return false;
         }
 
-        bool limitReached = limitValue && pageNumber > limitValue;
         uint32_t& page = pagetable[finalPageNumber];
 
         bool busError = false;
@@ -272,7 +273,7 @@ namespace Motion
         }
 
         // calculate a real physical ram address with 13...0 page adn teh bottom1 0 bits of the real address
-        *finalAddress = (page & 0x3FFF) << 12 | (addr & 0x1FFF);
+        *finalAddress = (page & MMU_PAGE_MASK) << 12 | (addr & 0x1FFF);
         return true; 
     }
 }

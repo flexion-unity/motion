@@ -242,12 +242,7 @@ namespace Motion
                     ImGui::SameLine();
 
                     // this makes the register text look like normal text
-                    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0, 0.0, 0.0, 0.0));
-                    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, CoherentUI::COLOUR_HEADER);
-                    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
-                    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));    
-
-                    ImGui::PushItemWidth(-FLT_MIN);
+                    CoherentUI::PushStylelessTextBox();
                     
                     // then the value
                     if (ImGui::InputText(nameBuf, aRegister->valBuf, 32, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue))
@@ -259,9 +254,7 @@ namespace Motion
                         aRegister->Write(newValue);
                     }
 
-                    ImGui::PopItemWidth();
-                    ImGui::PopStyleVar(2);
-                    ImGui::PopStyleColor(2);
+                    CoherentUI::PopStylelessTextBox();
 
                     i++;
                 }

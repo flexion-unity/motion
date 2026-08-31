@@ -70,6 +70,8 @@ namespace Motion
     #define MMU_MASK_MODIFIED               0x80000000      // modified
     #define MMU_MASK_ALWAYS_SET             0xF0001FFF      // Bits which mame always sets. these seem to be wrong compared with the implementation 
 
+    #define MMU_PAGE_MASK                   0x3FFF
+
     #define MMU_SEGMENT_GET_ID(x)           ((x >> 28) & 0x0F)
 
     /// The coherent extnension

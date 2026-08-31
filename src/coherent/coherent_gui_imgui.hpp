@@ -37,6 +37,10 @@ namespace Motion
         static void CentreAlign(ImVec2 contentSize);
         static void RightAlign(ImVec2 contentSize);
 
+        // these make a text box look like normal text
+        static void PushStylelessTextBox();
+        static void PopStylelessTextBox();
+
         enum GuardWindowType
         {
             GuardWindowWatchpoint = 0,

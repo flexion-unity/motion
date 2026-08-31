@@ -118,7 +118,6 @@ namespace Motion
             inline static thread_local bool faultPending = false;
             inline static thread_local size_t faultAddress = 0;
             inline static thread_local bool faultWasWrite = false;
-            inline static thread_local int32_t peekDepth = 0;
 
             /// @brief Rate limit for the unmapped access warning. Approximate across threads, which is fine.
             inline static int32_t unmappedLogged = 0;
