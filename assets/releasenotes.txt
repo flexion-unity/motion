@@ -4,8 +4,10 @@ The SGI Emulator
 Release Notes
 
 0.2.0
+** Motion can now boot GL2 Unix in serial mode only. A disk image is provided at: xxxxx**
+
     * Video scaling (thanks to flexion)
-    * --help for common convars (thanks to flexion)
+    * Added --help command-line option (also --h and -?) for common convars (thanks to flexion)
     * a launcher that lets you configure the most common settings
     * lisburn: hardcode DASM and register info to ON since we really don't need them to be an option
     * lisburn: fix 68020 format B stack frames
@@ -14,19 +16,22 @@ Release Notes
     * Fix Filesystem::Seek being broken
     * Fix busted back switches impl (was using pm2's???)
     * Fix issue involving init order causing first instruction to be corrupted, this was harmless until bus errors were a thing
-    * Last megabyte multibus memory is now emulated
-        * It tries to map the last megabyte to a multibus device and treats it as RAM if it fails. Not sure if this is right
+    * Fix unaligned memory access (initial version by danifunker, rewritten by me)
+    * Multibus: megabyte multibus memory is now emulated
+    * Multibus: multibus paging is now emulated
+    * Multibus: multibus slave behaviour is now emulated (thanks danifunker)
     * Multibus devices now use the SlotMapping class instead of the SLot class, they can map any number of regions now instead of being limited to 20 Multibus slots with one mapping each.
     * Memory / VRAM editors (CoherentEditor) now have an ASCII view.
     * change description of bp3 from "BP3 Bitplaned VRAM" to "Video RAM (BP3 bitplane board)" to make it easier to understand 
+    * Added an SRAM viewer
+    * Memory editors can now dump memory
     * added a cool logo
-    * assets now in assets folder
-    * added ability to edit register values, click on them to edit them
+    * Assets are now in the assets folder
+    * The last mapping read or written is now cached so we odn't have to linearly iterate through all mappings each time
+    * Added ability to edit register values, click on them to edit them
     * DSD 5217 emulation (first version sucked, thanks danifunker)
     * IP2 interrupt emulation (thanks danifunker)
     * proper RTC emulation (thanks danifunker)
-    * multibus paging emulation
-    * working unaligned memory access
     
 0.1.1 (August 10, 2026)
     * Fixed log file crashing early in initialisation.

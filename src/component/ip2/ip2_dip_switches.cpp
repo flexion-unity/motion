@@ -2,6 +2,27 @@
 
 namespace Motion
 {
+    Cvar* switchDefaultValue;
+
+    void IP2Switches::Start()
+    {
+        AddrSpaceMapping mapping = AddrSpaceMapping();
+
+        mapping.component = this; 
+        mapping.startAddr = SWITCH_ADDR;
+        mapping.endAddr = SWITCH_ADDR + 1; 
+
+        AddrSpace::AddMapping(mapping);
+
+        switchExtension = new CoherentExtensionIP2Switches(this);
+        Coherent::RegisterExtension(switchExtension);
+
+        // setup reasonable defaults for the switch register
+        switchDefaultValue = Cvar::Get("switchDefaultValue", "f"); // hex value
+
+        switchState = static_cast<uint16_t>(strtoul(switchDefaultValue->GetString(), NULL, 16));
+    };
+
     //
     // STATUS REG 
     //

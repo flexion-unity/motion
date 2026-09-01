@@ -73,23 +73,8 @@ namespace Motion
         // 0x0D ... 0x0F force DSD boot but idk why the user should cfg them
 
         public:
-            void Start() override
-            {
-                AddrSpaceMapping mapping = AddrSpaceMapping();
-
-                mapping.component = this; 
-                mapping.startAddr = SWITCH_ADDR;
-                mapping.endAddr = SWITCH_ADDR + 1; 
-
-                AddrSpace::AddMapping(mapping);
-
-                switchExtension = new CoherentExtensionIP2Switches(this);
-                Coherent::RegisterExtension(switchExtension);
-
-                // setup reasonable defaults
-
-            };
-
+            void Start() override;
+            
             uint8_t Read8(size_t addr) override;
             uint16_t Read16(size_t addr) override;
             uint32_t Read32(size_t addr) override;

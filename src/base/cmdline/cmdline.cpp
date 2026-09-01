@@ -45,7 +45,7 @@ namespace Motion
     void CommandLine::PrintHelp()
     {
         std::cout <<
-            "m  o  t  i  o  n " APP_VERSION "\n"
+            "m  o  t  i  o  n " APP_VERSION " " APP_BUILD_DATE " \n"
             "The SGI Emulator\n"
             "\n"
             "Copyright (c) 2026 starfrost\n"
@@ -54,7 +54,7 @@ namespace Motion
             "  motion [options]\n"
             "\n"
             "Options:\n"
-            "  -h, --help                     Show this help message and exit\n"
+            "  -?, -h, --help                 Show this help message and exit\n"
             "  +set <cvar> <value>            Set a console variable (cvar) before startup.\n"
             "                                 Can be repeated to set multiple cvars.\n"
             "\n"
@@ -67,6 +67,8 @@ namespace Motion
             "  machineName <name>              Machine to emulate (default: iris3130)\n"
             "  ramInstalled <bytes>            Amount of system RAM to install, in bytes (default: 16777216)\n"
             "  profileFolder <path>            Path to the user profile/config folder (default: ./profile)\n"
+            "  defaultSwitchValue <hex mask>   Default switch value (default: 0x1F - AUTOBOOT | BOOT FROM DSD DISK)\n"
+            "  fakeGF2 <0|1>                   Enter into graphical PROM monitor (only PROM graphics will work) (default: 0)\n"
             "\n"
             "Example:\n"
             "  motion +set vidScale 2 +set skipLauncher 1\n";

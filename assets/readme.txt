@@ -100,9 +100,6 @@ Command line:
         promPath
             the path of the PROM (basically the BIOS) to load.
             If you are messing around with different versions of the BIOS oyu can set this
-        forceEnterSerialMonitor
-            Disconnects the keyboard from the emulated machine. This forces the PROM to enter serial communication mode over DUART0 Port B.
-            Since the graphics system (and multibus) don't work yet this is the only way to do anything with the machine right now.
         startPaused (default is 1)
             Start the emulator paused, 0 will start the CPU immediately.
         ramInstalled (default is 16777216)
@@ -112,6 +109,12 @@ Command line:
         numBitplanes (default is 32)
             The number of bitplanes (one BP3 board is 4 bitplanes) to install. Affects maximum graphics bit depth and available graphics modes.
             Must be a multiple of 4 and between 4 and 32. There is no real reason to change this since oyu can use mapped modes with more bitplanes.
+        defaultSwitchValue (default is 0x1F / 31, or autoboot from DSD 5217 disk controller, hard drive)
+            A hexadecimal number indicating (see docs/boards/ip2.md) the default DIP switch value to use
+        fakeGF2 (default is 0)
+            Sets up a fake GF2 board which prevents bus errors from occurring so the graphical PROM monitor works. If this space does not bus error the GF2
+            is assumed to be installed.
+            NOTE: no attempt is made to emulate any aspect of the gf2 so GL2 will come up in serial mode with "fbc: dead meat" logged to the console.
 
 Notes:
     "Unmapped write" or "Unmapped read" warnings: Ignore them, they are fine.
