@@ -3,7 +3,9 @@ The SGI Emulator
 
 Release Notes
 
-0.2.0
+0.3.0
+
+0.2.0 (September 1, 2026)
 ** Motion can now boot GL2 Unix in serial mode only. A disk image is provided at: xxxxx**
 
     * Video scaling (thanks to flexion)

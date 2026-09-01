@@ -205,12 +205,15 @@ Similar to a .plan file
 * fix rtc incorrect control register read. NOW WE BOOT!!!!!!
 * add fakeGF2 convar to fake a gf2 board.
 * make failing to open hdd a message instead of a error
+* fix launcher
+* allow ability to set default switch state
+* v0.2.0-rc1 RELEASE !!! If everything good I will spin again
+    Didn't do some things
 
-v0.2.0 TODO:
+v0.3.0 TODO:
 
+* GE and FBC!!!!!!!
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE
-* DUART counters
-* Disk emulation of some kind to boot UNIX
 * Fix UC4 double buffering
 * HiDPI support
 * Abstract away initial PC

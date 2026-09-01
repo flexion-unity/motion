@@ -1,7 +1,7 @@
 M  O  T  I  O  N
 The SGI Emulator 
 
-Version 0.2.0
+Version 0.3.0
 Copyright (C) 2026 starfrost
 
 Currently this emulator targets the 68020-based IRIS 3000 series machines only.
