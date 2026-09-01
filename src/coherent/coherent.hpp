@@ -250,6 +250,50 @@ namespace Motion
             Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call GetStack64 on a system but it didn't implement it. Check the word size");
             return (uint64_t)-1; // bignumber of fs
         }
+
+        virtual void PushCall8(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call PushCall8 on a system but it didn't implement it. Check the word size");
+        }
+        
+        virtual void PushCall16(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call PushCall16 on a system but it didn't implement it. Check the word size");
+        }
+
+        virtual void PushCall32(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call PushCall32 on a system but it didn't implement it. Check the word size");
+        }
+
+        virtual void PushCall64(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call PushCall64 on a system but it didn't implement it. Check the word size");
+        }
+
+        virtual uint8_t PopCall8(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call PopCall8 on a system but it didn't implement it. Check the word size");
+            return 0xFF;
+        }
+        
+        virtual uint16_t PopCall16(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call PopCall16 on a system but it didn't implement it. Check the word size");
+            return 0xFFFF;
+        }
+
+        virtual uint32_t PopCall32(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call PopCall32 on a system but it didn't implement it. Check the word size");
+            return 0xFFFFFFFF;
+        }
+
+        virtual uint64_t PopCall64(uint32_t offset) 
+        { 
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent tried to call PopCall64 on a system but it didn't implement it. Check the word size");
+            return (uint64_t)-1; // bignumber of fs
+        }
     protected: 
 
         inline static WordSize wordSize; 

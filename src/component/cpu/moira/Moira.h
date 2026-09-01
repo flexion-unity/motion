@@ -342,8 +342,10 @@ protected:
     // Called when the CPU jumps to an exception vector
     virtual void didJumpToVector(int nr, u32 addr) { }
 
+    virtual void didJumpToSubroutine(u32 oldpc, u32 newpc) { }
+
     // Called when the cpu returns
-    virtual void didReturn(u32 oldpc, u32 newpc) { }
+    virtual void didReturnFromSubroutine(u32 oldpc, u32 newpc) { }
 
     
     //

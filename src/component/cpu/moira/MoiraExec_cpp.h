@@ -2389,6 +2389,8 @@ Moira::execJsr(u16 opcode)
     [[maybe_unused]] const int delay[] = { 0,0,0,0,0,2,4,2,0,2,4,0 };
     SYNC(delay[(int)M]);
 
+    u32 oldpc = reg.pc;
+
     switch (C) {
 
         case Core::C68000:
@@ -2481,6 +2483,9 @@ Moira::execJsr(u16 opcode)
     CYCLES_AL   ( 0,  0,  0,        0,  0,  0,       20, 20,  4)
     CYCLES_DIPC ( 0,  0,  0,        0,  0,  0,       18, 18,  5)
     CYCLES_IXPC ( 0,  0,  0,        0,  0,  0,       22, 22,  7)
+
+    // Custom return delegate as we need to inform the debugger when we return
+    didJumpToSubroutine(oldpc, reg.pc);
 
     FINALIZE
 }
@@ -4995,7 +5000,7 @@ Moira::execRts(u16 opcode)
     CYCLES_IP   ( 0,  0,  0,        0,  0,  0,       16, 16, 10)
 
     // Custom return delegate as we need to inform the debugger when we return
-    didReturn(oldpc, newpc);
+    didReturnFromSubroutine(oldpc, newpc);
 
     FINALIZE
 }
