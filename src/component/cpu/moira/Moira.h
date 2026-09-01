@@ -342,6 +342,9 @@ protected:
     // Called when the CPU jumps to an exception vector
     virtual void didJumpToVector(int nr, u32 addr) { }
 
+    // Called when the cpu returns
+    virtual void didReturn(u32 oldpc, u32 newpc) { }
+
     
     //
     // Cache register delegates

@@ -4985,12 +4985,17 @@ Moira::execRts(u16 opcode)
         throw AddressError(makeFrame<AE_PROG>(newpc));
     }
 
+    u32 oldpc = reg.pc;
+
     setPC(newpc);
     fullPrefetch<C, POLL>();
 
     //           00  10  20        00  10  20        00  10  20
     //           .b  .b  .b        .w  .w  .w        .l  .l  .l
     CYCLES_IP   ( 0,  0,  0,        0,  0,  0,       16, 16, 10)
+
+    // Custom return delegate as we need to inform the debugger when we return
+    didReturn(oldpc, newpc);
 
     FINALIZE
 }

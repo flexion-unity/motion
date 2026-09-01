@@ -21,7 +21,7 @@ namespace Motion
         ImGui::SetCursorPosX(targetCursorX);
     }
 
-        // this makes the register text look like normal text
+    // this makes the register text look like normal text
 
     void CoherentUI::PushStylelessTextBox()
     {
