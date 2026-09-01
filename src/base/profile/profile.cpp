@@ -76,7 +76,7 @@ namespace Motion
 
         if (!hdd)
         {
-            Logger::Log(PROFILE_LOG_PREFIX, std::format("Failed to open HDD {} at {}!", id, hddPath).c_str(), LogChannels::Error);
+            Logger::Log(PROFILE_LOG_PREFIX, std::format("HDD {} not installed: {} not found!", id, hddPath).c_str());
             return nullptr; 
         }
 
