@@ -3,8 +3,35 @@
 
 namespace Motion
 {
-    // yes, this checks exactly for one. becaue we don't want duplicatges and check for them 
+    // implements our cached path
     AddrSpaceMapping* AddrSpace::GetMapping(size_t addr) 
+    { 
+        // only check one mapping rather than iterating through all dozen mappings
+        if (cachedMapping)
+        {
+            if (addr >= cachedMapping->startAddr
+            && addr <= cachedMapping->endAddr)
+                return cachedMapping;
+        }
+
+        // we are oging to have to optimise this    ``
+        for (auto it : mappings)
+        {
+            if (addr >= it.second.startAddr
+                && addr <= it.second.endAddr)
+            {
+                cachedMapping = &mappings[it.second.startAddr];
+                // guaranteed to succeed since we *know* that the start address is *always* the key. if the impl changes we'll have to change this
+                // yes, it could create an implicit kv pair if we don't
+                return &mappings[it.second.startAddr];
+            }
+        }
+        
+        return nullptr; 
+    }
+ 
+    // non-cached path which doesn't break everything 
+    AddrSpaceMapping* AddrSpace::PeekMapping(size_t addr) 
     { 
         // we are oging to have to optimise this    ``
         for (auto it : mappings)
@@ -21,178 +48,134 @@ namespace Motion
         return nullptr; 
     }
 
+    bool AddrSpace::Translate(size_t addr, size_t* physAddr, bool isWrite)
+    {
+        if (mmu)
+        {
+            if (!mmu->Translate(addr, physAddr, isWrite))
+            {
+                SignalFault(addr, isWrite);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    AddrSpaceMapping* AddrSpace::ReadCommon(size_t addr)
+    {
+        size_t physAddr = addr;
+
+        if (!Translate(addr, &physAddr, false))
+            return nullptr;
+
+        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        return mapping;
+    }
+
+    AddrSpaceMapping* AddrSpace::PeekCommon(size_t addr)
+    {
+        size_t physAddr = addr;
+
+        if (!Translate(addr, &physAddr, false))
+            return nullptr;
+
+        AddrSpaceMapping* mapping = PeekMapping(physAddr);
+        return mapping;
+    }
+
+    AddrSpaceMapping* AddrSpace::WriteCommon(size_t addr)
+    {
+        size_t physAddr = addr;
+
+        if (!Translate(addr, &physAddr, true))
+            return nullptr;
+
+        AddrSpaceMapping* mapping = PeekMapping(physAddr);
+        return mapping;
+    }
+
     void AddrSpace::LogUnmapped(const char* what, size_t addr, bool isWrite, uint32_t value)
     {
-        if (isWrite)
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::{} - Unmapped write of 0x{:x} to 0x{:x}!",
-                what, value, addr).c_str(), LogChannels::Warning);
-        else
-            Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::{} - Unmapped read from 0x{:x}!",
-                what, addr).c_str(), LogChannels::Warning);
+        Logger::Log(LOG_PREFIX_MAPPING, std::format("AddrSpace::{} - Unmapped {} of 0x{:x} to 0x{:x}!",
+        (isWrite) ? "write" : "read", what, value, addr).c_str(), LogChannels::Warning);
     }
 
     uint8_t AddrSpace::ReadU8(size_t addr)
     {
-        size_t physAddr = addr;
-
-        if (mmu)
-        {
-            if (!mmu->Translate(addr, &physAddr, false))
-            {
-                SignalFault(addr, false);
-                return 0xFF;
-            }
-        }
-
-        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        AddrSpaceMapping* mapping = ReadCommon(addr);
 
         if (mapping)
-        {
-            return mapping->component->Read8(physAddr);
-        }
+            return mapping->component->Read8(addr);
         else
         {
-            SignalFaultIfDeviceSpace(physAddr, false);
-            NotifyUnmapped(physAddr, false, 8);
-
-            LogUnmapped("ReadU8", physAddr, false, 0);
-            return 0;
+            BusError(addr, false, 8);
+            LogUnmapped("ReadU8", addr, false, 8);
+            return 0x00;
         }
     }
     
     uint16_t AddrSpace::ReadU16(size_t addr)
     {
-        size_t physAddr = addr;
-
-        if (mmu)
-        {
-            if (!mmu->Translate(addr, &physAddr, false))
-            {
-                SignalFault(addr, false);
-                return 0xFF;
-            }
-        }
-
-        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        AddrSpaceMapping* mapping = ReadCommon(addr);
 
         if (mapping)
-        {
-            auto value = mapping->component->Read16(physAddr);
-            // IRIS is a big-endian system
-
-            return value;
-        }
+            return mapping->component->Read16(addr);
         else
         {
-            SignalFaultIfDeviceSpace(physAddr, false);
-            NotifyUnmapped(physAddr, false, 16);
-
-            LogUnmapped("ReadU16", physAddr, false, 0);
-            return 0;
+            BusError(addr, false, 16);
+            LogUnmapped("ReadU16", addr, false, 16);
+            return 0x00;
         }
     }
     
     uint32_t AddrSpace::ReadU32(size_t addr)
     {
-        size_t physAddr = addr;
-
-        if (mmu)
-        {
-            if (!mmu->Translate(addr, &physAddr, false))
-            {
-                SignalFault(addr, false);
-                return 0xFF;
-            }
-        }
-
-        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        AddrSpaceMapping* mapping = ReadCommon(addr);
 
         if (mapping)
-        {
-            // IRIS is a big-endian system
-            auto value = mapping->component->Read32(physAddr);
-
-            return value;
-        }
+            return mapping->component->Read32(addr);
         else
         {
-            SignalFaultIfDeviceSpace(physAddr, false);
-            NotifyUnmapped(physAddr, false, 32);
-
-            LogUnmapped("ReadU32", physAddr, false, 0);
-            return 0;
+            BusError(addr, false, 32);
+            LogUnmapped("ReadU32", addr, false, 32);
+            return 0x00;
         }
     }
     
-    int8_t AddrSpace::ReadS8(size_t addr)
-    {
-        return (int8_t)ReadU8(addr);
-    }
-    
-    int16_t AddrSpace::ReadS16(size_t addr)
-    {
-        return (int16_t)ReadU16(addr);
-    }
-    
-    int32_t AddrSpace::ReadS32(size_t addr)
-    {
-        return (int32_t)ReadU32(addr);
-    }
+    int8_t AddrSpace::ReadS8(size_t addr) { return (int8_t)ReadU8(addr); };
+    int16_t AddrSpace::ReadS16(size_t addr) { return (int16_t)ReadU16(addr); };
+    int32_t AddrSpace::ReadS32(size_t addr) { return (int32_t)ReadU32(addr); };
 
     // todo: make readxx call this peakxx function
 
     uint8_t AddrSpace::PeekU8(size_t addr)
     {
-        size_t physAddr = addr;
-
-        if (mmu)
-        {
-            if (!mmu->Translate(addr, &physAddr, false))
-                return 0x00;
-        }
-
-        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        AddrSpaceMapping* mapping = PeekCommon(addr);
 
         if (mapping)
-            return mapping->component->Read8(physAddr);
+            return mapping->component->Read8(addr);
     
         return 0x00;
     }
 
     uint16_t AddrSpace::PeekU16(size_t addr)
     {
-        size_t physAddr = addr;
-
-        if (mmu)
-        {
-            if (!mmu->Translate(addr, &physAddr, false))
-                return 0x00;
-
-        }
-
-        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        AddrSpaceMapping* mapping = PeekCommon(addr);
 
         if (mapping)
-            return mapping->component->Read16(physAddr);
-
+            return mapping->component->Read16(addr);
+    
         return 0x00;
     }
 
     uint32_t AddrSpace::PeekU32(size_t addr)
     {
-        size_t physAddr = addr;
-
-        if (mmu)
-        {
-            if (!mmu->Translate(addr, &physAddr, false))
-                return 0x00;
-        }
-
-        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        AddrSpaceMapping* mapping = PeekCommon(addr);
 
         if (mapping)
-            return mapping->component->Read32(physAddr);
-
+            return mapping->component->Read32(addr);
+    
         return 0x00;
     }
 
@@ -234,86 +217,40 @@ namespace Motion
 
     void AddrSpace::WriteU8(size_t addr, uint8_t value)
     {
-        size_t physAddr = addr;
-
-        if (mmu)
-        {
-            if (!mmu->Translate(addr, &physAddr, true))
-            {
-                SignalFault(addr, true);
-                return;
-            }
-        }
-
-        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        AddrSpaceMapping* mapping = WriteCommon(addr);
 
         if (mapping)
-        {
-            return mapping->component->Write8(physAddr, value);
-        }
+            return mapping->component->Write8(addr, value);
         else
         {
-            SignalFaultIfDeviceSpace(physAddr, true);
-            NotifyUnmapped(physAddr, true, 8);
-
-            LogUnmapped("WriteU8", physAddr, true, value);
+            BusError(addr, true, 8);
+            LogUnmapped("WriteU8", addr, true, value);
         }
     }
 
     void AddrSpace::WriteU16(size_t addr, uint16_t value)
     {
-        size_t physAddr = addr;
-
-        if (mmu)
-        {
-            if (!mmu->Translate(addr, &physAddr, true))
-            {
-                SignalFault(addr, true);
-                return;
-            }
-        }
-
-        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        AddrSpaceMapping* mapping = WriteCommon(addr);
 
         if (mapping)
-        {
-            // IRIS is a big-endian system
-            return mapping->component->Write16(physAddr, value);
-        }
+            return mapping->component->Write16(addr, value);
         else
         {
-            SignalFaultIfDeviceSpace(physAddr, true);
-            NotifyUnmapped(physAddr, true, 16);
-
-            LogUnmapped("WriteU16", physAddr, true, value);
+            BusError(addr, true, 16);
+            LogUnmapped("WriteU16", addr, true, value);
         }
     }
 
     void AddrSpace::WriteU32(size_t addr, uint32_t value)
     {
-        size_t physAddr = addr;
-
-        if (mmu)
-        {
-            if (!mmu->Translate(addr, &physAddr, true))
-            {
-                SignalFault(addr, true);
-                return;
-            }
-        }
-
-        AddrSpaceMapping* mapping = GetMapping(physAddr);
+        AddrSpaceMapping* mapping = WriteCommon(addr);
 
         if (mapping)
-        {
-            return mapping->component->Write32(physAddr, value);
-        }
+            return mapping->component->Write32(addr, value);
         else
         {
-            SignalFaultIfDeviceSpace(physAddr, true);
-            NotifyUnmapped(physAddr, true, 32);
-
-            LogUnmapped("WriteU32", physAddr, true, value);
+            BusError(addr, true, 32);
+            LogUnmapped("WriteU32", addr, true, value);
         }
     }
 
@@ -330,6 +267,13 @@ namespace Motion
     void AddrSpace::WriteS32(size_t addr, int32_t value)
     {
         WriteU32(addr, (uint32_t)value);
+    }
+
+    // bus error stuff
+    void AddrSpace::BusError(size_t addr, bool isWrite, size_t bits)
+    {
+        SignalFaultIfDeviceSpace(addr, isWrite);
+        NotifyUnmapped(addr, isWrite, bits);
     }
 
     /*

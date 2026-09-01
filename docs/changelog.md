@@ -195,6 +195,12 @@ Similar to a .plan file
     * these simply translate and return if bus error, bus 
     * Moira::read16Dasm does this
 
+## 2026-08-31
+* added Moira delegate, didReturn, for implementing call probes in the debugger
+
+## 2026-09-01
+* renamed didReturn to didReturnFromSubroutine and add didJumpToSubroutine
+
 v0.2.0 TODO:
 
 * Reset architecture is garbage and causes enormous memory corruption. Shutdown code is more like ShitDown and would require probably a rewrite (?) to not constantly break, so let's do a non-invasive reset by adding Reset. UPDATE WHEN ACTUALLY DONE

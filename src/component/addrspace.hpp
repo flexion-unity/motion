@@ -4,7 +4,7 @@
 
     Copyright (c)2026 starfrost
 
-    addrspace.hpp : Implements the address space mapping system and also interfaces with an optional MMU
+    addrspace.hpp : Implements the address space mapping system, bus erroring if not present. and also interfaces with an optional MMU
 */
 
 #pragma once
@@ -67,6 +67,7 @@ namespace Motion
  
             static void AddMapping(AddrSpaceMapping mapping);
             static AddrSpaceMapping* GetMapping(size_t addr);
+            static AddrSpaceMapping* PeekMapping(size_t addr);
 
             /*
                 An MMU can detect a fault, but it can't raise the exception: only the CPU core knows how to
@@ -105,11 +106,23 @@ namespace Motion
 
             static void Shutdown();
         private: 
-            inline static std::unordered_map<size_t, AddrSpaceMapping> mappings;
+
+            static AddrSpaceMapping* ReadCommon(size_t addr);                   // Translates and maps an address for reading
+            static AddrSpaceMapping* PeekCommon(size_t addr);                   // Translates and maps an address for peeking.
+            static AddrSpaceMapping* WriteCommon(size_t addr);                  // Translates and maps an address for writing
+
+            // fire a bus error
+            static void BusError(size_t addr, bool isWrite, size_t bits);    
+
+            static bool Translate(size_t addr, size_t* physAddr, bool isWrite); // Translates an address if an MMU exists, bus erroring if not possible
             
+            inline static std::unordered_map<size_t, AddrSpaceMapping> mappings;
 
             ///pointer to an MMU component
             inline static ComponentMMU* mmu;
+
+            // last cached mapping (we don't use lastread or lastwrite like in the multibus. probably we should just change it there too.)
+            inline static AddrSpaceMapping* cachedMapping;
 
             /// @brief Whether a failed translation should be recorded at all. Set once at startup.
             inline static bool faultsEnabled = false;
