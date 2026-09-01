@@ -200,6 +200,7 @@ Similar to a .plan file
 
 ## 2026-09-01
 * renamed didReturn to didReturnFromSubroutine and add didJumpToSubroutine
+* fix the absolutely horrendous state of addrspace.cpp. move translate code into translate method, add cached mappings so we don't have to iterate throuh every mapping, add common read, peek and write methods which handles calling getmapping (or peekmapping), add peekmapping so cachedmapping isn't corrupted by the debugger and generally optimise the syntax
 
 v0.2.0 TODO:
 

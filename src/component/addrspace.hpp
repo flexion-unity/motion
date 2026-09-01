@@ -107,9 +107,9 @@ namespace Motion
             static void Shutdown();
         private: 
 
-            static AddrSpaceMapping* ReadCommon(size_t addr);                   // Translates and maps an address for reading
-            static AddrSpaceMapping* PeekCommon(size_t addr);                   // Translates and maps an address for peeking.
-            static AddrSpaceMapping* WriteCommon(size_t addr);                  // Translates and maps an address for writing
+            static AddrSpaceMapping* ReadCommon(size_t addr, size_t* physAddr);     // Translates and maps an address for reading
+            static AddrSpaceMapping* PeekCommon(size_t addr, size_t* physAddr);     // Translates and maps an address for peeking.
+            static AddrSpaceMapping* WriteCommon(size_t addr, size_t* physAddr);    // Translates and maps an address for writing
 
             // fire a bus error
             static void BusError(size_t addr, bool isWrite, size_t bits);    
