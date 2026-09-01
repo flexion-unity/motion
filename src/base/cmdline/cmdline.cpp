@@ -45,7 +45,7 @@ namespace Motion
     void CommandLine::PrintHelp()
     {
         std::cout <<
-            "m  o  t  i  o  n\n"
+            "m  o  t  i  o  n " APP_VERSION "\n"
             "The SGI Emulator\n"
             "\n"
             "Copyright (c) 2026 starfrost\n"

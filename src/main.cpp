@@ -63,7 +63,8 @@ namespace Motion
     {
         CommandLine::Parse(argc, argv); // parse command line early to detect --help
 
-        if (CommandLine::Present("--help") || CommandLine::Present("-h"))
+        if (CommandLine::Present("--help") || CommandLine::Present("-h")
+        || CommandLine::Present("-?"))
         {
             CommandLine::PrintHelp();
             exit(EXIT_SUCCESS);

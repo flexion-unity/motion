@@ -58,7 +58,7 @@ Command line:
         logIP2DUART 
             Enables debug log messages for the IP2 DUART (two Signetics SCN68681 DUARTs).
         logIP2RTC
-            Enables debug log messages for the IP2 RTC, which is currently a stub emulation. 
+            Enables debug log messages for the IP2 RTC, a Motorola MC146818.
         logDC4
             Enables debug log messages for the Display Controller.
         logUC4
