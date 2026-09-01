@@ -29,8 +29,15 @@ namespace Motion
     #define MMU_START                       0x36000000
     #define MMU_END                         0x3F000000
 
-    #define PAGETABLE_MAX_PAGES             (1 << 14) // pagenumber is 13 bits but there might be 2 ptes (one supervisor and one user?)
-    #define PAGETABLE_INDEX(x)              0x3B000000 + (x*sizeof(uint32_t))
+    // 17x AM2167-35PC (16384x1): 16384 entries of 17 bits - 13 of frame number + protection, referenced and modified.
+    #define PAGETABLE_MAX_PAGES             (1 << 14)
+
+    // The 14 bits above the page offset are used as the page mask.
+    #define PAGETABLE_PAGE_MASK             0x3FFF
+
+    // Frame number in a page table entry. This is 13 bits even though there's (1<<14) pages. Huh
+    #define PAGETABLE_FRAME_MASK            0x1FFF
+    #define PAGETABLE_INDEX(x)              (0x3B000000 + ((x) * sizeof(uint32_t)))
 
     #define REG_OS_BASE                     0x36000000
     #define REG_STATUS                      0x38000000
@@ -70,9 +77,10 @@ namespace Motion
     #define MMU_MASK_MODIFIED               0x80000000      // modified
     #define MMU_MASK_ALWAYS_SET             0xF0001FFF      // Bits which mame always sets. these seem to be wrong compared with the implementation 
 
-    #define MMU_PAGE_MASK                   0x3FFF
-
     #define MMU_SEGMENT_GET_ID(x)           ((x >> 28) & 0x0F)
+
+    // The OS is based on basically causing bus errors, which i think it then uses to remap (?)
+    #define IP2MMU_MAX_FAULTS_LOGGED        32
 
     /// The coherent extnension
     class CoherentExtensionIP2MMU : public CoherentExtension
@@ -151,7 +159,8 @@ namespace Motion
         uint16_t stackBase = 0x0;
         uint16_t stackLimit = 0x0;
 
-        bool logEnabled = false; 
+        bool logEnabled = false;
+        uint32_t faultsLogged = 0;
 
     private: 
         CoherentExtensionIP2MMU* mmuExtension; 

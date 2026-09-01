@@ -42,20 +42,20 @@ namespace Motion
     uint8_t IP2Clock::Read8(size_t addr)
     {
         uint8_t ret = 0x00;
-        
+
         if (addr < IP2_CLOCK_DATA)
             ret = (uint8_t)control;
 
         // Data only while the read strobes are up; otherwise the port reads back the latched address, which the PROM checks.
         if (control == (RTC_CTRL_READ_ENABLE | RTC_CTRL_DATA_STROBE))
             ret =  ReadRegister(address);
-
-        ret = address;
+        else if (addr >= IP2_CLOCK_DATA)
+            ret = address;
 
         if (logIP2RTC->GetValue())
             Logger::Log(LOG_PREFIX_IP2RTC, std::format("IP2 RTC read {:x} from {:x}", ret, address).c_str(), LOG_CHANNEL_IP2RTC);
 
-        return address;
+        return ret;
     }
 
     void IP2Clock::Write8(size_t addr, uint8_t value)

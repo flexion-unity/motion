@@ -1,5 +1,7 @@
 #pragma once 
 
+#include <exception>
+
 #include <Motion.hpp>
 #include <coherent/coherent.hpp>
 #include <component/component.hpp>

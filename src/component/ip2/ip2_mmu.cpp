@@ -203,26 +203,27 @@ namespace Motion
         if (segment == MMU_SEGMENT_GET_ID(MMU_SEGMENT_STACK))
         {
             // bits 23-12
-            pageNumber = ((addr >> 12) & MMU_PAGE_MASK) ^ MMU_PAGE_MASK;
+            pageNumber = ((addr >> 12) & PAGETABLE_PAGE_MASK) ^ PAGETABLE_PAGE_MASK;
             finalPageNumber = (baseValue - pageNumber);
         }
         else
         {
-            pageNumber = (addr >> 12) & MMU_PAGE_MASK;
+            pageNumber = (addr >> 12) & PAGETABLE_PAGE_MASK;
             finalPageNumber = (baseValue + pageNumber);
         }
-        
+
         bool limitReached = limitValue && pageNumber > limitValue;
 
         // allow a fault if we are outside of the page number range
         if (finalPageNumber >= PAGETABLE_MAX_PAGES)
         {
-            // peek's ignore logging 
-            if (isPeek)
+            if (!isPeek 
+                && faultsLogged < IP2MMU_MAX_FAULTS_LOGGED)
             {
+                faultsLogged++;
                 Logger::Log(LOG_PREFIX_IP2MMU,
-                std::format("Bus error: {} of 0x{:x} indexes page table entry 0x{:x}, past the end of the table",
-                isWrite ? "write" : "read", addr, finalPageNumber).c_str(), LogChannels::Warning);
+                    std::format("Bus error: {} of 0x{:x} indexes page table entry 0x{:x}, past the end of the table",
+                    isWrite ? "write" : "read", addr, finalPageNumber).c_str(), LogChannels::Warning);
             }
 
             return false;
@@ -261,19 +262,19 @@ namespace Motion
 
         if (busError)
         {
-            if (!isPeek)
+            if (!isPeek && faultsLogged < IP2MMU_MAX_FAULTS_LOGGED)
             {
-                // CPU will handle it
+                faultsLogged++;
                 Logger::Log(LOG_PREFIX_IP2MMU,
-                std::format("Bus error: {} of unmapped address 0x{:x} (segment {}, pte index 0x{:x}, pte 0x{:08x})",
-                isWrite ? "write" : "read", addr, segment, finalPageNumber, page).c_str(), LogChannels::Warning);
+                    std::format("Bus error: {} of unmapped address 0x{:x} (segment {}, pte index 0x{:x}, pte 0x{:08x})",
+                    isWrite ? "write" : "read", addr, segment, finalPageNumber, page).c_str(), LogChannels::Warning);
             }
 
             return false; 
         }
 
-        // calculate a real physical ram address with 13...0 page adn teh bottom1 0 bits of the real address
-        *finalAddress = (page & MMU_PAGE_MASK) << 12 | (addr & 0x1FFF);
+        // calculate a real physical ram address with 13...0 page and the bottom 12 bits of the real address.
+        *finalAddress = ((page & PAGETABLE_FRAME_MASK) << 12) | (addr & 0xFFF);
         return true; 
     }
 }
