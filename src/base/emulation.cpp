@@ -89,6 +89,8 @@ namespace Motion
 
     void Emulation::SingleStep()
     {
+        Coherent::Reset();
+        
         if (paused)
             machine->SingleStep();
     }

@@ -69,6 +69,12 @@ namespace Motion
         }
     }
 
+    void Coherent::Reset()
+    {
+        Leave();
+        Enter();
+    }
+
     void Coherent::Leave()
     {   
         // shuts down session specific data

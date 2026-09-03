@@ -199,12 +199,6 @@ namespace Motion
             registers.push_back(reg); 
         }
 
-        void Reset()
-        {
-            // reset
-            registers.clear();
-        }
-
         void Shutdown()
         {
             // don't bother cleaning these up on shutdown for now since the entire process is going away
@@ -323,6 +317,9 @@ namespace Motion
         /// @brief Tick the debugger. Called before all emulation components are ticked.
         static void Tick();
         
+        /// @brief Reset the debugger.
+        static void Reset();
+
         /// @brief Render a frame of the debugger (see coherent_gui.cpp)
         static void Frame();
         

@@ -210,6 +210,10 @@ Similar to a .plan file
 * v0.2.0-rc1 RELEASE !!! If everything good I will spin again
     Didn't do some things
 
+## 2026-09-03
+* start splitting off reset from shutdown 
+* get rid of ridiculous hack where we manually bitbanged the address into the memory and make it machine specific
+
 v0.3.0 TODO:
 
 * GE and FBC!!!!!!!

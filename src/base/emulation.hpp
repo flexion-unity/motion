@@ -27,26 +27,24 @@ namespace Motion
     class Emulation
     {
     public: 
-        static void Init();             // initialise the emulation system
-        static void Start();            // Start emulation
-        static void Frame();            // render a frame
-        static void Tick();             // run one tick of the system
+        static void Init();                         // initialise the emulation system
+        static void Start();                        // Start emulation
+        static void Frame();                        // render a frame
+        static void Tick();                         // run one tick of the system
         static void Render(RenderTexture* screen);  // render
-        static void OnEvent(Event& evt);   // fire an event
-        static void Reset();            // reset the emulation
-        static void SingleStep();       // run one emulation tick
-        static void Stop();             // shut down
-        static void Shutdown();     
+        static void OnEvent(Event& evt);            // fire an event
+        static void Reset();                        // reset the emulation
+        static void SingleStep();                   // run one emulation tick
+        static void Stop();                         // stop the emualtion
+        static void Shutdown();                     // shut down the emulation
 
         // Called by components to e.g. get the address space
         static Machine* GetMachine() { return machine; }
-        
-        static bool IsRunning() { return running; }    
-        static void SetRunning(bool value) { running = value; };
-
+        static bool GetIsRunning() { return running; }    
         static bool GetPaused() { return paused; };
 
         // setters for private fields
+        static void SetRunning(bool value) { running = value; };
         static void SetPaused(bool paused) { Emulation::paused = paused; };
 
     private: 
