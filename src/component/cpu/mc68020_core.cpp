@@ -49,6 +49,10 @@ namespace Motion
         Coherent::SetSystem(system);
         // convert to nanoseconds
 
+    }
+
+    void MC68020::Reset()
+    {
         Logger::Log(LOG_PREFIX_68020, "Resetting CPU...");
 
         // ignore autovectors. THe IP2 reads out of PROM U118 to determine what vectors to call  on interrupts

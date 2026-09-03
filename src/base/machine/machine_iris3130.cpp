@@ -62,4 +62,15 @@ namespace Motion
             AddComponent<KeyboardIris>();
             
     }
+
+    void IRIS3130::Reset()
+    {
+        Memory* memory = Emulation::GetMachine()->FindComponentByType<Memory>();
+
+        // i have no idea how the machine gets these so just write them in before reset 
+        
+        memory->Write32(0x0, 0x33000800);        // initial sp
+        memory->Write32(0x4, 0x30000400);        // initial pc
+        Machine::Reset();
+    }
 }

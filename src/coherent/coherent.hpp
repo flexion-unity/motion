@@ -199,6 +199,12 @@ namespace Motion
             registers.push_back(reg); 
         }
 
+        void Reset()
+        {
+            // reset
+            registers.clear();
+        }
+
         void Shutdown()
         {
             // don't bother cleaning these up on shutdown for now since the entire process is going away

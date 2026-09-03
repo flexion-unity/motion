@@ -84,8 +84,7 @@ namespace Motion
     {
         Logger::Log("Resetting emulation...");
 
-        Stop();
-        Start();
+        machine->Reset();
     }
 
     void Emulation::SingleStep()
@@ -101,6 +100,9 @@ namespace Motion
 
     void Emulation::Tick()
     {
+        // reset first
+        machine->Reset();
+
         while (running)
         {
             // do this after processing everything for the current tick

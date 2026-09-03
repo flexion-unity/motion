@@ -16,11 +16,11 @@ namespace Motion
 
     void Machine::Start()
     {
-        // components are added earlier so the renderer can read the screen size
-        AddComponents();
-
         ramInstalled = Cvar::Get("ramInstalled", "16777216");
         totalRamInstalled = ramInstalled->GetValue();
+
+        // components are added earlier so the renderer can read the screen size
+        AddComponents();
 
         Logger::Log("Initialising early-start components...");
         // early start components. eg the MMU. The MMU has to be available because
@@ -76,6 +76,14 @@ namespace Motion
 
         run:
             component->Tick();
+        }
+    }
+
+    void Machine::Reset()
+    {
+        for (Component* component : components)
+        {
+            component->Reset();
         }
     }
 

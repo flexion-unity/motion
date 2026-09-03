@@ -22,6 +22,8 @@ namespace Motion
         void AddComponents() override;
         const char* GetName() override { return "SGI IRIS 3130 (1986)"; };
 
+        void Reset() override; 
+
         int32_t GetInternalScreenSizeX() override { return 1024; };
         int32_t GetInternalScreenSizeY() override { return 1024; };
     }; 

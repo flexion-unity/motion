@@ -52,6 +52,7 @@ namespace Motion
         uint32_t GetClockSpeed() override { return 16666670; }; 
 
         void Start() override;
+        void Reset() override;
         void Tick() override;
         void Shutdown() override; 
 

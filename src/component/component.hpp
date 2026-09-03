@@ -31,8 +31,9 @@ namespace Motion
 
         virtual void Start() { };
         virtual void Tick() { };                // ticks at clock speed
-        virtual void OnEvent(Event& evt) { };      // fire an event
-        virtual void Shutdown() { };
+        virtual void OnEvent(Event& evt) { };   // fire an event
+        virtual void Reset() { };               // fired when the emulator starts or resets
+        virtual void Shutdown() { };            // fired on shutdown
         
         virtual uint8_t Read8(size_t addr) 
         { 

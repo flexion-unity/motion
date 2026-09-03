@@ -65,6 +65,9 @@ namespace Motion
         /// @brief Start the machine.
         void Start();
 
+        /// @brief resets (or starts for the first time) the machine
+        virtual void Reset();
+
         /// @brief Tick each component of the emulation.
         void Tick();
 
