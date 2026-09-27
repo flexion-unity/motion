@@ -27,7 +27,7 @@ namespace Motion
         Matrix()
         {
             MOTION_ASSERT_FATAL(X <= 0 || Y <= 0, "Tried to create a matrix with a size of zero ?????");
-            MOTION_ASSERT_WARNING(X >= MATRIX_MINIMUM_WARNING_X || Y >= MATRIX_MINIMUM_WARNING_Y, std::format("That matrix will use {} bytes of memory, are you sure you intended this?", MATRIX_MINIMUM_WARNING_X, MATRIX_MINIMUM_WARNING_Y));
+            MOTION_ASSERT_WARNING(X >= MATRIX_MINIMUM_WARNING_X || Y >= MATRIX_MINIMUM_WARNING_Y, std::format("That matrix will use {} bytes of memory, are you sure you intended this?", MATRIX_MINIMUM_WARNING_X * MATRIX_MINIMUM_WARNING_Y));
             return; 
         }
 
