@@ -66,11 +66,18 @@ namespace Motion
                 {
                     // see which extensions are enabled 
 
+                    // this code is duplicated :/ need to separate the ui from the extension iterator
+
                     for (CoherentExtension* extension : Coherent::extensions)
                     {
+                        const char* name = extension->GetMenuName();
+
                         if (extension->GetExtensionType() == CoherentExtensionType::PeripheralsMenu)
-                            if (ImGui::MenuItem(extension->component->GetName()))
+                        {
+                            if (ImGui::MenuItem(name))
                                 extension->enabled = true;
+                        }
+
                     }
 
                     ImGui::EndMenu();
@@ -81,13 +88,8 @@ namespace Motion
                 {
                     const char* name = extension->component->GetName();
 
-                    // if the extension has a specified menu name do that
-                    if (extension->GetMenuName()[0] != '\0')
-                        name = extension->GetMenuName();
-
                     if (extension->GetExtensionType() == CoherentExtensionType::CustomMenu)
                     {
-
                         // we checked already so it can only be custommenunochildren
                         bool clicked = false;
 

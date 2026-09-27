@@ -50,9 +50,7 @@ namespace Motion
         }
         
         Logger::Log(GF2_GE_LOG_PREFIX, std::format("GE Read16 0x{:x} from 0x{:x}", value, addr).c_str(), LogChannels::Debug);
-
         return value; 
-
     }
 
     void GF2::GEWrite16(size_t addr, uint16_t value)
@@ -61,6 +59,10 @@ namespace Motion
         {
             case GF2_GE_FLAGS:
                 geFlagsWritten = value; 
+
+                // sets to gedebug BUT THEN EXPECTS IT TO BE ZERO?
+                if (geFlagsWritten == 0x813e)
+                    geFlagsWritten = 0;
                 break; 
         }
 
@@ -72,4 +74,9 @@ namespace Motion
     {
 
     }
+
+    //
+    // GEUnit
+    //
+
 }

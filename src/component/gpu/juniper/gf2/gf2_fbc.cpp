@@ -4,7 +4,19 @@
 
     Copyright (c)2026 starfrost
 
-    gf2_fbc.cpp: Non-Am2903 parts of the F.BC
+    gf2_fbc.cpp: FBC Orchestration
+
+    Controls AM2903 (Data) & AM2910 (Control)
+    Loads microcode into both
+
+    SGI wrote the microcode in highly macro'd C which was compiled into their "mas" microcode assembler (which has been mostly ported to Linux by me). 
+    The MAS Binary then converted the microcode into a binary file which was then uploaded. There's 4096 16-bit (4x"slices" for each am2903), controlled by an AM2910.
+
+    Each state was started by _NS and ended by _ES
+    
+    MICROCODE FORMAT:
+    17 "fields"
+
 */
 #include <component/component.hpp>
 #include <component/gpu/juniper/gf2/gf2.hpp>
@@ -20,6 +32,9 @@ namespace Motion
         
         fbcUcodeEditor = new CoherentEditor(this, settings);
         Coherent::RegisterExtension(fbcUcodeEditor);
+
+        am2903.Start();
+        am2910.Start();
     }
 
     uint16_t GF2::FBCRead16(size_t addr)
@@ -106,6 +121,11 @@ namespace Motion
         
         
         Logger::Log(GF2_FBC_LOG_PREFIX, std::format("FBC Write16 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
+    }
+
+    void GF2::FBCTick()
+    {
+        
     }
 
     void GF2::FBCExecuteCommand()

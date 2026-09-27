@@ -43,7 +43,12 @@ namespace Motion
     #define GF2_FBC_FLAGS_WRITE_FORCE_REQUEST       (1 << 4)           
     #define GF2_FBC_FLAGS_WRITE_FORCE_ACKNOWLEDGE   (1 << 5)           
     #define GF2_FBC_FLAGS_WRITE_FORCE_SUBST_IN      (1 << 6)           
-    #define GF2_FBC_FLAGS_WRITE_FORCE_SUBST_OUT     (1 << 7)                    
+    #define GF2_FBC_FLAGS_WRITE_FORCE_SUBST_OUT     (1 << 7)        
+    
+    // Interrupts
+
+    #define GF2_FBC_INTPIXEL32                     10
+
     // sometimes it is x50001000 for BETA GF2 ????? 
     // TOKEN means BUSY (SET == BUSY)
 
@@ -84,6 +89,8 @@ namespace Motion
     // commands
     // GE commands onyl: we don't care about the FBC commands, except the "alternative" ones
     // because we LLE the AM2903
+
+    #define GE_CMD_MATRIX_STACK_SIZE                8
 
     #define GE_CMD_WAITING		                    -1 
 
@@ -145,12 +152,25 @@ namespace Motion
     #define GF2_FBC_SCRATCH_SIZE                    0xFFF // scratch ram size (assume larger ofr more funcitons?)
     #define GF2_FBC_MICRO_VERSION                   0x200 // ucode VERSION
 
+    class CoherentExtensionGF2 : public CoherentExtension
+    {
+    public: 
+        CoherentExtensionGF2(Component* component) : CoherentExtension(component) { };
+
+        void AddUI() override;
+
+        /// @brief Set the menu option name. If this is not called the component name will be used as the menu name.
+        /// @param name The menu name to use
+        const char* GetMenuName() override { return "GF2 (Graphics Debug)"; };
+    };
+
     class GF2 : public Component
     {
     public: 
         GF2() : am2910(&am2903) { };
 
         void Start() override; 
+        void Tick() override; 
         void Shutdown() override; 
             
         uint8_t Read8(size_t addr) override;
@@ -159,8 +179,6 @@ namespace Motion
         void Write8(size_t addr, uint8_t value) override;
         void Write16(size_t addr, uint16_t value) override;
         void Write32(size_t addr, uint32_t value) override; 
-
-        void Tick() override;
 
         const char* GetName() { return "GF2 (3D Graphics Board)"; }; 
     private: 
@@ -172,6 +190,10 @@ namespace Motion
                 
             private:
                 uint16_t matTop;
+
+                // 2d mode : only use 2x2, 3d mode 3x3 etc
+                Matrix<float, 4, 4> matrixStack[GE_CMD_MATRIX_STACK_SIZE];
+
         };
 
         /* COMMANDS ARE PASSED OT UNIT*/
@@ -180,7 +202,6 @@ namespace Motion
             uint16_t type;
             uint8_t* data; 
         };
-
 
         ///
         /// FIELDS
@@ -191,12 +212,10 @@ namespace Motion
         bool geBusy = false;  // token is passing through
         bool geReset = true; 
 
-        uint16_t geFlagsRead;
-        uint16_t geFlagsWritten;
-        uint16_t fbcFlagsRead;
-        uint16_t fbcFlagsWritten; 
-
-        bool geX = false;
+        uint16_t geFlagsRead = 0;
+        uint16_t geFlagsWritten = 0;
+        uint16_t fbcFlagsRead = 0;
+        uint16_t fbcFlagsWritten = 0; 
 
         // geometry engine
         GEUnit theGe;
@@ -212,6 +231,10 @@ namespace Motion
 
         void GEStart();
         void FBCStart();
+
+        // GE Only performs operations oN command
+        void FBCTick();
+
         uint16_t GERead16(size_t addr);
         uint16_t FBCRead16(size_t addr);
         void GEWrite16(size_t addr, uint16_t value);
@@ -239,6 +262,8 @@ namespace Motion
         void FBCExecuteCommand();
         uint16_t FBCExecuteAlternativeCommand(uint16_t id);
         void BPCExecuteCommand();
+
+        CoherentExtensionGF2* gf2Extension;
 
     }; 
 }; 

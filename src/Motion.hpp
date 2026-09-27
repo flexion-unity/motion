@@ -35,7 +35,7 @@
 #include <base/cmdline/cmdline.hpp>
 
 #define APP_NAME            "motion"
-#define APP_SIGNON          "The SGI Emulator\nEmulation engine © 2026 starfrost\nOriginal hardware and software by Silicon Graphics, Inc. © 1981-1989"
+#define APP_SIGNON          "The SGI Emulator\n© 2026 starfrost and contributors\nOriginal hardware and software by Silicon Graphics, Inc. © 1981-1989"
 // This part will be replaced by some fancy GHA script later
 #define APP_VERSION         "0.3.0"
 #ifdef DEBUG
@@ -82,14 +82,21 @@
 
 // Assertions.
 // I usually don't like them except in critical-path stuff, where it may be too slow to do manual checks.
+// Or in cases where the issue is rather compile-time...
 
 #ifdef DEBUG
-#define MOTION_ASSERT(cond, msg)                if (cond) \
+#define MOTION_ASSERT_WARNING(cond, msg)        if (cond) \
+                                                    Logger::Log(std::format("***** ASSERTION FAILED (WARNING) *****\n{}", msg).c_str(), LogChannels::Warning)
+#define MOTION_ASSERT_ERROR(cond, msg)          if (cond) \
+                                                    Logger::Log(std::format("***** ASSERTION FAILED (WARNING) *****\n{}", msg).c_str(), LogChannels::Error) 
+#define MOTION_ASSERT_FATAL(cond, msg)          if (cond) \
                                                     Logger::Log(std::format("***** ASSERTION FAILED *****\n{}", msg).c_str(), LogChannels::FatalError) 
 #define MOTION_ASSERT_UNSAFE(cond, msg)         if (cond) \
                                                     Logger::Log(std::format("***** ASSERTION FAILED *****\n{}", msg).c_str(), LogChannels::UnsafeShutdown)
 #else
-#define MOTION_ASSERT(cond, msg)
+#define MOTION_ASSERT_WARNING(cond, msg)
+#define MOTION_ASSERT_ERROR(cond, msg)
+#define MOTION_ASSERT_FATAL(cond, msg)
 #define MOTION_ASSERT_UNSAFE(cond, msg)
 #endif
 
@@ -110,3 +117,6 @@
                                                         space[addr + 1] = (uint8_t)(value >> 16); \
                                                         space[addr + 2] = (uint8_t)(value >> 8); \
                                                         space[addr + 3] = (uint8_t)value
+
+// math.hpp depends on MOTION_ASSERT but we want everything to have access to it so just put it here
+#include <platform/math/math.hpp>

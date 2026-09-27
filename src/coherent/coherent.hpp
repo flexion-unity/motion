@@ -74,11 +74,12 @@ namespace Motion
         // Getters for private methods
         virtual CoherentExtensionType GetExtensionType() { return CoherentExtensionType::PeripheralsMenu; };
 
-        /// @brief Set the menu name. If this is not called the component name will be used as the menu name.
-        /// @param name The menu name to use
-        virtual const char* GetMenuName() { return "Name this Menu"; };
+        /// @brief Set the menu option name for custom menu type items. If this is not overridden the component name will be used as the menu name.
+        /// @param name The menu name to use. Default is the componet name.
+        virtual const char* GetMenuName() { return component->GetName(); };
 
         // Setters for private methods
+
 
     private:
         std::vector<CoherentCommand*> commands;

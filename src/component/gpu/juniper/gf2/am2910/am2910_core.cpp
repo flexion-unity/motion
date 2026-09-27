@@ -17,12 +17,17 @@ namespace Motion
 {
     void AM2910::Start()
     {
-
+        running = true; 
     }
 
-    uint16_t AM2910::StackPush()
+    void AM2910::Tick()
     {
 
+    }
+    
+    uint16_t AM2910::StackPush()
+    {
+        return 0xFF; 
     }
 
     void AM2910::StackPop()

@@ -6,6 +6,8 @@
 
     am2910.hpp: The AMD Am2910 Microcode Sequencer
     This one controls the AM2903...To perform actions
+
+    AM2903 is control side
     
      
     Source: https://www.datasheets360.com/pdf/-6069213202016663880
@@ -32,6 +34,7 @@ namespace Motion
         }
 
         void Start();
+        void Tick();
 
         uint16_t StackPush();
         void StackPop();
@@ -47,13 +50,15 @@ namespace Motion
 
         
         // LIFO 
-        uint16_t pcPtr;
+        uint16_t pcCtr;                         // on zero, execute NEXT instruction
         uint16_t pcReg;        
         uint16_t stack[AM2910_STACK_SIZE];
         uint8_t stackPtr; 
         uint16_t d;                             // Direct input
 
         AM2903* the2903;                        // used to contrl us. this code sucks but it's r&d
+
+        bool running = false; 
 
     }; 
 };

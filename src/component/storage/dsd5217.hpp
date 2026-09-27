@@ -199,8 +199,7 @@ namespace Motion
 
         /*
             These are DECODED COPIES of the control blocks, not overlays onto guest memory - the controller
-            fetches them out of Multibus RAM when it is started. The comment on each field is its Multibus
-            byte offset within the block, which is what the manuals use. Note that the IP2 crosses the byte
+            fetches them out of Multibus RAM when it is started. The offsets are taken from the manual. Note that the IP2 crosses the byte
             lanes, so Multibus offset N is the byte the host wrote at N ^ 1: that is why the layout below
             looks transposed compared to what you see in a memory viewer.
         */

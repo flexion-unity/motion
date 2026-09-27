@@ -44,6 +44,9 @@ namespace Motion
         privMapping.component = this;
 
         AddrSpace::AddMapping(privMapping);
+
+        gf2Extension = new CoherentExtensionGF2(this);
+        Coherent::RegisterExtension(gf2Extension);
     } 
     
     // BIG ENDIAN! WE DO NOT USE MULTIBUS MEMORY SO WE DON'T NEED TO FLIP
@@ -105,12 +108,14 @@ namespace Motion
     {
         // TEMP !!!
         //ge.Tick();
-        //fbc.Tick();
+        FBCTick();
     }
 
     void GF2::Shutdown()
     {
         if (fbcUcodeEditor)
             delete fbcUcodeEditor;
+
+        delete gf2Extension;
     }
 };
