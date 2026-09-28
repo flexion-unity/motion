@@ -113,8 +113,7 @@ namespace Motion
                 case GF2_FBC_DATA_START:  // not in condition to write uCode
                     lastFbcAltCommand = value;
                     break; 
-                // ON WRITE TO FBCDATA, INITIATE UCODE OPERATIONS!
-                // THE UCODE MUST BE RUN ACCORDING TO THE COMMAND, WHICH WAS WRITTEN TO FBCDATA!
+                // ONLY ON REAL FBC COMMAND MUST UCODE OPERATIONS BE INITIALISED
 
             }
         }
@@ -128,12 +127,12 @@ namespace Motion
         
     }
 
-    void GF2::FBCExecuteCommand()
+    void GF2::FBCExecuteCommand(uint16_t word)
     {
         
     }
     
-    void GF2::BPCExecuteCommand()
+    void GF2::BPCExecuteCommand(uint16_t word)
     {
 
     }

@@ -64,19 +64,118 @@ namespace Motion
                 if (geFlagsWritten == 0x813e)
                     geFlagsWritten = 0;
                 break; 
+            case GF2_GE_DATA:
+                GEPushCommandWord(value);
+                break; 
         }
 
         
         Logger::Log(GF2_GE_LOG_PREFIX, std::format("GE Write16 0x{:x} to 0x{:x}", value, addr).c_str(), LogChannels::Debug);
     }
 
-    void GF2::GEExecuteCommand()
+    //
+    // Command parsing
+    //
+    
+    /// @brief get the number of geometry engine parameters for a given command. MUST BE CONVERTED INTO TWO TABLES
+    /// @param id the id to get 
+    uint32_t GF2::GEGetCmdNrParameters(uint16_t word)
+    {
+        uint32_t numParameters = 0;
+
+        switch (word)
+        {
+            default: // commands encode parameters for dimensions of operation and type 
+                switch (word & GE_CMD_PARAM_DIMENSION_MASK)
+                {
+                    case GE_CMD_OPERATES_ON_2D:
+                        numParameters = 2;
+                        break;
+                    case GE_CMD_OPERATES_ON_3D:
+                        numParameters = 3;
+                        break;
+                    default:
+                        numParameters = 4;
+                        break;
+                }
+
+                if (!((word & GE_CMD_PARAM_TYPE_MASK) == GE_CMD_PARAM_IS_SHORT))
+                    numParameters <<= 1; // bus is 16 bit
+                break;
+            case GE_CMD_POPMM: case GE_CMD_PUSHMM:
+            case GE_CMD_NOOP:
+            case GE_CMD_RECONFIGURE: 
+            case GE_CMD_CLOSEPOLY:
+                numParameters = 0;
+                break;
+            case GE_CMD_LOADMM:
+                numParameters = 32;
+                break;
+            case GE_CMD_LOADVIEWPORT:
+                numParameters = 16; // 8 dwords
+                break; 
+        }
+
+        return numParameters;
+    }
+
+    void GF2::GEPushCommandWord(uint16_t word)
+    {
+        uint16_t cmd = (word & 0xFF);
+
+        // Go into the fifo
+        
+        pipeParameters[pipeWritePtr] = word; 
+
+        // high byte all bits high = reconfigure all ges
+        if (theGe.reconfiguring && (word & 0xFF00) == 0xFF00)
+            theGe.reconfiguring = false; 
+
+        // if 0, it's a new command...
+        if (theGe.lastGeCommand == GE_NO_COMMAND)
+        {
+            theGe.lastGeCommand = cmd;
+            theGe.lastGeCommandOffset = pipeWritePtr;
+        }
+        else
+        {
+            theGe.lastGeCommandParameters++;
+
+            if (theGe.lastGeCommandParameters == GEGetCmdNrParameters(word))
+            {
+                Logger::Log(GF2_GE_LOG_PREFIX, std::format("About to execute GE command 0x{:x} with 0x{:x} parameters", cmd, theGe.lastGeCommandParameters).c_str(), LogChannels::Debug);
+                GEExecuteCommand(word);
+
+                theGe.lastGeCommand = GE_NO_COMMAND;
+                theGe.lastGeCommandParameters = 0;
+            }
+        }
+
+        pipeWritePtr++;
+        pipeWritePtr %= GF2_GE_MAX_PARAMETERS;
+
+    
+        if (cmd == GE_CMD_PASSTHRU)
+            FBCExecuteCommand(word);
+            // Go to FBC Microcode Engine
+    }
+
+    uint16_t GF2::GEPeekNextCommandWord(uint16_t word)
+    {
+        pipePeekPtr++;
+        pipePeekPtr %= GF2_GE_MAX_PARAMETERS;
+
+        return pipeParameters[pipePeekPtr];
+    }
+
+    //
+    // Command eexcution
+    //
+
+    void GF2::GEExecuteCommand(uint16_t word)
     {
 
     }
 
-    //
-    // GEUnit
-    //
 
 }

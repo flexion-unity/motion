@@ -7,6 +7,9 @@
     gf2_coordinator.hpp: The mappings for GF2 are messy as shit. So we map them to different components in here...
 
     These are all implemented in one class because they are basically so connected to each other that there is no way of doing it
+
+    TODO:
+    GE 20.8 format floats
 */
 
 #pragma once
@@ -71,7 +74,9 @@ namespace Motion
     #define GF2_GE_FLAG_WRITE_ENABLE_AUTOCLEAR      (1 << 11)   // AUTO CLEAR fbc interrupts after writing
     #define GF2_GE_FLAG_FBC_CURRENT_STATE           ((1 << 12) | (1 << 11) | (1 << 10)) // god damn macros bruh
     #define GF2_GE_FLAG_FBC_SLICE_SHIFT             13          // FBC slice sift
-    #define GF2_GE_FLAG_WRITE_DISABLE_UCODE_ACCESS   (1 << 15)   // Microcode access enabled
+    #define GF2_GE_FLAG_WRITE_DISABLE_UCODE_ACCESS  (1 << 15)   // Microcode access enabled
+
+    #define GF2_GE_MAX_PARAMETERS                   32
 
     #define GF2_MULTIBUS_END                        0x50002FFF
 
@@ -139,6 +144,26 @@ namespace Motion
     #define GE_CMD_CURVEPOLY		                0x37
     #define GE_CMD_TRANSFORMPOINT	                0x38
 
+    // Sentinel value used when a command is done processing
+    #define GE_NO_COMMAND                           0xFF
+
+    // Parameters
+    // Many GF2 include commands have coords
+    // These determine how many dimensions everything gets affetced by
+    #define GE_CMD_PARAM_DIMENSION_MASK             0x300
+    #define GE_CMD_PARAM_TYPE_MASK                  0xC00
+    #define GE_CMD_PARAM_IS_FLOAT                   0x0
+    #define GE_CMD_PARAM_IS_INT                     0x400
+    #define GE_CMD_PARAM_IS_SHORT                   0x800
+
+    #define GE_CMD_OPERATES_ON_2D                   0x100
+    #define GE_CMD_OPERATES_ON_3D                   0x200
+
+    // GE->FBC passthrough
+    #define GE_CMD_FBC_NOTHING_MORE                 0xFF08
+
+    // Default is "4d" or 4x4.
+    
     #define GF2_FBC_UCODE_STATES                    4096
     #define GF2_FBC_UCODE_SLICES                    4
     // 16 bit (4096 states * 4 am2903s * 4 bits per am2903) bits = 0x400, mst be 16 bit aligned = 0x3fe
@@ -151,6 +176,7 @@ namespace Motion
 
     #define GF2_FBC_SCRATCH_SIZE                    0xFFF // scratch ram size (assume larger ofr more funcitons?)
     #define GF2_FBC_MICRO_VERSION                   0x200 // ucode VERSION
+
 
     class CoherentExtensionGF2 : public CoherentExtension
     {
@@ -186,21 +212,21 @@ namespace Motion
         // We model all GEs as one...
         class GEUnit
         {
+            friend class GF2; 
+
             public:
-                
+                uint16_t lastGeCommand; 
+                uint16_t lastGeCommandOffset;
+                uint16_t lastGeCommandParameters;
+
             private:
+                bool reconfiguring; // the ge is reconfiguring
+
                 uint16_t matTop;
 
                 // 2d mode : only use 2x2, 3d mode 3x3 etc
                 Matrix<float, 4, 4> matrixStack[GE_CMD_MATRIX_STACK_SIZE];
 
-        };
-
-        /* COMMANDS ARE PASSED OT UNIT*/
-        class GECommand
-        {
-            uint16_t type;
-            uint8_t* data; 
         };
 
         ///
@@ -254,14 +280,26 @@ namespace Motion
 
         /// @brief get requested microcode slice for addr addr
         uint16_t GetRequestedFBCUcodeData(uint16_t addr) { return ucode[GetCurrentUcodeState(addr)][GetCurrentUcodeSlice()]; };
+
         ///
         /// COMMANDS
         ///
 
-        void GEExecuteCommand();
-        void FBCExecuteCommand();
+        /* COMMANDS ARE PASSED OT UNIT*/
+        // this is a ringbuffer (shared with FBC)
+        uint16_t pipeParameters[GF2_GE_MAX_PARAMETERS];
+        uint16_t pipeWritePtr;
+        uint16_t pipePeekPtr;                           // special for GEExecuteCommand. It's a write only but we need to peek
+
+        /// @brief ge current parameters
+        uint32_t GEGetCmdNrParameters(uint16_t word);
+
+        void GEPushCommandWord(uint16_t word);
+        uint16_t GEPeekNextCommandWord(uint16_t word);
+        void GEExecuteCommand(uint16_t word);
+        void FBCExecuteCommand(uint16_t word);
         uint16_t FBCExecuteAlternativeCommand(uint16_t id);
-        void BPCExecuteCommand();
+        void BPCExecuteCommand(uint16_t word);
 
         CoherentExtensionGF2* gf2Extension;
 
