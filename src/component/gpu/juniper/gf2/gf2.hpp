@@ -288,12 +288,12 @@ namespace Motion
         /* COMMANDS ARE PASSED OT UNIT*/
         // this is a ringbuffer (shared with FBC)
         uint16_t pipeParameters[GF2_GE_MAX_PARAMETERS];
-        uint16_t pipeWritePtr;
-        uint16_t pipePeekPtr;                           // special for GEExecuteCommand. It's a write only but we need to peek
+        uint16_t pipeWritePtr = 0;
+        uint16_t pipePeekPtr = 0;                           // special for GEExecuteCommand. It's a write only but we need to peek
 
-        uint16_t passthroughStart;
-        uint16_t passthroughWords;
-        uint16_t passthroughSize;
+        uint16_t passthroughStart = 0;
+        uint16_t passthroughWords = 0;
+        uint16_t passthroughSize = 0;
 
         /// @brief ge current parameters
         uint32_t GEGetCmdNrParameters(uint16_t word);
