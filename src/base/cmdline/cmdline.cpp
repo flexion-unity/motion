@@ -68,7 +68,7 @@ namespace Motion
             "  ramInstalled <bytes>            Amount of system RAM to install, in bytes (default: 16777216)\n"
             "  profileFolder <path>            Path to the user profile/config folder (default: ./profile)\n"
             "  defaultSwitchValue <hex mask>   Default switch value (default: 0x1F - AUTOBOOT | BOOT FROM DSD DISK)\n"
-            "  fakeGF2 <0|1>                   Enter into graphical PROM monitor (only PROM graphics will work) (default: 0)\n"
+            "  enableGF2 <0|1>                 Enable graphics system (default: 0)\n"
             "\n"
             "Example:\n"
             "  motion +set vidScale 2 +set skipLauncher 1\n";

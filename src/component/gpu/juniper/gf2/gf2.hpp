@@ -291,13 +291,17 @@ namespace Motion
         uint16_t pipeWritePtr;
         uint16_t pipePeekPtr;                           // special for GEExecuteCommand. It's a write only but we need to peek
 
+        uint16_t passthroughStart;
+        uint16_t passthroughWords;
+        uint16_t passthroughSize;
+
         /// @brief ge current parameters
         uint32_t GEGetCmdNrParameters(uint16_t word);
 
         void GEPushCommandWord(uint16_t word);
         uint16_t GEPeekNextCommandWord(uint16_t word);
         void GEExecuteCommand(uint16_t word);
-        void FBCExecuteCommand(uint16_t word);
+        void FBCExecuteCommand(uint16_t word, uint16_t passthroughStart);
         uint16_t FBCExecuteAlternativeCommand(uint16_t id);
         void BPCExecuteCommand(uint16_t word);
 

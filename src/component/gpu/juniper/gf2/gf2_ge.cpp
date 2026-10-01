@@ -151,13 +151,31 @@ namespace Motion
             }
         }
 
+        if (cmd == GE_CMD_PASSTHRU)
+        {
+
+            if (passthroughWords == 0)
+            {
+                passthroughSize = ((word >> 8)) + 1;
+                passthroughStart = pipeWritePtr;
+            }
+               
+
+            passthroughWords++;
+
+            if (passthroughWords == passthroughSize)
+            {
+                passthroughSize = passthroughStart = passthroughWords = 0;
+                FBCExecuteCommand(word, passthroughStart);
+
+            }
+        }
+            // Go to FBC Microcode Engine
+
+        
         pipeWritePtr++;
         pipeWritePtr %= GF2_GE_MAX_PARAMETERS;
 
-    
-        if (cmd == GE_CMD_PASSTHRU)
-            FBCExecuteCommand(word);
-            // Go to FBC Microcode Engine
     }
 
     uint16_t GF2::GEPeekNextCommandWord(uint16_t word)

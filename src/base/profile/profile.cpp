@@ -88,4 +88,3 @@ namespace Motion
         return Filesystem::Close(fs);
     }
 }
-

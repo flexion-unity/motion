@@ -127,7 +127,7 @@ namespace Motion
         
     }
 
-    void GF2::FBCExecuteCommand(uint16_t word)
+    void GF2::FBCExecuteCommand(uint16_t word, uint16_t passthroughStart) // size from GE Passthrough
     {
         
     }
