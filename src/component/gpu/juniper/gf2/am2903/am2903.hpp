@@ -8,6 +8,8 @@
     4 are used for the FBC
     
     In order to reduce complexity we basically model this strictly as four units rather than messing around with slice nonsense.
+
+    Also, an AMD Am2910 Microcode Processor is 
     This is technically a problem but I don't think any other SGI systems use the AM2903.    
     Source: https://www.datasheets360.com/pdf/-6069213202016663880
 */
@@ -24,7 +26,7 @@ namespace Motion
     {
     public: 
         void Start();
-        void ExecuteUcodeAt(uint16_t addr);
+        void ExecuteUcode(uint16_t);
         void Tick(); 
 
     private: 

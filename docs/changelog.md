@@ -224,7 +224,12 @@ took a big break, preventative to stop burnout
 * microcode loading
 * merged ge and fbc 
 * added getcurrentslice, getcurrentstate
-    
+
+## 2026-09-25 to 2026-10-01
+* finally got the damn process going
+* fbc commands
+
+
 v0.3.0 TODO:
 
 * GE and FBC!!!!!!!

@@ -33,7 +33,7 @@ namespace Motion
             the2903 = new2903;
         }
 
-        void Start();
+        void Start(uint16_t pcCtr);
         void Tick();
 
         uint16_t StackPush();

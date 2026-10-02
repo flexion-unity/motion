@@ -125,7 +125,7 @@ namespace Motion
 
         // Go into the fifo
         
-        pipeParameters[pipeWritePtr] = word; 
+        pipeData[pipeWritePtr] = word; 
 
         // high byte all bits high = reconfigure all ges
         if (theGe.reconfiguring && (word & 0xFF00) == 0xFF00)
@@ -153,20 +153,18 @@ namespace Motion
 
         if (cmd == GE_CMD_PASSTHRU)
         {
-
             if (passthroughWords == 0)
             {
                 passthroughSize = ((word >> 8)) + 1;
                 passthroughStart = pipeWritePtr;
             }
-               
 
             passthroughWords++;
 
             if (passthroughWords == passthroughSize)
             {
                 passthroughSize = passthroughStart = passthroughWords = 0;
-                FBCExecuteCommand(word, passthroughStart);
+                FBCExecuteCommand(word);
 
             }
         }
@@ -178,12 +176,12 @@ namespace Motion
 
     }
 
-    uint16_t GF2::GEPeekNextCommandWord(uint16_t word)
+    uint16_t GF2::GEPeekNextCommandWord()
     {
         pipePeekPtr++;
         pipePeekPtr %= GF2_GE_MAX_PARAMETERS;
 
-        return pipeParameters[pipePeekPtr];
+        return pipeData[pipePeekPtr];
     }
 
     //

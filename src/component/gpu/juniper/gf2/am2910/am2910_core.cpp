@@ -15,8 +15,9 @@
 
 namespace Motion
 {
-    void AM2910::Start()
+    void AM2910::Start(uint16_t pcReg)
     {
+        this->pcReg = pcReg;
         running = true; 
     }
 
@@ -39,6 +40,6 @@ namespace Motion
     /// @param nextUcode the microcode instruction to execute
     void AM2910::YellAt2903(uint16_t nextUcode)
     {
-        the2903->ExecuteUcodeAt(nextUcode);
+        the2903->ExecuteUcode(nextUcode);
     }
 }

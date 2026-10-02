@@ -127,9 +127,30 @@ namespace Motion
         
     }
 
-    void GF2::FBCExecuteCommand(uint16_t word, uint16_t passthroughStart) // size from GE Passthrough
+    void GF2::FBCExecuteCommand(uint16_t word) // size from GE Passthrough
     {
-        
+        // ok
+        uint16_t passthroughPtr = passthroughStart;
+        uint16_t commandId = pipeData[passthroughPtr];
+
+        pipePeekPtr = passthroughStart;
+
+        uint16_t cmd = GEPeekNextCommandWord();
+
+        // Temporary buffer for storing the parameters
+
+        uint16_t wordBuffer[GF2_GE_MAX_PARAMETERS] = {0};
+
+        for (int32_t i = 0; i < passthroughWords - 1; i++)
+        {
+            uint16_t paramWord = GEPeekNextCommandWord();
+            wordBuffer[i + 1] = paramWord; 
+        }
+    
+        // ok we are done. get the microcode start location
+        uint16_t ucodeStart = cmd << 1; 
+
+        am2910.Start();
     }
     
     void GF2::BPCExecuteCommand(uint16_t word)
