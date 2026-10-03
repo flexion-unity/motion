@@ -16,6 +16,7 @@
 
 #pragma once
 #include <component/component.hpp>
+#include <component/gpu/juniper/gf2/gf2_ucode.hpp>
 
 namespace Motion
 {
@@ -25,8 +26,13 @@ namespace Motion
     class AM2903
     {
     public: 
+        AM2903(GF2Ucode* ucode)
+        {
+            this->ucode = ucode;
+        }
+
         void Start();
-        void ExecuteUcode(uint16_t);
+        void ExecuteUcode(uint16_t ucode);
         void Tick(); 
 
     private: 
@@ -37,6 +43,8 @@ namespace Motion
 
         uint16_t ramAddrA, ramAddrB;
         uint16_t io;
+
+        GF2Ucode* ucode; 
 
         bool running = false; 
 

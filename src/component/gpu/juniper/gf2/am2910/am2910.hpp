@@ -16,6 +16,7 @@
 #pragma once
 #include <component/component.hpp>
 #include <component/gpu/juniper/gf2/am2903/am2903.hpp>
+#include <component/gpu/juniper/gf2/gf2_ucode.hpp>
 
 namespace Motion
 {
@@ -25,12 +26,13 @@ namespace Motion
     class AM2910
     {
     public: 
-        AM2910(AM2903* new2903)
+        AM2910(AM2903* new2903, GF2Ucode* ucode)
         {
             if (!new2903)
                 Logger::Log(AM2910_LOG_PREFIX, "AM2910::AM2910(): Am2903 IS NULL!", LogChannels::FatalError);
 
             the2903 = new2903;
+            this->ucode = ucode;
         }
 
         void Start(uint16_t pcCtr);
@@ -48,6 +50,7 @@ namespace Motion
 
         // WARNING: YOU MUST AND WITH 0xFFF! BITS 15-12 DO NOT EXIST! IF YOU SEE VALUE OF >=0X1000, IT'S INVALID!
 
+        GF2Ucode* ucode; 
         
         // LIFO 
         uint16_t pcCtr;                         // on zero, execute NEXT instruction
@@ -57,7 +60,6 @@ namespace Motion
         uint16_t d;                             // Direct input
 
         AM2903* the2903;                        // used to contrl us. this code sucks but it's r&d
-
         bool running = false; 
 
     }; 

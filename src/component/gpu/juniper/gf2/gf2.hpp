@@ -16,6 +16,7 @@
 #include <component/component.hpp>
 #include <component/multibus/multibus.hpp>
 #include <component/gpu/vram.hpp>
+#include <component/gpu/juniper/gf2/gf2_ucode.hpp>
 #include <component/gpu/juniper/gf2/am2903/am2903.hpp>
 #include <component/gpu/juniper/gf2/am2910/am2910.hpp>
 
@@ -193,7 +194,7 @@ namespace Motion
     class GF2 : public Component
     {
     public: 
-        GF2() : am2910(&am2903) { };
+        GF2() : am2910(&am2903, &ucode), am2903(&ucode) { };
 
         void Start() override; 
         void Tick() override; 
@@ -249,7 +250,9 @@ namespace Motion
         // FBC SHIT
         AM2903 am2903; 
         AM2910 am2910; 
-        uint16_t ucode[GF2_FBC_UCODE_STATES][GF2_FBC_UCODE_SLICES]; // 16kb 
+
+        /// @brief the microcode. passed to am2903 and am2910
+        GF2Ucode ucode;
 
         uint16_t lastFbcAltCommand;
 
@@ -267,6 +270,8 @@ namespace Motion
         void FBCWrite16(size_t addr, uint16_t value);
 
         // should be good for gcc and clang 
+
+        /// we don't model slices but GL2 KGL expects to return the last slice ANDed with 0xFF
         __attribute__((always_inline)) uint16_t GetCurrentUcodeSlice() { return (geFlagsWritten >> GF2_GE_FLAG_FBC_SLICE_SHIFT) & 0x03; }; // calculate slice
 
         __attribute__((always_inline)) uint16_t GetCurrentUcodeState(size_t addr)
@@ -279,7 +284,7 @@ namespace Motion
         __attribute__((always_inline)) bool UcodeAccessIsEnabled() { return !(geFlagsWritten & GF2_GE_FLAG_WRITE_DISABLE_UCODE_ACCESS); };
 
         /// @brief get requested microcode slice for addr addr
-        uint16_t GetRequestedFBCUcodeData(uint16_t addr) { return ucode[GetCurrentUcodeState(addr)][GetCurrentUcodeSlice()]; };
+        uint16_t GetRequestedFBCUcodeData(uint16_t addr) { return ucode.data[GetCurrentUcodeState(addr)]; };
 
         ///
         /// COMMANDS

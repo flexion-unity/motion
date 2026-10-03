@@ -5,8 +5,7 @@
     Copyright (c)2026 starfrost
 
     am2910.cpp: The AMD Am2910 Microcode Sequencer Implementation
-    This one controls the AM2903...To perform actions
-    
+    This one uses the am2903 to perform actions 
      
     Source: https://www.datasheets360.com/pdf/-6069213202016663880
 */
@@ -15,14 +14,22 @@
 
 namespace Motion
 {
+    /// @brief Start exeuction of the am2910. Default is at 0x0.
+    /// @param pcReg 
     void AM2910::Start(uint16_t pcReg)
     {
         this->pcReg = pcReg;
         running = true; 
+
+        // WHAT IS PCCTR ?? WHY ???
     }
 
     void AM2910::Tick()
     {
+        // next the next state
+        uint16_t next = (ucode->data[pcReg]);
+
+        pcReg += 2; 
 
     }
     

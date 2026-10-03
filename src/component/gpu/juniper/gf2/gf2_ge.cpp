@@ -164,6 +164,7 @@ namespace Motion
             if (passthroughWords == passthroughSize)
             {
                 passthroughSize = passthroughStart = passthroughWords = 0;
+                Logger::Log(GF2_GE_LOG_PREFIX, std::format("About to execute FBC command 0x{:x} with 0x{:x} parameters", cmd, theGe.lastGeCommandParameters).c_str(), LogChannels::Debug);
                 FBCExecuteCommand(word);
 
             }

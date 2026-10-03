@@ -26,7 +26,7 @@ namespace Motion
     void GF2::FBCStart()
     {
         CoherentEditor::Settings settings;
-        settings.buf = (uint8_t*)ucode;
+        settings.buf = (uint8_t*)ucode.data;
         settings.bufSize = GF2_FBC_UCODE_SLICES * GF2_FBC_UCODE_STATES;
         settings.name = "FBC Microcode Editor";
         
@@ -34,7 +34,6 @@ namespace Motion
         Coherent::RegisterExtension(fbcUcodeEditor);
 
         am2903.Start();
-        am2910.Start();
     }
 
     uint16_t GF2::FBCRead16(size_t addr)
@@ -46,7 +45,7 @@ namespace Motion
         && fbcFlagsWritten == 0xFF
         && UcodeAccessIsEnabled())
         {
-            uint16_t ucodeValue = ucode[GetCurrentUcodeState(addr)][GetCurrentUcodeSlice()];
+            uint16_t ucodeValue = ucode.data[GetCurrentUcodeState(addr)];
             // the top slice of each state is 8b its wide
             value = (GetCurrentUcodeSlice() == 3) ? (ucodeValue & 0xFF) : ucodeValue;
         }    
@@ -99,8 +98,7 @@ namespace Motion
         && UcodeAccessIsEnabled())
         {
             uint16_t state = GetCurrentUcodeState(addr);
-            uint16_t slice = GetCurrentUcodeSlice();
-            ucode[state][slice] = value;
+            ucode.data[state] = value;
         }
         else
         {
@@ -150,7 +148,8 @@ namespace Motion
         // ok we are done. get the microcode start location
         uint16_t ucodeStart = cmd << 1; 
 
-        am2910.Start();
+        // initiate execution of current ucode
+        am2910.Start(ucodeStart);
     }
     
     void GF2::BPCExecuteCommand(uint16_t word)
