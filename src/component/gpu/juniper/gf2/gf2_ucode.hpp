@@ -14,13 +14,14 @@
 
 namespace Motion
 {
-    // data is split into 4 slices. since we only model four am2903s we don't bother with them. for now we can probably just figure out how to do it
+    // data is split into 4 slices.
     #define GF2_FBC_UCODE_STATES                    4096
-
+    #define GF2_FBC_UCODE_SLICES                    4
+    
     class GF2Ucode
     {
     public:             // this is against all principles of oop 
-        uint16_t data[GF2_FBC_UCODE_STATES]; // 16kb 
+        uint16_t data[GF2_FBC_UCODE_STATES][GF2_FBC_UCODE_SLICES]; // 16kb 
         
     };
 };

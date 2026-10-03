@@ -27,7 +27,7 @@ namespace Motion
     void AM2910::Tick()
     {
         // next the next state
-        uint16_t next = (ucode->data[pcReg]);
+        uint16_t next = (ucode->data[pcReg][0]);
 
         pcReg += 2; 
 

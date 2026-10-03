@@ -45,7 +45,7 @@ namespace Motion
         && fbcFlagsWritten == 0xFF
         && UcodeAccessIsEnabled())
         {
-            uint16_t ucodeValue = ucode.data[GetCurrentUcodeState(addr)];
+            uint16_t ucodeValue = ucode.data[GetCurrentUcodeState(addr)][GetCurrentUcodeSlice()];
             // the top slice of each state is 8b its wide
             value = (GetCurrentUcodeSlice() == 3) ? (ucodeValue & 0xFF) : ucodeValue;
         }    
@@ -98,7 +98,8 @@ namespace Motion
         && UcodeAccessIsEnabled())
         {
             uint16_t state = GetCurrentUcodeState(addr);
-            ucode.data[state] = value;
+            uint16_t slice = GetCurrentUcodeSlice();
+            ucode.data[state][slice] = value;
         }
         else
         {
@@ -145,7 +146,7 @@ namespace Motion
             wordBuffer[i + 1] = paramWord; 
         }
     
-        // ok we are done. get the microcode start location
+        // ok we are done. get the microcode state start location
         uint16_t ucodeStart = cmd << 1; 
 
         // initiate execution of current ucode

@@ -270,8 +270,6 @@ namespace Motion
         void FBCWrite16(size_t addr, uint16_t value);
 
         // should be good for gcc and clang 
-
-        /// we don't model slices but GL2 KGL expects to return the last slice ANDed with 0xFF
         __attribute__((always_inline)) uint16_t GetCurrentUcodeSlice() { return (geFlagsWritten >> GF2_GE_FLAG_FBC_SLICE_SHIFT) & 0x03; }; // calculate slice
 
         __attribute__((always_inline)) uint16_t GetCurrentUcodeState(size_t addr)
@@ -284,7 +282,7 @@ namespace Motion
         __attribute__((always_inline)) bool UcodeAccessIsEnabled() { return !(geFlagsWritten & GF2_GE_FLAG_WRITE_DISABLE_UCODE_ACCESS); };
 
         /// @brief get requested microcode slice for addr addr
-        uint16_t GetRequestedFBCUcodeData(uint16_t addr) { return ucode.data[GetCurrentUcodeState(addr)]; };
+        uint16_t GetRequestedFBCUcodeData(uint16_t addr) { return ucode.data[GetCurrentUcodeState(addr)][GetCurrentUcodeSlice()]; };
 
         ///
         /// COMMANDS
