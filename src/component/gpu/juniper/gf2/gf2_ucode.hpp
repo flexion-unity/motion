@@ -17,11 +17,11 @@ namespace Motion
     // data is split into 4 slices.
     #define GF2_FBC_UCODE_STATES                    4096
     #define GF2_FBC_UCODE_SLICES                    4
-    
+
     class GF2Ucode
     {
     public:             // this is against all principles of oop 
-        uint16_t data[GF2_FBC_UCODE_STATES][GF2_FBC_UCODE_SLICES]; // 16kb 
+        uint16_t data[GF2_FBC_UCODE_STATES][GF2_FBC_UCODE_SLICES]; // 32kb 
         
     };
 };

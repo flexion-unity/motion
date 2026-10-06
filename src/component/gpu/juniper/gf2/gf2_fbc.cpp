@@ -15,7 +15,45 @@
     Each state was started by _NS and ended by _ES
     
     MICROCODE FORMAT:
-    17 "fields"
+    /*================================================================
+    /*   outputs
+    /*================================================================
+
+    Output NextAddress ={"di",		0,	15,	0};
+    // 2910 Inputs 
+    Output i0 = 		{"i0",		16,	16,	0};
+    Output i1 =		    {"i1",		17,	20,	6};
+    Output i2 =		    {"i2",		21,	24,	4};  deflt: WRE 
+    
+    Output cin =		{"cin",		25,	25,	0};
+    Output earbar =		{"earbar",	26,	26,	0};
+    Output ealbar =		{"ealbar",	27,	27,	0};
+    Output addra =		{"addra",	28,	31,	0};
+    Output addrb =		{"addrb",	32,	35,	0};
+
+    // START PARTS THAT WE CAN HOPEFULLY IGNORE
+    Output clklong =	{"clklong",	36,	36,	0};     
+    Output get = 		{"get",		37,	37,	0};
+    Output put =		{"put",		38,	38,	0};
+    Output loadout = 	{"loadout",	39,	39,	0};    
+    Output enram = 		{"enram",	40,	40,	0};
+    Output rdram =		{"rdram",	41,	41,	0};
+    Output highbyte =	{"highbyte",	42,	42,	0};
+    Output rightjust =	{"rightjust",	43,	43,	0};
+    // STOP PARTS THAT WE CAN HOPEFULLY IGNORE
+
+    Output seqop =		{"seqop",	44,	47,	14};
+    Output ccsel =		{"ccsel",	48,	50,	0};
+    Output fbccode =	{"fbccode",	51,	54,	0};
+    Output reverse =	{"reverse",	55,	55,	0};
+
+    Output DIsrc = 		{"DIsrc",	0,	7,	0};
+            pseudo-field for recording intended use of DI bus	
+    Output seqtype = 	{"seqtype",	0,	7,	0};
+            pseudo-field for categorizing 2910 opcode used	
+    Output microconst = 	{"microconst",	-1,	-1,	0};
+            pseudo-field for recording whether MICROCONST invoked 
+
 
 */
 #include <component/component.hpp>
@@ -27,7 +65,7 @@ namespace Motion
     {
         CoherentEditor::Settings settings;
         settings.buf = (uint8_t*)ucode.data;
-        settings.bufSize = GF2_FBC_UCODE_SLICES * GF2_FBC_UCODE_STATES;
+        settings.bufSize = (GF2_FBC_UCODE_SLICES * GF2_FBC_UCODE_STATES) << 1; // 32 kb
         settings.name = "FBC Microcode Editor";
         
         fbcUcodeEditor = new CoherentEditor(this, settings);

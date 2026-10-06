@@ -165,7 +165,7 @@ namespace Motion
             {
                 passthroughSize = passthroughStart = passthroughWords = 0;
                 Logger::Log(GF2_GE_LOG_PREFIX, std::format("About to execute FBC command 0x{:x} with 0x{:x} parameters", cmd, theGe.lastGeCommandParameters).c_str(), LogChannels::Debug);
-                FBCExecuteCommand(word);
+                FBCExecuteCommand(theGe.lastGeCommand);
 
             }
         }
@@ -189,9 +189,13 @@ namespace Motion
     // Command eexcution
     //
 
-    void GF2::GEExecuteCommand(uint16_t word)
+    void GF2::GEExecuteCommand(uint16_t commandId)
     {
-
+        switch (commandId)
+        {
+            case GE_CMD_POPMM:
+                break;
+        }
     }
 
 

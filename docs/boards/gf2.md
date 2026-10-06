@@ -44,7 +44,15 @@ Scale XY <- ClipFar <- ZOut /ClipNear <- ClipBottom <- ClipTop <- ClipRight
 
 ## Frame Buffer Controller
 
-Four hopelessly bottlenecked AMD Am2903 bit-slice processors. These perform all non wireframe operations and run custom SGI microcode.
+Four hopelessly bottlenecked AMD Am2903 bit-slice processors combined with a sequencer (amd am2910). These perform all non wireframe operations and run custom SGI microcode.
+
+4096 states, 4 words.
+
+There is actually 4096 * 4 words of ucode = 32 kb.
+
+Each slice is 16 bits. so each state is 64 bit
+
+-->so each slice is one microword? or is each *state* one microword? 
 
 ## Bit Plane Controller
 The interface to the UC4 board (in GF1 boards this is the only way to write to the UC4, but in GF2, Multibus I/O at 50003000-50003fff is exposed as the UC4 board and used by e.g. IP2 PROM. Emulation of this has already occurred) and VRAM. 

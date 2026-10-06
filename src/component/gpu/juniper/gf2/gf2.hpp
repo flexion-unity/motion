@@ -193,6 +193,7 @@ namespace Motion
 
     class GF2 : public Component
     {
+        friend class CoherentExtensionGF2;
     public: 
         GF2() : am2910(&am2903, &ucode), am2903(&ucode) { };
 

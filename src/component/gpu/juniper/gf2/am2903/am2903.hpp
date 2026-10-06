@@ -23,6 +23,13 @@ namespace Motion
     #define AM2903_LOG_PREFIX           "GF2 FBC Microcode Processor (AMD Am2903)"
     #define AM2903_INTERNAL_RAM_SIZE    16          // AM2903 Intenral ram size
 
+    // i1 field in ucode
+    #define AM2903_ALU_OP_HIGH          0           // If I0 = HIGH, Special Functions
+    #define AM2903_ALU_OP_SUB_SR        1           // F = S - R - 1 + Cn
+    #define AM2903_ALU_OP_SUB_RS        2           // F = R - S - 1 + Cn
+    #define AM2903_ALU_OP_ADD           3           // F = R + S + Cn
+
+
     class AM2903
     {
     public: 
@@ -33,6 +40,8 @@ namespace Motion
 
         void Start();
         void ExecuteUcode(uint16_t ucode);
+
+        uint16_t AluOp();
         void Tick(); 
 
     private: 
