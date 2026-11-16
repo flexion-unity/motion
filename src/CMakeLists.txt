@@ -83,6 +83,8 @@ add_executable(motion
     coherent/coherent_symbol_format.cpp
     coherent/coherent_symbol_editor.cpp
     
-    ui/ui_core.cpp    
+    ui/ui_core.cpp
+    component/cpu/mips/mips1.cpp
+    component/cpu/mips/mips1_cp0.cpp    
 )
 

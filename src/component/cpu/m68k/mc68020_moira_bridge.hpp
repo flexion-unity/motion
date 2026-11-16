@@ -12,7 +12,7 @@
 
 namespace Motion
 {
-    #define LOG_PREFIX_BRIDGE        "68020 CPU Lisburn-to-Motion Bridge"
+    #define LOG_PREFIX_BRIDGE        "68020 CPU Lisburn Bridge"
 
     class MC68020MoiraBridge : public Motion::Lisburn::Moira 
     {

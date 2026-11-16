@@ -48,6 +48,38 @@ namespace Motion
     class MIPS : public ComponentCPU
     {
     private:
+
+        // MIPS fetch phase
+        class MIPS_IF
+        {
+
+        };
+
+        // MIPS decode phase
+        class MIPS_ID
+        {
+
+        };
+
+        
+        // MIPSI execution phase
+        class MIPS_EX
+        {
+
+        };
+
+        // MIPSI memory phaes
+        class MIPS_MEM
+        {
+
+        };
+
+        // MIPSI writeback phase
+        class MIPS_WR
+        {
+
+        }; 
+
         uint32_t r[MIPS_NUM_GENERAL_REGS]; // the general registers. r0 is always 0
 
         uint32_t pc; 
@@ -60,9 +92,25 @@ namespace Motion
 
         MIPSCP0 cp0; 
 
+        void Tick() override;                   // the tick
+
         void DecodeI(uint32_t opcode);          // DECODE I-Type instruction
         void DecodeJ(uint32_t opcode);          // DECODE J-Type instruction
         void DecodeR(uint32_t opcode);          // DECODE R-Type instruction
+
+        /// @brief get the name of this component. immutable const char*.
+        const char* GetName() 
+        { 
+            switch (flavour)
+            {
+                case MIPSFlavour::R2000:
+                    return "MIPS R2000 CPU";
+                case MIPSFlavour::R3000:
+                    return "MIPS R3000 CPU";
+                default:
+                    return "Unknown MIPS-I CPU";
+            }
+        };
 
     }; 
 }
